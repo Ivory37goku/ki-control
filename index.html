@@ -46,6 +46,16 @@
         .fingerprint-btn { width: 100%; padding: 18px; border-radius: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.15); border: none; cursor: pointer; }
         .fingerprint-btn:active { transform: scale(0.97); }
         
+        .action-btn { 
+            width: 100%; padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; 
+            display: flex; align-items: center; justify-content: center; gap: 6px; 
+            transition: all 0.2s; border: none; cursor: pointer; margin-top: 8px;
+        }
+        .action-btn:active { transform: scale(0.97); }
+        .btn-add-extra { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.4); }
+        .btn-edit { background: #f1f5f9; color: #475569; }
+        .dark .btn-edit { background: #334155; color: #cbd5e1; }
+        
         .modal-content { background: white; border-radius: 20px 20px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; }
         .dark .modal-content { background: #1e293b; }
         @media (min-width: 640px) { .modal-content { border-radius: 20px; max-width: 480px; margin: 0 auto; } }
@@ -73,9 +83,16 @@
         .btn-secondary { background: #1e293b; color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .btn-secondary { background: white; color: #0f172a; }
         .btn-secondary:active { transform: scale(0.97); }
+
+        .filter-pill { 
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; 
+            background: #f1f5f9; color: #64748b; border: none; cursor: pointer; transition: all 0.2s; 
+        }
+        .dark .filter-pill { background: #1e293b; color: #94a3b8; }
+        .filter-pill.active { background: #f97316; color: white; }
     </style>
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444' } } } };
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } };
     </script>
 </head>
 <body class="text-slate-800 dark:text-slate-100 min-h-screen">
@@ -129,24 +146,22 @@
                 </div>
             </div>
 
-            <!-- OBJETIVO MENSUAL (NUEVO) -->
+            <!-- OBJETIVO MENSUAL -->
             <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4 border-l-secondary">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="font-bold text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-bullseye mr-2 text-secondary"></i>Objetivo Mensual</h3>
                     <span class="text-xs font-bold text-slate-500" id="month-label">Noviembre 2026</span>
                 </div>
-                
                 <div class="flex justify-between items-end mb-2">
                     <div>
                         <p class="text-[10px] text-slate-500 uppercase font-bold">Llevas trabajadas</p>
                         <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-worked">0 h</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] text-slate-500 uppercase font-bold">Objetivo estimado</p>
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Objetivo a fecha de hoy</p>
                         <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-target">0 h</p>
                     </div>
                 </div>
-
                 <div class="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div id="monthly-progress-bar" class="absolute top-0 left-0 h-full bg-secondary rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
@@ -197,7 +212,7 @@
                 </div>
             </div>
 
-            <!-- TAB: JORNADAS -->
+            <!-- TAB: JORNADAS CON FILTROS Y EDICIÓN -->
             <div id="content-jornadas" class="tab-content fade-in">
                 <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
                     <h2 class="font-bold text-lg text-slate-900 dark:text-white">Jornadas</h2>
@@ -211,6 +226,14 @@
                     </div>
                 </div>
                 
+                <!-- Filtros rápidos -->
+                <div class="flex gap-2 mb-3 overflow-x-auto pb-1">
+                    <button onclick="setFilter('all')" class="filter-pill active" data-filter="all">Todos</button>
+                    <button onclick="setFilter('confirmado')" class="filter-pill" data-filter="confirmado">Confirmados</button>
+                    <button onclick="setFilter('provisional')" class="filter-pill" data-filter="provisional">Provisionales</button>
+                    <button onclick="setFilter('extra')" class="filter-pill" data-filter="extra">Con Extras</button>
+                </div>
+
                 <div class="mobile-cards space-y-2" id="jornadas-cards"></div>
                 
                 <div class="desktop-table glass-panel rounded-2xl overflow-hidden">
@@ -221,8 +244,9 @@
                                     <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Fecha</th>
                                     <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Horario</th>
                                     <th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Norm.</th>
-                                    <th class="px-4 py-3 text-center text-xs font-bold text-primary uppercase">Extra</th>
+                                    <th class="px-4 py-3 text-center text-xs font-bold text-accent uppercase">Extra</th>
                                     <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Estado</th>
+                                    <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="jornadas-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
@@ -251,7 +275,6 @@
             <!-- TAB: AJUSTES -->
             <div id="content-ajustes" class="tab-content hidden fade-in">
                 <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Backup</h2>
-                
                 <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label>
@@ -265,7 +288,6 @@
                         <i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios
                     </button>
                 </div>
-
                 <div class="glass-panel rounded-2xl p-5">
                     <h3 class="font-bold text-base text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-database mr-2 text-primary"></i>Gestión de Datos</h3>
                     <div class="grid grid-cols-2 gap-3">
@@ -303,7 +325,7 @@
             </button>
         </nav>
 
-        <!-- MODAL -->
+        <!-- MODAL GENÉRICO -->
         <div id="generic-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
             <div class="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:-translate-y-1/2">
@@ -329,7 +351,7 @@
 
     <script>
         // ============================================
-        // DATOS ORIGINALES SANITIZED (ESPACIOS LIMPIOS)
+        // DATOS ORIGINALES SANITIZED
         // ============================================
         const rawJsonString = `{
  "jornadas": [
@@ -398,46 +420,55 @@
 
         let appData = null;
         let currentModalType = null;
+        let editingId = null;
         let chartInstance = null;
+        let currentFilter = 'all';
 
         function initApp() {
             const saved = localStorage.getItem('ivory37_data_v1');
-            
             if (saved) {
-                try {
-                    appData = JSON.parse(saved);
-                    ensureFullYearData();
-                } catch (e) {
-                    appData = buildInitialData();
-                }
+                try { appData = JSON.parse(saved); } catch (e) { appData = buildInitialData(); }
             } else {
                 appData = buildInitialData();
             }
 
+            // CORRECCIÓN AUTOMÁTICA DE DATOS
+            sanitizeConfirmedRecords();
+            ensureFullYearData();
+
             updateDateAndClock();
             setInterval(updateDateAndClock, 1000);
-            
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            }
-
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
             renderAll();
             registerSW();
         }
 
         function buildInitialData() {
             const parsed = JSON.parse(rawJsonString);
-            const missing = generateMissingJornadas(parsed.jornadas);
             return {
-                jornadas: [...parsed.jornadas, ...missing],
-                viajes: parsed.viajes,
-                pagos: parsed.pagos,
-                ajustes: parsed.ajustes,
-                notas: parsed.notas || []
+                jornadas: [...parsed.jornadas, ...generateMissingJornadas(parsed.jornadas)],
+                viajes: parsed.viajes, pagos: parsed.pagos, ajustes: parsed.ajustes, notas: parsed.notas || []
             };
         }
 
-        // FUNCIÓN CORREGIDA: Asegura TODAS las jornadas hasta HOY con entrada/salida rellenas
+        // CORREGIR REGISTROS CONFIRMADOS SIN HORARIO
+        function sanitizeConfirmedRecords() {
+            let updated = false;
+            appData.jornadas.forEach(j => {
+                const estado = getJornadaEstado(j);
+                if (estado === 'confirmado' && (!j.entrada || !j.entrada.trim() || !j.salida || !j.salida.trim())) {
+                    j.entrada = "08:00";
+                    j.salida = "16:00";
+                    j.horas_normales = 8.0;
+                    if (!j.notas.toLowerCase().includes('horario asignado')) {
+                        j.notas = (j.notas ? j.notas + ' | ' : '') + '⚠️ Horario asignado automáticamente por sistema.';
+                    }
+                    updated = true;
+                }
+            });
+            if (updated) saveDataSilent();
+        }
+
         function ensureFullYearData() {
             const existingDates = new Set(appData.jornadas.map(j => j.fecha));
             const startDate = new Date('2026-01-01');
@@ -446,438 +477,221 @@
             let idCounter = Math.max(...appData.jornadas.map(j => j.id), 999) + 1;
 
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-                const dayOfWeek = d.getDay();
-                if (dayOfWeek === 0 || dayOfWeek === 6) continue;
-
+                if (d.getDay() === 0 || d.getDay() === 6) continue;
                 const dateStr = d.toISOString().split('T')[0];
                 if (!existingDates.has(dateStr)) {
                     appData.jornadas.push({
-                        id: idCounter++,
-                        fecha: dateStr,
-                        entrada: "08:00",      // <-- CLAVE: Marcado como fichado
-                        salida: "16:00",       // <-- CLAVE: Marcado como fichado
-                        horas_normales: 8.0,
-                        horas_extra: 0.0,
-                        estado: "confirmado",
-                        notas: "[CONFIRMADO] Jornada estándar verificada.",
-                        creado: d.toISOString()
+                        id: idCounter++, fecha: dateStr, entrada: "08:00", salida: "16:00",
+                        horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado",
+                        notas: "[CONFIRMADO] Jornada estándar verificada.", creado: d.toISOString()
                     });
                     needsUpdate = true;
                 }
             }
-
-            if (needsUpdate) saveData();
+            if (needsUpdate) saveDataSilent();
         }
 
-        function generateMissingJornadas(existingJornadas) {
-            const existingDates = new Set(existingJornadas.map(j => j.fecha));
-            const newJornadas = [];
-            const startDate = new Date('2026-01-01');
-            const endDate = new Date();
-            let idCounter = 1000;
-
-            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-                const dayOfWeek = d.getDay();
-                if (dayOfWeek === 0 || dayOfWeek === 6) continue;
-
-                const dateStr = d.toISOString().split('T')[0];
-                if (!existingDates.has(dateStr)) {
-                    newJornadas.push({
-                        id: idCounter++,
-                        fecha: dateStr,
-                        entrada: "08:00",
-                        salida: "16:00",
-                        horas_normales: 8.0,
-                        horas_extra: 0.0,
-                        estado: "confirmado",
-                        notas: "[CONFIRMADO] Jornada estándar verificada.",
-                        creado: d.toISOString()
-                    });
-                }
+        function generateMissingJornadas(existing) {
+            const dates = new Set(existing.map(j => j.fecha));
+            const newJ = [];
+            let id = 1000;
+            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
+                if (d.getDay() === 0 || d.getDay() === 6) continue;
+                const ds = d.toISOString().split('T')[0];
+                if (!dates.has(ds)) newJ.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar verificada.", creado: d.toISOString() });
             }
-            return newJornadas;
+            return newJ;
         }
 
-        function saveData() {
-            localStorage.setItem('ivory37_data_v1', JSON.stringify(appData));
-            renderAll();
-        }
+        function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderAll(); }
+        function saveDataSilent() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); }
 
         function renderAll() {
-            renderDashboard();
-            renderMonthlyGoal(); // NUEVO: Renderizar objetivo mensual
-            renderChart();
-            renderJornadas();
-            renderViajes();
-            renderPagos();
-            renderConfig();
-            updateTodayStatus();
+            renderDashboard(); renderMonthlyGoal(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus();
         }
 
         function updateDateAndClock() {
             const now = new Date();
-            const dateStr = now.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
-            const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('current-date').innerText = dateStr;
-            document.getElementById('live-clock').innerText = timeStr;
-            document.getElementById('live-clock-big').innerText = timeStr;
+            document.getElementById('current-date').innerText = now.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+            const t = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('live-clock').innerText = t;
+            document.getElementById('live-clock-big').innerText = t;
         }
 
-        // CÁLCULO DE OBJETIVO MENSUAL (40H SEMANALES)
         function renderMonthlyGoal() {
             const now = new Date();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
-            const todayDay = now.getDate();
-
+            const cm = now.getMonth(), cy = now.getFullYear(), td = now.getDate();
             document.getElementById('month-label').innerText = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-
-            // Calcular días laborables transcurridos este mes
-            let workingDaysPassed = 0;
-            for (let d = 1; d <= todayDay; d++) {
-                const date = new Date(currentYear, currentMonth, d);
-                const dayOfWeek = date.getDay();
-                if (dayOfWeek !== 0 && dayOfWeek !== 6) workingDaysPassed++;
-            }
-
-            // Calcular total días laborables del mes (para el objetivo total)
-            const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            let totalWorkingDays = 0;
-            for (let d = 1; d <= lastDayOfMonth; d++) {
-                const date = new Date(currentYear, currentMonth, d);
-                const dayOfWeek = date.getDay();
-                if (dayOfWeek !== 0 && dayOfWeek !== 6) totalWorkingDays++;
-            }
-
-            const targetHours = totalWorkingDays * 8; // 40h semanales = 8h/día
-            const expectedHours = workingDaysPassed * 8;
-
-            // Sumar horas trabajadas REALES este mes
-            let workedHours = 0;
+            
+            let wpd = 0;
+            for (let d = 1; d <= td; d++) { const dt = new Date(cy, cm, d); if (dt.getDay() !== 0 && dt.getDay() !== 6) wpd++; }
+            
+            const target = wpd * 8;
+            let worked = 0;
             appData.jornadas.forEach(j => {
-                const jDate = new Date(j.fecha);
-                if (jDate.getMonth() === currentMonth && jDate.getFullYear() === currentYear) {
-                    // Solo sumar si tiene entrada y salida válidas
-                    if (j.entrada && j.salida && j.entrada.trim() !== "" && j.salida.trim() !== "") {
-                        const start = new Date(`${j.fecha}T${j.entrada.trim()}`);
-                        const end = new Date(`${j.fecha}T${j.salida.trim()}`);
-                        const hours = (end - start) / (1000 * 60 * 60);
-                        workedHours += hours;
-                    }
+                const jd = new Date(j.fecha);
+                if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada && j.salida && j.entrada.trim() && j.salida.trim()) {
+                    worked += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000;
                 }
             });
 
-            document.getElementById('monthly-worked').innerText = workedHours.toFixed(1) + " h";
-            document.getElementById('monthly-target').innerText = targetHours + " h";
-
-            const pct = Math.min((workedHours / targetHours) * 100, 100);
-            document.getElementById('monthly-progress-bar').style.width = pct + "%";
-
-            const diff = workedHours - expectedHours;
-            const balanceEl = document.getElementById('monthly-balance');
+            document.getElementById('monthly-worked').innerText = worked.toFixed(1) + " h";
+            document.getElementById('monthly-target').innerText = target + " h";
+            document.getElementById('monthly-progress-bar').style.width = Math.min((worked / target) * 100, 100) + "%";
             
-            if (Math.abs(diff) < 0.1) {
-                balanceEl.innerText = "✅ Vas exactamente al día";
-                balanceEl.className = "text-xs text-slate-500 mt-2 text-center font-bold";
-            } else if (diff > 0) {
-                balanceEl.innerText = `🟢 Vas ${diff.toFixed(1)}h por delante`;
-                balanceEl.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-2 text-center font-bold";
-            } else {
-                balanceEl.innerText = `🔴 Te faltan ${Math.abs(diff).toFixed(1)}h para ir al día`;
-                balanceEl.className = "text-xs text-red-500 mt-2 text-center font-bold";
-            }
+            const diff = worked - target;
+            const bal = document.getElementById('monthly-balance');
+            if (Math.abs(diff) < 0.1) { bal.innerText = "✅ Vas exactamente al día"; bal.className = "text-xs text-slate-500 mt-2 text-center font-bold"; }
+            else if (diff > 0) { bal.innerText = `🟢 Vas ${diff.toFixed(1)}h por delante`; bal.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-2 text-center font-bold"; }
+            else { bal.innerText = `🔴 Te faltan ${Math.abs(diff).toFixed(1)}h para ir al día`; bal.className = "text-xs text-red-500 mt-2 text-center font-bold"; }
         }
 
         function renderDashboard() {
-            let totalExtra = 0;
-            appData.jornadas.forEach(j => totalExtra += parseFloat(j.horas_extra || 0));
+            let te = 0; appData.jornadas.forEach(j => te += parseFloat(j.horas_extra || 0));
+            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
+            const rate = rs ? parseFloat(rs.valor) : 19.69;
+            let ptv = 0, ptc = 0, tp = 0;
+            appData.viajes.forEach(v => { const a = parseFloat(v.importe || 0); if (v.pagado === 1) tp += a; else { ptv += a; ptc++; } });
+            appData.pagos.forEach(p => { const a = parseFloat(p.importe || 0); if (a > 0 && p.categoria !== 'viaje') tp += a; });
             
-            const rateSetting = appData.ajustes.find(a => a.clave === "hora_extra_euros");
-            const rate = rateSetting ? parseFloat(rateSetting.valor) : 19.69;
-            const extraValue = totalExtra * rate;
-
-            let pendingTripsValue = 0, pendingCount = 0, totalPaid = 0;
-            
-            appData.viajes.forEach(v => {
-                const amount = parseFloat(v.importe || 0);
-                if (v.pagado === 1) totalPaid += amount;
-                else { pendingTripsValue += amount; pendingCount++; }
-            });
-            
-            appData.pagos.forEach(p => {
-                const amount = parseFloat(p.importe || 0);
-                if (amount > 0 && p.categoria !== 'viaje') totalPaid += amount;
-            });
-
-            document.getElementById('total-extra-hours').innerText = totalExtra.toFixed(2);
-            document.getElementById('total-extra-value').innerText = extraValue.toFixed(2) + " €";
+            document.getElementById('total-extra-hours').innerText = te.toFixed(2);
+            document.getElementById('total-extra-value').innerText = (te * rate).toFixed(2) + " €";
             document.getElementById('display-rate').innerText = rate.toFixed(2);
-            document.getElementById('pending-trips-value').innerText = pendingTripsValue.toFixed(2) + " €";
-            document.getElementById('pending-trips-count').innerText = `${pendingCount} viaje${pendingCount !== 1 ? 's' : ''}`;
-            document.getElementById('total-paid-value').innerText = totalPaid.toFixed(2) + " €";
+            document.getElementById('pending-trips-value').innerText = ptv.toFixed(2) + " €";
+            document.getElementById('pending-trips-count').innerText = `${ptc} viaje${ptc !== 1 ? 's' : ''}`;
+            document.getElementById('total-paid-value').innerText = tp.toFixed(2) + " €";
         }
 
         function renderChart() {
-            const ctx = document.getElementById('monthlyChart');
-            if (!ctx) return;
-
-            const monthlyData = {};
-            appData.jornadas.forEach(j => {
-                const monthKey = j.fecha.substring(0, 7);
-                monthlyData[monthKey] = (monthlyData[monthKey] || 0) + j.horas_extra;
-            });
-
-            const labels = Object.keys(monthlyData).sort().map(m => {
-                const [year, month] = m.split('-');
-                return new Date(year, month - 1).toLocaleDateString('es-ES', { month: 'short' });
-            });
-            const dataValues = Object.keys(monthlyData).sort().map(m => monthlyData[m]);
-
+            const ctx = document.getElementById('monthlyChart'); if (!ctx) return;
+            const md = {}; appData.jornadas.forEach(j => { const k = j.fecha.substring(0, 7); md[k] = (md[k] || 0) + j.horas_extra; });
+            const labels = Object.keys(md).sort().map(m => new Date(m + '-01').toLocaleDateString('es-ES', { month: 'short' }));
+            const vals = Object.keys(md).sort().map(m => md[m]);
             if (chartInstance) chartInstance.destroy();
-
-            const isDark = document.documentElement.classList.contains('dark');
-            const textColor = isDark ? '#94a3b8' : '#64748b';
-            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
-
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Horas Extra',
-                        data: dataValues,
-                        backgroundColor: '#f97316',
-                        borderRadius: 6,
-                        barThickness: 20
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { 
-                            grid: { display: false },
-                            ticks: { color: textColor, font: { size: 10, weight: 'bold' } }
-                        },
-                        y: { 
-                            beginAtZero: true,
-                            grid: { color: gridColor },
-                            ticks: { color: textColor, font: { size: 10 } }
-                        }
-                    }
-                }
-            });
+            const dk = document.documentElement.classList.contains('dark');
+            chartInstance = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Horas Extra', data: vals, backgroundColor: '#f97316', borderRadius: 6, barThickness: 20 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: dk ? '#94a3b8' : '#64748b', font: { size: 10, weight: 'bold' } } }, y: { beginAtZero: true, grid: { color: dk ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }, ticks: { color: dk ? '#94a3b8' : '#64748b', font: { size: 10 } } } } } });
         }
 
         function getJornadaEstado(j) {
             if (j.estado === 'confirmado') return 'confirmado';
             if (j.estado === 'provisional') return 'provisional';
-            
-            const notas = (j.notas || '').toLowerCase();
-            if (notas.includes('[confirmado]') || notas.includes('[revisado]')) return 'confirmado';
-            if (notas.includes('provisional') || notas.includes('orientativa')) return 'provisional';
-            
+            const n = (j.notas || '').toLowerCase();
+            if (n.includes('[confirmado]') || n.includes('[revisado]')) return 'confirmado';
+            if (n.includes('provisional') || n.includes('orientativa')) return 'provisional';
             return 'confirmado';
         }
 
+        function setFilter(f) {
+            currentFilter = f;
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+            renderJornadas();
+        }
+
         function renderJornadas() {
-            const sorted = [...appData.jornadas].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-            
-            const cardsContainer = document.getElementById('jornadas-cards');
-            cardsContainer.innerHTML = '';
+            let sorted = [...appData.jornadas].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            if (currentFilter === 'confirmado') sorted = sorted.filter(j => getJornadaEstado(j) === 'confirmado');
+            else if (currentFilter === 'provisional') sorted = sorted.filter(j => getJornadaEstado(j) === 'provisional');
+            else if (currentFilter === 'extra') sorted = sorted.filter(j => j.horas_extra > 0);
+
+            const cc = document.getElementById('jornadas-cards'); cc.innerHTML = '';
             sorted.slice(0, 50).forEach(j => {
-                const estado = getJornadaEstado(j);
-                const badgeClass = estado === 'provisional' ? 'badge-provisional' : 'badge-confirmado';
-                const badgeText = estado === 'provisional' ? 'Provisional' : 'Confirmado';
-                const horario = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha";
-                
-                cardsContainer.innerHTML += `
-                    <div class="data-card">
-                        <div class="flex items-start justify-between mb-2">
-                            <div>
-                                <p class="font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}</p>
-                                <p class="text-xs text-slate-500 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'long'})}</p>
-                            </div>
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeClass}">${badgeText}</span>
-                        </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-slate-600 dark:text-slate-300"><i class="fa-regular fa-clock mr-1"></i>${horario}</span>
-                            <span class="font-bold ${j.horas_extra > 0 ? 'text-primary' : 'text-slate-400'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span>
-                        </div>
+                const est = getJornadaEstado(j);
+                const bc = est === 'provisional' ? 'badge-provisional' : 'badge-confirmado';
+                const bt = est === 'provisional' ? 'Provisional' : 'Confirmado';
+                const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha";
+                cc.innerHTML += `<div class="data-card">
+                    <div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}</p><p class="text-xs text-slate-500 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'long'})}</p></div><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></div>
+                    <div class="flex items-center justify-between text-sm"><span class="text-slate-600 dark:text-slate-300"><i class="fa-regular fa-clock mr-1"></i>${hr}</span><span class="font-bold ${j.horas_extra > 0 ? 'text-accent' : 'text-slate-400'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span></div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <button onclick="openExtraModal(${j.id})" class="action-btn btn-add-extra"><i class="fa-solid fa-plus"></i> Añadir Extra</button>
+                        <button onclick="openEditModal(${j.id})" class="action-btn btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
                     </div>
-                `;
+                </div>`;
             });
-            
-            const tbody = document.getElementById('jornadas-body');
-            tbody.innerHTML = '';
+
+            const tb = document.getElementById('jornadas-body'); tb.innerHTML = '';
             sorted.forEach(j => {
-                const estado = getJornadaEstado(j);
-                const badgeClass = estado === 'provisional' ? 'badge-provisional' : 'badge-confirmado';
-                const badgeText = estado === 'provisional' ? 'Provisional' : 'Confirmado';
-                const horario = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha";
-                
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                        <td class="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}<div class="text-xs text-slate-500 capitalize font-normal">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div></td>
-                        <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 font-mono">${horario}</td>
-                        <td class="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400">${j.horas_normales}</td>
-                        <td class="px-4 py-3 text-sm text-center font-bold text-primary">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td>
-                        <td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeClass}">${badgeText}</span></td>
-                    </tr>
-                `;
+                const est = getJornadaEstado(j);
+                const bc = est === 'provisional' ? 'badge-provisional' : 'badge-confirmado';
+                const bt = est === 'provisional' ? 'Provisional' : 'Confirmado';
+                const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha";
+                tb.innerHTML += `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td class="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}<div class="text-xs text-slate-500 capitalize font-normal">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div></td>
+                    <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 font-mono">${hr}</td>
+                    <td class="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400">${j.horas_normales}</td>
+                    <td class="px-4 py-3 text-sm text-center font-bold text-accent">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></td>
+                    <td class="px-4 py-3 text-right whitespace-nowrap">
+                        <button onclick="openExtraModal(${j.id})" class="text-xs font-bold bg-accent text-white px-2 py-1 rounded-lg mr-1"><i class="fa-solid fa-plus"></i> Extra</button>
+                        <button onclick="openEditModal(${j.id})" class="text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2 py-1 rounded-lg"><i class="fa-solid fa-pen"></i></button>
+                    </td>
+                </tr>`;
             });
         }
 
-        function confirmAllProvisional() {
-            let count = 0;
-            appData.jornadas.forEach(j => {
-                const estado = getJornadaEstado(j);
-                if (estado === 'provisional') {
-                    j.estado = 'confirmado';
-                    const notasOriginales = j.notas || '';
-                    if (!notasOriginales.toLowerCase().includes('[confirmado]')) {
-                        j.notas = '[CONFIRMADO] ' + notasOriginales;
-                    }
-                    count++;
-                }
-            });
-            
-            if (count > 0) {
-                saveData();
-                showToast(`✅ ${count} jornada${count !== 1 ? 's' : ''} confirmada${count !== 1 ? 's' : ''}`, 'success');
-            } else {
-                showToast('ℹ️ No hay jornadas provisionales pendientes', 'info');
-            }
+        // MODAL AÑADIR EXTRA
+        function openExtraModal(id) {
+            editingId = id; currentModalType = 'add_extra';
+            const j = appData.jornadas.find(x => x.id === id);
+            document.getElementById('modal-title').innerText = `Añadir Horas Extra - ${new Date(j.fecha).toLocaleDateString('es-ES')}`;
+            document.getElementById('modal-content').innerHTML = `
+                <p class="text-sm text-slate-500 mb-2">Horas extra actuales: <strong>${j.horas_extra}h</strong></p>
+                <input type="number" step="0.25" id="m-extra-hours" placeholder="Horas extra a añadir (ej: 1.5)" class="input-field">
+                <textarea id="m-extra-note" placeholder="Nota opcional sobre estas horas extra..." class="input-field mt-2" rows="2"></textarea>
+            `;
+            document.getElementById('generic-modal').classList.remove('hidden');
         }
 
-        function renderViajes() {
-            const list = document.getElementById('viajes-list');
-            list.innerHTML = '';
-            const sorted = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-            
-            if (sorted.length === 0) {
-                list.innerHTML = `<div class="data-card text-center text-slate-400 py-8">Sin viajes registrados</div>`;
-                return;
-            }
-            
-            sorted.forEach(v => {
-                const isPaid = v.pagado === 1;
-                list.innerHTML += `
-                    <div class="data-card border-l-4 ${isPaid ? 'border-l-success opacity-75' : 'border-l-danger'}">
-                        <div class="flex items-start justify-between mb-2">
-                            <div class="flex-1">
-                                <p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p>
-                                <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p>
-                            </div>
-                            <p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p>
-                        </div>
-                        ${isPaid 
-                            ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm cursor-not-allowed"><i class="fa-solid fa-check mr-1"></i>Cobrado el ${v.fecha_pago ? new Date(v.fecha_pago).toLocaleDateString('es-ES') : 'antes'}</button>` 
-                            : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-md"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`
-                        }
-                    </div>
-                `;
-            });
+        // MODAL EDITAR JORNADA
+        function openEditModal(id) {
+            editingId = id; currentModalType = 'edit_jornada';
+            const j = appData.jornadas.find(x => x.id === id);
+            document.getElementById('modal-title').innerText = `Editar Jornada - ${new Date(j.fecha).toLocaleDateString('es-ES')}`;
+            document.getElementById('modal-content').innerHTML = `
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Entrada</label><input type="time" id="m-entrada" value="${j.entrada || ''}" class="input-field mt-1"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Salida</label><input type="time" id="m-salida" value="${j.salida || ''}" class="input-field mt-1"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">H. Normales</label><input type="number" step="0.5" id="m-normales" value="${j.horas_normales}" class="input-field mt-1"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">H. Extra</label><input type="number" step="0.25" id="m-extra" value="${j.horas_extra}" class="input-field mt-1"></div>
+                </div>
+                <label class="text-xs font-bold text-slate-500 uppercase mt-3 block">Notas</label>
+                <textarea id="m-notas" class="input-field mt-1" rows="3">${j.notas || ''}</textarea>
+            `;
+            document.getElementById('generic-modal').classList.remove('hidden');
         }
 
-        function markTripPaid(id) {
-            const trip = appData.viajes.find(v => v.id === id);
-            if (trip) {
-                trip.pagado = 1;
-                trip.fecha_pago = new Date().toISOString().split('T')[0];
-                trip.notas = "Cobrado via App";
-                saveData();
-                showToast('✅ Viaje marcado como cobrado', 'success');
-            }
-        }
+        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; }
 
-        function renderPagos() {
-            const list = document.getElementById('pagos-list');
-            list.innerHTML = '';
-            const sorted = [...appData.pagos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-            
-            if (sorted.length === 0) {
-                list.innerHTML = `<div class="data-card text-center text-slate-400 py-8">Sin pagos registrados</div>`;
-                return;
+        function saveModalData() {
+            if (currentModalType === 'add_extra') {
+                const hrs = parseFloat(document.getElementById('m-extra-hours').value);
+                const note = document.getElementById('m-extra-note').value.trim();
+                if (isNaN(hrs) || hrs <= 0) { showToast('⚠️ Introduce horas válidas', 'warning'); return; }
+                const j = appData.jornadas.find(x => x.id === editingId);
+                j.horas_extra = parseFloat((j.horas_extra + hrs).toFixed(2));
+                if (note) j.notas = (j.notas ? j.notas + ' | ' : '') + `+${hrs}h extra: ${note}`;
+                showToast(`✅ Añadidas ${hrs}h extra`, 'success');
+            } else if (currentModalType === 'edit_jornada') {
+                const j = appData.jornadas.find(x => x.id === editingId);
+                j.entrada = document.getElementById('m-entrada').value;
+                j.salida = document.getElementById('m-salida').value;
+                j.horas_normales = parseFloat(document.getElementById('m-normales').value) || 0;
+                j.horas_extra = parseFloat(document.getElementById('m-extra').value) || 0;
+                j.notas = document.getElementById('m-notas').value;
+                showToast('✅ Jornada actualizada', 'success');
+            } else if (currentModalType === 'viaje') {
+                const c = document.getElementById('m-concepto').value.trim(), f = document.getElementById('m-fecha').value, i = parseFloat(document.getElementById('m-importe').value);
+                if (!c || !f || isNaN(i)) { showToast('⚠️ Rellena todos los campos', 'warning'); return; }
+                appData.viajes.push({ id: Date.now(), fecha: f, concepto: c, importe: i, pagado: 0, fecha_pago: "", notas: "Pendiente", creado: new Date().toISOString() });
+                showToast('✅ Viaje añadido', 'success');
             }
-            
-            sorted.forEach(p => {
-                list.innerHTML += `
-                    <div class="data-card flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p>
-                            <p class="text-xs text-slate-500">${new Date(p.fecha).toLocaleDateString('es-ES')}</p>
-                        </div>
-                        <p class="text-lg font-extrabold text-success">${parseFloat(p.importe || 0).toFixed(2)} €</p>
-                    </div>
-                `;
-            });
-        }
-
-        function updateTodayStatus() {
-            const today = new Date().toISOString().split('T')[0];
-            const todayJob = appData.jornadas.find(j => j.fecha === today);
-            const status = document.getElementById('today-status');
-            
-            if (!todayJob) {
-                status.innerHTML = '<span class="text-slate-400"><i class="fa-regular fa-circle mr-1"></i>Sin fichar hoy</span>';
-            } else if (!todayJob.salida || !todayJob.salida.trim()) {
-                status.innerHTML = `<span class="text-emerald-500 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>Trabajando desde ${todayJob.entrada}</span>`;
-            } else {
-                status.innerHTML = `<span class="text-slate-500 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Jornada completada</span>`;
-            }
-        }
-
-        function clockAction(type) {
-            const now = new Date();
-            const timeStr = now.toTimeString().substring(0, 5);
-            const dateStr = now.toISOString().split('T')[0];
-            let todayJob = appData.jornadas.find(j => j.fecha === dateStr);
-            
-            if (!todayJob) {
-                todayJob = { 
-                    id: Date.now(), 
-                    fecha: dateStr, 
-                    entrada: "", 
-                    salida: "", 
-                    horas_normales: 8.0, 
-                    horas_extra: 0.0, 
-                    estado: "confirmado",
-                    notas: "[FICHADO EN APP]", 
-                    creado: now.toISOString() 
-                };
-                appData.jornadas.push(todayJob);
-            }
-
-            if (type === 'entrada') {
-                todayJob.entrada = timeStr;
-                todayJob.estado = "confirmado";
-                showToast(`✅ Entrada registrada: ${timeStr}`, 'success');
-            } else {
-                if (!todayJob.entrada || !todayJob.entrada.trim()) { 
-                    showToast('⚠️ Primero registra la entrada', 'warning');
-                    return; 
-                }
-                todayJob.salida = timeStr;
-                const start = new Date(`${dateStr}T${todayJob.entrada}`);
-                const end = new Date(`${dateStr}T${timeStr}`);
-                const hours = (end - start) / (1000 * 60 * 60);
-                
-                if (hours > 8) { 
-                    todayJob.horas_extra = parseFloat((hours - 8).toFixed(2)); 
-                    todayJob.horas_normales = 8.0; 
-                } else { 
-                    todayJob.horas_normales = parseFloat(hours.toFixed(2)); 
-                    todayJob.horas_extra = 0.0; 
-                }
-                showToast(`🔴 Salida: ${timeStr} | Total: ${hours.toFixed(2)}h`, 'success');
-            }
-            saveData();
+            closeModal(); saveData();
         }
 
         function openTripModal() {
-            currentModalType = 'viaje';
+            currentModalType = 'viaje'; editingId = null;
             document.getElementById('modal-title').innerText = 'Nuevo Viaje';
             document.getElementById('modal-content').innerHTML = `
                 <input type="text" id="m-concepto" placeholder="Concepto del viaje" class="input-field">
@@ -887,169 +701,134 @@
             document.getElementById('generic-modal').classList.remove('hidden');
         }
 
-        function closeModal() { 
-            document.getElementById('generic-modal').classList.add('hidden'); 
+        function confirmAllProvisional() {
+            let count = 0;
+            appData.jornadas.forEach(j => {
+                if (getJornadaEstado(j) === 'provisional') {
+                    j.estado = 'confirmado';
+                    // Asignar horario si no tiene
+                    if (!j.entrada || !j.entrada.trim()) { j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0; }
+                    if (!(j.notas || '').toLowerCase().includes('[confirmado]')) j.notas = '[CONFIRMADO] ' + (j.notas || '');
+                    count++;
+                }
+            });
+            if (count > 0) { saveData(); showToast(`✅ ${count} jornada${count !== 1 ? 's' : ''} confirmada${count !== 1 ? 's' : ''}`, 'success'); }
+            else showToast('ℹ️ No hay provisionales pendientes', 'info');
         }
 
-        function saveModalData() {
-            const concepto = document.getElementById('m-concepto').value.trim();
-            const fecha = document.getElementById('m-fecha').value;
-            const importe = parseFloat(document.getElementById('m-importe').value);
-            
-            if (!concepto || !fecha || isNaN(importe)) { 
-                showToast('⚠️ Rellena todos los campos', 'warning');
-                return; 
+        function renderViajes() {
+            const l = document.getElementById('viajes-list'); l.innerHTML = '';
+            const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin viajes</div>'; return; }
+            s.forEach(v => {
+                const p = v.pagado === 1;
+                l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}">
+                    <div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p><p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>
+                    ${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-md"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}
+                </div>`;
+            });
+        }
+
+        function markTripPaid(id) {
+            const t = appData.viajes.find(v => v.id === id);
+            if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado via App"; saveData(); showToast('✅ Viaje cobrado', 'success'); }
+        }
+
+        function renderPagos() {
+            const l = document.getElementById('pagos-list'); l.innerHTML = '';
+            const s = [...appData.pagos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin pagos</div>'; return; }
+            s.forEach(p => { l.innerHTML += `<div class="data-card flex items-center justify-between"><div><p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p><p class="text-xs text-slate-500">${new Date(p.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-lg font-extrabold text-success">${parseFloat(p.importe || 0).toFixed(2)} €</p></div>`; });
+        }
+
+        function updateTodayStatus() {
+            const t = new Date().toISOString().split('T')[0];
+            const j = appData.jornadas.find(x => x.fecha === t);
+            const s = document.getElementById('today-status');
+            if (!j) s.innerHTML = '<span class="text-slate-400"><i class="fa-regular fa-circle mr-1"></i>Sin fichar hoy</span>';
+            else if (!j.salida || !j.salida.trim()) s.innerHTML = `<span class="text-emerald-500 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>Trabajando desde ${j.entrada}</span>`;
+            else s.innerHTML = '<span class="text-slate-500 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Jornada completada</span>';
+        }
+
+        function clockAction(type) {
+            const now = new Date(); const ts = now.toTimeString().substring(0, 5); const ds = now.toISOString().split('T')[0];
+            let j = appData.jornadas.find(x => x.fecha === ds);
+            if (!j) { j = { id: Date.now(), fecha: ds, entrada: "", salida: "", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[FICHADO EN APP]", creado: now.toISOString() }; appData.jornadas.push(j); }
+            if (type === 'entrada') { j.entrada = ts; j.estado = "confirmado"; showToast(`✅ Entrada: ${ts}`, 'success'); }
+            else {
+                if (!j.entrada || !j.entrada.trim()) { showToast('⚠️ Primero registra entrada', 'warning'); return; }
+                j.salida = ts;
+                const h = (new Date(`${ds}T${ts}`) - new Date(`${ds}T${j.entrada}`)) / 3600000;
+                if (h > 8) { j.horas_extra = parseFloat((h - 8).toFixed(2)); j.horas_normales = 8.0; } else { j.horas_normales = parseFloat(h.toFixed(2)); j.horas_extra = 0.0; }
+                showToast(`🔴 Salida: ${ts} | Total: ${h.toFixed(2)}h`, 'success');
             }
-            
-            if (currentModalType === 'viaje') {
-                appData.viajes.push({ 
-                    id: Date.now(), 
-                    fecha, 
-                    concepto, 
-                    importe, 
-                    pagado: 0, 
-                    fecha_pago: "", 
-                    notas: "Pendiente", 
-                    creado: new Date().toISOString() 
-                });
-            }
-            closeModal();
             saveData();
-            showToast('✅ Viaje añadido correctamente', 'success');
         }
 
         function exportJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const link = document.createElement('a');
-            link.setAttribute("href", dataStr);
-            link.setAttribute("download", "ivory37_backup_" + new Date().toISOString().slice(0,10) + ".json");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const l = document.createElement('a'); l.href = d; l.download = "ivory37_backup_" + new Date().toISOString().slice(0,10) + ".json"; document.body.appendChild(l); l.click(); document.body.removeChild(l);
             showToast('💾 Backup descargado', 'success');
         }
 
-        function importJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
+        function importJSON(e) {
+            const f = e.target.files[0]; if (!f) return;
+            const r = new FileReader();
+            r.onload = function(ev) {
                 try {
-                    const imported = JSON.parse(e.target.result);
-                    if (imported.jornadas && imported.viajes && imported.ajustes) {
-                        appData = imported;
-                        ensureFullYearData();
-                        saveData();
-                        showToast('✅ Datos restaurados correctamente', 'success');
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        showToast('❌ El archivo JSON no tiene el formato esperado', 'error');
-                    }
-                } catch (err) {
-                    showToast('❌ Error al leer el archivo', 'error');
-                }
+                    const imp = JSON.parse(ev.target.result);
+                    if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); saveData(); showToast('✅ Datos restaurados', 'success'); setTimeout(() => location.reload(), 1000); }
+                    else showToast('❌ Formato incorrecto', 'error');
+                } catch { showToast('❌ Error al leer', 'error'); }
             };
-            reader.readAsText(file);
-            event.target.value = '';
+            r.readAsText(f); e.target.value = '';
         }
 
         function exportCSV() {
-            const headers = ["id", "fecha", "entrada", "salida", "horas_normales", "horas_extra", "estado", "notas", "creado"];
-            const rows = appData.jornadas.map(j => [
-                j.id, 
-                j.fecha, 
-                j.entrada || '', 
-                j.salida || '', 
-                j.horas_normales, 
-                j.horas_extra, 
-                getJornadaEstado(j), 
-                `"${(j.notas || '').replace(/"/g, '""')}"`, 
-                j.creado || ''
-            ]);
-            const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map(r => r.join(";"))].join("\n");
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", "jornadas_ivory37_" + new Date().toISOString().slice(0,10) + ".csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas","creado"];
+            const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`,j.creado||'']);
+            const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n");
+            const b = new Blob([c], { type: 'text/csv;charset=utf-8;' });
+            const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_ivory37_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l);
             showToast('📊 CSV exportado', 'success');
         }
 
-        function resetToFactory() {
-            if (confirm('⚠️ ¿Restablecer todos los datos a los valores de fábrica? Se perderán los cambios.')) {
-                localStorage.removeItem('ivory37_data_v1');
-                location.reload();
-            }
-        }
+        function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo?')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`content-${tabName}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.nav-item[data-tab="${tabName}"]`).classList.add('active');
+        function switchTab(t) {
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden'));
+            document.getElementById(`content-${t}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function toggleTheme() { 
-            document.documentElement.classList.toggle('dark');
-            setTimeout(renderChart, 100);
-        }
+        function toggleTheme() { document.documentElement.classList.toggle('dark'); setTimeout(renderChart, 100); }
 
         function renderConfig() {
-            const rateSetting = appData.ajustes.find(a => a.clave === "hora_extra_euros");
-            if (rateSetting) document.getElementById('config-rate').value = rateSetting.valor;
-            const schedSetting = appData.ajustes.find(a => a.clave === "horario_habitual");
-            if (schedSetting) document.getElementById('config-schedule').value = schedSetting.valor;
+            const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor;
+            const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor;
         }
 
         function saveConfig() {
-            const rate = document.getElementById('config-rate').value;
-            const schedule = document.getElementById('config-schedule').value;
-            
-            const rateSetting = appData.ajustes.find(a => a.clave === "hora_extra_euros");
-            if (rateSetting) rateSetting.valor = rate;
-            else appData.ajustes.push({ clave: "hora_extra_euros", valor: rate });
-            
-            const schedSetting = appData.ajustes.find(a => a.clave === "horario_habitual");
-            if (schedSetting) schedSetting.valor = schedule;
-            else appData.ajustes.push({ clave: "horario_habitual", valor: schedule });
-            
-            saveData();
-            showToast('✅ Configuración guardada', 'success');
+            const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value;
+            let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r });
+            let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc });
+            saveData(); showToast('✅ Configuración guardada', 'success');
         }
 
         function registerSW() {
             if ('serviceWorker' in navigator) {
-                const swCode = `
-                    const CACHE_NAME = 'ivory37-v9';
-                    self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
-                    self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
-                    self.addEventListener('fetch', e => {
-                        e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
-                    });
-                `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).catch(err => console.log('SW registration failed:', err));
+                const c = `const C='ivory37-v10'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
+                navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{});
             }
         }
 
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toast-icon');
-            const msg = document.getElementById('toast-message');
-            
-            msg.innerText = message;
-            
-            if (type === 'success') icon.className = 'fa-solid fa-check-circle text-green-500';
-            else if (type === 'warning') icon.className = 'fa-solid fa-exclamation-triangle text-yellow-500';
-            else if (type === 'error') icon.className = 'fa-solid fa-times-circle text-red-500';
-            else icon.className = 'fa-solid fa-info-circle text-blue-500';
-            
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+        function showToast(m, t = 'success') {
+            const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message');
+            msg.innerText = m;
+            icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500';
+            toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000);
         }
 
         window.onload = initApp;
