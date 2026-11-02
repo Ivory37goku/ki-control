@@ -129,6 +129,30 @@
                 </div>
             </div>
 
+            <!-- OBJETIVO MENSUAL (NUEVO) -->
+            <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4 border-l-secondary">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-bullseye mr-2 text-secondary"></i>Objetivo Mensual</h3>
+                    <span class="text-xs font-bold text-slate-500" id="month-label">Noviembre 2026</span>
+                </div>
+                
+                <div class="flex justify-between items-end mb-2">
+                    <div>
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Llevas trabajadas</p>
+                        <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-worked">0 h</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Objetivo estimado</p>
+                        <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-target">0 h</p>
+                    </div>
+                </div>
+
+                <div class="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div id="monthly-progress-bar" class="absolute top-0 left-0 h-full bg-secondary rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-2 text-center font-medium" id="monthly-balance">Calculando...</p>
+            </div>
+
             <!-- GRÁFICO MENSUAL -->
             <div class="glass-panel rounded-2xl p-4 mb-4">
                 <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2 text-primary"></i>Evolución Horas Extra</h3>
@@ -382,7 +406,6 @@
             if (saved) {
                 try {
                     appData = JSON.parse(saved);
-                    // VERIFICACIÓN CRÍTICA: Si hay datos guardados pero faltan jornadas, regenerarlas
                     ensureFullYearData();
                 } catch (e) {
                     appData = buildInitialData();
@@ -414,7 +437,7 @@
             };
         }
 
-        // FUNCIÓN CORREGIDA: Asegura que existan TODAS las jornadas hasta HOY
+        // FUNCIÓN CORREGIDA: Asegura TODAS las jornadas hasta HOY con entrada/salida rellenas
         function ensureFullYearData() {
             const existingDates = new Set(appData.jornadas.map(j => j.fecha));
             const startDate = new Date('2026-01-01');
@@ -482,6 +505,7 @@
 
         function renderAll() {
             renderDashboard();
+            renderMonthlyGoal(); // NUEVO: Renderizar objetivo mensual
             renderChart();
             renderJornadas();
             renderViajes();
@@ -497,6 +521,71 @@
             document.getElementById('current-date').innerText = dateStr;
             document.getElementById('live-clock').innerText = timeStr;
             document.getElementById('live-clock-big').innerText = timeStr;
+        }
+
+        // CÁLCULO DE OBJETIVO MENSUAL (40H SEMANALES)
+        function renderMonthlyGoal() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            const todayDay = now.getDate();
+
+            document.getElementById('month-label').innerText = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+
+            // Calcular días laborables transcurridos este mes
+            let workingDaysPassed = 0;
+            for (let d = 1; d <= todayDay; d++) {
+                const date = new Date(currentYear, currentMonth, d);
+                const dayOfWeek = date.getDay();
+                if (dayOfWeek !== 0 && dayOfWeek !== 6) workingDaysPassed++;
+            }
+
+            // Calcular total días laborables del mes (para el objetivo total)
+            const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            let totalWorkingDays = 0;
+            for (let d = 1; d <= lastDayOfMonth; d++) {
+                const date = new Date(currentYear, currentMonth, d);
+                const dayOfWeek = date.getDay();
+                if (dayOfWeek !== 0 && dayOfWeek !== 6) totalWorkingDays++;
+            }
+
+            const targetHours = totalWorkingDays * 8; // 40h semanales = 8h/día
+            const expectedHours = workingDaysPassed * 8;
+
+            // Sumar horas trabajadas REALES este mes
+            let workedHours = 0;
+            appData.jornadas.forEach(j => {
+                const jDate = new Date(j.fecha);
+                if (jDate.getMonth() === currentMonth && jDate.getFullYear() === currentYear) {
+                    // Solo sumar si tiene entrada y salida válidas
+                    if (j.entrada && j.salida && j.entrada.trim() !== "" && j.salida.trim() !== "") {
+                        const start = new Date(`${j.fecha}T${j.entrada.trim()}`);
+                        const end = new Date(`${j.fecha}T${j.salida.trim()}`);
+                        const hours = (end - start) / (1000 * 60 * 60);
+                        workedHours += hours;
+                    }
+                }
+            });
+
+            document.getElementById('monthly-worked').innerText = workedHours.toFixed(1) + " h";
+            document.getElementById('monthly-target').innerText = targetHours + " h";
+
+            const pct = Math.min((workedHours / targetHours) * 100, 100);
+            document.getElementById('monthly-progress-bar').style.width = pct + "%";
+
+            const diff = workedHours - expectedHours;
+            const balanceEl = document.getElementById('monthly-balance');
+            
+            if (Math.abs(diff) < 0.1) {
+                balanceEl.innerText = "✅ Vas exactamente al día";
+                balanceEl.className = "text-xs text-slate-500 mt-2 text-center font-bold";
+            } else if (diff > 0) {
+                balanceEl.innerText = `🟢 Vas ${diff.toFixed(1)}h por delante`;
+                balanceEl.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-2 text-center font-bold";
+            } else {
+                balanceEl.innerText = `🔴 Te faltan ${Math.abs(diff).toFixed(1)}h para ir al día`;
+                balanceEl.className = "text-xs text-red-500 mt-2 text-center font-bold";
+            }
         }
 
         function renderDashboard() {
@@ -849,7 +938,7 @@
                     const imported = JSON.parse(e.target.result);
                     if (imported.jornadas && imported.viajes && imported.ajustes) {
                         appData = imported;
-                        ensureFullYearData(); // Asegurar que el import también tenga todas las jornadas
+                        ensureFullYearData();
                         saveData();
                         showToast('✅ Datos restaurados correctamente', 'success');
                         setTimeout(() => location.reload(), 1000);
