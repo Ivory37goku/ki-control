@@ -72,10 +72,37 @@
         /* Logo personalizado */
         #custom-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         #default-logo-svg { display: block; }
+
+        /* Pantalla de Login */
+        #login-screen {
+            position: fixed; inset: 0; z-index: 100;
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .dark #login-screen { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
     </style>
     <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } }; </script>
 </head>
 <body class="text-slate-800 dark:text-slate-100 min-h-screen">
+    
+    <!-- PANTALLA DE LOGIN -->
+    <div id="login-screen">
+        <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center goku-glow text-white shadow-2xl mb-6">
+            <svg viewBox="0 0 24 24" class="w-12 h-12 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
+        </div>
+        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">工V龱尺ㄚ㇌7</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 font-medium">Control Laboral Pro v15.0</p>
+        
+        <div class="w-full max-w-xs space-y-4 px-6">
+            <input type="password" id="login-pass" placeholder="Introduce contraseña" class="input-field text-center text-lg tracking-widest" onkeydown="if(event.key==='Enter') checkLogin()">
+            <button onclick="checkLogin()" class="btn-primary w-full py-3 text-base">
+                <i class="fa-solid fa-lock-open mr-2"></i> Acceder
+            </button>
+            <p id="login-error" class="text-red-500 text-xs text-center font-bold hidden">Contraseña incorrecta</p>
+        </div>
+        <p class="absolute bottom-8 text-[10px] text-slate-400">Datos almacenados localmente en tu dispositivo</p>
+    </div>
+
     <!-- INDICADOR OFFLINE -->
     <div id="offline-indicator"><i class="fa-solid fa-wifi-slash mr-2"></i>Sin conexión - Cambios guardados localmente</div>
     
@@ -168,8 +195,12 @@
     <script>
         let appData = null, currentModalType = null, editingId = null, chartInstance = null, currentFilter = 'all';
         let offlineQueue = [];
+        let storedPassword = "230522"; // Valor por defecto hasta cargar auth.json
         
         async function initApp() {
+            // 1. Cargar credenciales primero
+            await loadAuthCredentials();
+            
             const saved = localStorage.getItem('ivory37_data_v1');
             if (saved) { try { appData = JSON.parse(saved); } catch { appData = await loadDefaultData(); } } 
             else { appData = await loadDefaultData(); }
@@ -179,15 +210,49 @@
             setupOfflineDetection(); scheduleNotifications();
             
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
-            document.getElementById('app-container').classList.remove('hidden');
-            renderAll(); registerSW();
+            
+            // Mostrar pantalla de login inicialmente
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+            
+            registerSW();
+        }
+
+        // CARGAR CREDENCIALES DESDE AUTH.JSON
+        async function loadAuthCredentials() {
+            try {
+                const res = await fetch('auth.json');
+                const auth = await res.json();
+                if (auth.password) storedPassword = auth.password;
+            } catch (e) {
+                console.warn("No se pudo cargar auth.json, usando contraseña por defecto");
+            }
+        }
+
+        // VERIFICACIÓN DE LOGIN
+        function checkLogin() {
+            const input = document.getElementById('login-pass').value.trim();
+            const errorEl = document.getElementById('login-error');
+            
+            if (input === storedPassword) {
+                // Login exitoso
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                renderAll();
+                showToast('✅ Bienvenido/a', 'success');
+            } else {
+                // Login fallido
+                errorEl.classList.remove('hidden');
+                document.getElementById('login-pass').value = '';
+                document.getElementById('login-pass').focus();
+                setTimeout(() => errorEl.classList.add('hidden'), 3000);
+            }
         }
 
         async function loadDefaultData() {
             try {
                 const res = await fetch('data.json');
                 const raw = await res.json();
-                // Sanitizar claves con espacios del JSON original automáticamente
                 const clean = JSON.parse(JSON.stringify(raw, (k, v) => typeof k === 'string' ? k.trim() : k, 2));
                 return { jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], viajes: clean.viajes, pagos: clean.pagos, ajustes: clean.ajustes, notas: clean.notas || [] };
             } catch (e) { console.error("Error cargando data.json", e); return { jornadas: [], viajes: [], pagos: [], ajustes: [], notas: [] }; }
@@ -209,7 +274,6 @@
             document.getElementById('app-name').innerText = appName;
             document.title = `${appName} | Control Laboral Pro`;
             
-            // Aplicar logo si existe
             const imgEl = document.getElementById('custom-logo-img');
             const svgEl = document.getElementById('default-logo-svg');
             const previewEl = document.getElementById('logo-preview');
@@ -236,12 +300,10 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64Logo = e.target.result;
-                // Guardar temporalmente en ajustes para persistir al guardar configuración
                 let logoSetting = appData.ajustes.find(a => a.clave === "app_logo");
                 if (logoSetting) logoSetting.valor = base64Logo;
                 else appData.ajustes.push({ clave: "app_logo", valor: base64Logo });
                 
-                // Actualizar vista previa inmediatamente
                 applyBranding();
                 showToast('✅ Logo cargado. Pulsa "Guardar Todo" para confirmar.', 'success');
             };
@@ -576,7 +638,7 @@
             saveData(); showToast('✅ Configuración y marca actualizadas', 'success'); 
         }
 
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v14-offline'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v15-auth'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
