@@ -88,14 +88,6 @@
         .btn-secondary { background: #1e293b; color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .btn-secondary { background: white; color: #0f172a; }
         .btn-secondary:active { transform: scale(0.97); }
-
-        /* Login Screen Styles */
-        #login-screen {
-            position: fixed; inset: 0; z-index: 100;
-            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .dark #login-screen { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
     </style>
     <script>
         tailwind.config = {
@@ -106,28 +98,8 @@
 </head>
 <body class="text-slate-800 dark:text-slate-100 min-h-screen">
 
-    <!-- PANTALLA DE LOGIN -->
-    <div id="login-screen">
-        <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center goku-glow text-white shadow-2xl mb-6">
-            <svg viewBox="0 0 24 24" class="w-12 h-12 fill-current" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/>
-            </svg>
-        </div>
-        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">工V龱尺ㄚ㇌7</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 font-medium">Control Laboral Pro v9.0</p>
-        
-        <div class="w-full max-w-xs space-y-4 px-6">
-            <input type="password" id="login-pass" placeholder="Introduce contraseña" class="input-field text-center text-lg tracking-widest" onkeydown="if(event.key==='Enter') checkLogin()">
-            <button onclick="checkLogin()" class="btn-primary w-full py-3 text-base">
-                <i class="fa-solid fa-lock-open mr-2"></i> Acceder
-            </button>
-            <p id="login-error" class="text-red-500 text-xs text-center font-bold hidden">Contraseña incorrecta</p>
-        </div>
-        <p class="absolute bottom-8 text-[10px] text-slate-400">Datos almacenados localmente en tu dispositivo</p>
-    </div>
-
-    <!-- APP PRINCIPAL (Oculta hasta login) -->
-    <div id="app-container" class="hidden fade-in">
+    <!-- APP PRINCIPAL (SIN LOGIN) -->
+    <div id="app-container" class="fade-in">
         <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
             <div class="px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -178,7 +150,7 @@
                 </div>
             </div>
 
-            <!-- GRÁFICO MENSUAL (NUEVO) -->
+            <!-- GRÁFICO MENSUAL -->
             <div class="glass-panel rounded-2xl p-4 mb-4">
                 <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2 text-primary"></i>Evolución Horas Extra</h3>
                 <div class="relative h-48 w-full">
@@ -275,7 +247,7 @@
 
             <!-- TAB: AJUSTES -->
             <div id="content-ajustes" class="tab-content hidden fade-in">
-                <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Seguridad</h2>
+                <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Backup</h2>
                 
                 <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4">
                     <div>
@@ -283,8 +255,8 @@
                         <input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contraseña de Acceso</label>
-                        <input type="text" id="config-password" class="input-field" placeholder="Dejar vacío para mantener actual">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label>
+                        <input type="text" id="config-schedule" class="input-field">
                     </div>
                     <button onclick="saveConfig()" class="btn-secondary w-full">
                         <i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios
@@ -354,7 +326,7 @@
 
     <script>
         // ============================================
-        // DATOS ORIGINALES SANITIZED + CONTRASEÑA AÑADIDA
+        // DATOS ORIGINALES SANITIZED (SIN CONTRASEÑA)
         // ============================================
         const rawJsonString = `{
  "jornadas": [
@@ -416,8 +388,7 @@
 {"clave": "hora_extra_euros", "valor": "19.69"},
 {"clave": "horas_normales_dia", "valor": "8"},
 {"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
-{"clave": "dias_trabajo", "valor": "Lunes a viernes"},
-{"clave": "password", "valor": "230522"}
+{"clave": "dias_trabajo", "valor": "Lunes a viernes"}
 ],
  "notas": []
 }`;
@@ -430,7 +401,7 @@
         let chartInstance = null;
 
         // ============================================
-        // INICIALIZACIÓN Y SEGURIDAD
+        // INICIALIZACIÓN (SIN LOGIN)
         // ============================================
         function initApp() {
             const saved = localStorage.getItem('ivory37_data_v1');
@@ -466,22 +437,6 @@
                 ajustes: parsed.ajustes,
                 notas: parsed.notas || []
             };
-        }
-
-        function checkLogin() {
-            const passInput = document.getElementById('login-pass').value;
-            const storedPassSetting = appData.ajustes.find(a => a.clave === "password");
-            const storedPass = storedPassSetting ? storedPassSetting.valor : "230522";
-            
-            if (passInput === storedPass) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('hidden');
-                showToast('✅ Bienvenido/a', 'success');
-            } else {
-                const errorEl = document.getElementById('login-error');
-                errorEl.classList.remove('hidden');
-                setTimeout(() => errorEl.classList.add('hidden'), 3000);
-            }
         }
 
         // ============================================
@@ -583,10 +538,9 @@
             const ctx = document.getElementById('monthlyChart');
             if (!ctx) return;
 
-            // Agrupar horas extra por mes
             const monthlyData = {};
             appData.jornadas.forEach(j => {
-                const monthKey = j.fecha.substring(0, 7); // YYYY-MM
+                const monthKey = j.fecha.substring(0, 7);
                 monthlyData[monthKey] = (monthlyData[monthKey] || 0) + j.horas_extra;
             });
 
@@ -977,7 +931,6 @@
 
         function toggleTheme() { 
             document.documentElement.classList.toggle('dark');
-            // Redibujar gráfico con colores correctos al cambiar tema
             setTimeout(renderChart, 100);
         }
 
@@ -987,24 +940,21 @@
         function renderConfig() {
             const rateSetting = appData.ajustes.find(a => a.clave === "hora_extra_euros");
             if (rateSetting) document.getElementById('config-rate').value = rateSetting.valor;
-            
-            const passSetting = appData.ajustes.find(a => a.clave === "password");
-            if (passSetting) document.getElementById('config-password').value = passSetting.valor;
+            const schedSetting = appData.ajustes.find(a => a.clave === "horario_habitual");
+            if (schedSetting) document.getElementById('config-schedule').value = schedSetting.valor;
         }
 
         function saveConfig() {
             const rate = document.getElementById('config-rate').value;
-            const password = document.getElementById('config-password').value;
+            const schedule = document.getElementById('config-schedule').value;
             
             const rateSetting = appData.ajustes.find(a => a.clave === "hora_extra_euros");
             if (rateSetting) rateSetting.valor = rate;
             else appData.ajustes.push({ clave: "hora_extra_euros", valor: rate });
             
-            if (password && password.trim() !== "") {
-                const passSetting = appData.ajustes.find(a => a.clave === "password");
-                if (passSetting) passSetting.valor = password;
-                else appData.ajustes.push({ clave: "password", valor: password });
-            }
+            const schedSetting = appData.ajustes.find(a => a.clave === "horario_habitual");
+            if (schedSetting) schedSetting.valor = schedule;
+            else appData.ajustes.push({ clave: "horario_habitual", valor: schedule });
             
             saveData();
             showToast('✅ Configuración guardada', 'success');
