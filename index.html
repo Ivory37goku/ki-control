@@ -354,7 +354,7 @@
 
     <script>
         // ============================================
-        // DATOS ORIGINALES (SANITIZED)
+        // DATOS ORIGINALES SANITIZED + CONTRASEÑA AÑADIDA
         // ============================================
         const rawJsonString = `{
  "jornadas": [
@@ -471,7 +471,7 @@
         function checkLogin() {
             const passInput = document.getElementById('login-pass').value;
             const storedPassSetting = appData.ajustes.find(a => a.clave === "password");
-            const storedPass = storedPassSetting ? storedPassSetting.valor : "goku2026";
+            const storedPass = storedPassSetting ? storedPassSetting.valor : "230522";
             
             if (passInput === storedPass) {
                 document.getElementById('login-screen').classList.add('hidden');
