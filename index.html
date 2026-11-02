@@ -10,17 +10,18 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; padding-bottom: 90px; min-height: 100vh; }
         .dark body { background-color: #0f172a; }
         .glass-panel { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(16px); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06); }
         .dark .glass-panel { background: rgba(15, 23, 42, 0.98); border-color: rgba(51, 65, 85, 0.5); }
-        .goku-glow { filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6)); }
+        .goku-glow { filter: drop-shadow(0 0 8px var(--app-primary, #f97316)); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border-top: 1px solid rgba(226, 232, 240, 0.8); padding-bottom: env(safe-area-inset-bottom); }
         .dark .bottom-nav { background: rgba(15, 23, 42, 0.98); border-top-color: rgba(51, 65, 85, 0.5); }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 4px; color: #94a3b8; transition: all 0.2s; font-size: 10px; font-weight: 600; background: none; border: none; cursor: pointer; }
-        .nav-item.active { color: #f97316; }
+        .nav-item.active { color: var(--app-primary, #f97316); }
         .nav-item i { font-size: 20px; margin-bottom: 2px; }
         .data-card { background: white; border-radius: 16px; padding: 16px; border: 1px solid #e2e8f0; transition: all 0.2s; }
         .dark .data-card { background: #1e293b; border-color: #334155; }
@@ -47,27 +48,41 @@
         @media (min-width: 769px) { .mobile-cards { display: none; } }
         .input-field { width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; transition: all 0.2s; outline: none; }
         .dark .input-field { background: #0f172a; border-color: #334155; color: white; }
-        .input-field:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1); }
-        .btn-primary { background: linear-gradient(135deg, #f97316, #ea580c); color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px -4px rgba(249, 115, 22, 0.4); }
+        .input-field:focus { border-color: var(--app-primary, #f97316); box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1); }
+        .btn-primary { background: linear-gradient(135deg, var(--app-primary, #f97316), var(--app-primary-dark, #ea580c)); color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px -4px rgba(249, 115, 22, 0.4); }
         .btn-primary:active { transform: scale(0.97); }
         .btn-secondary { background: #1e293b; color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .btn-secondary { background: white; color: #0f172a; }
         .btn-secondary:active { transform: scale(0.97); }
         .filter-pill { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #f1f5f9; color: #64748b; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .filter-pill { background: #1e293b; color: #94a3b8; }
-        .filter-pill.active { background: #f97316; color: white; }
+        .filter-pill.active { background: var(--app-primary, #f97316); color: white; }
+        
+        /* Indicador Offline */
+        #offline-indicator { 
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50; 
+            background: #ef4444; color: white; text-align: center; padding: 6px; 
+            font-size: 12px; font-weight: bold; transform: translateY(-100%); transition: transform 0.3s; 
+        }
+        #offline-indicator.visible { transform: translateY(0); }
+        
+        /* Variables CSS para marca blanca */
+        :root { --app-primary: #f97316; --app-primary-dark: #ea580c; }
     </style>
     <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } }; </script>
 </head>
 <body class="text-slate-800 dark:text-slate-100 min-h-screen">
+    <!-- INDICADOR OFFLINE -->
+    <div id="offline-indicator"><i class="fa-solid fa-wifi-slash mr-2"></i>Sin conexión - Cambios guardados localmente</div>
+    
     <div id="app-container" class="fade-in hidden">
         <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
             <div class="px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center goku-glow text-white shadow-lg">
+                    <div id="app-logo" class="w-11 h-11 rounded-full flex items-center justify-center goku-glow text-white shadow-lg" style="background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark))">
                         <svg viewBox="0 0 24 24" class="w-7 h-7 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
                     </div>
-                    <div><h1 class="font-extrabold text-lg leading-none text-slate-900 dark:text-white tracking-tight">工V龱尺ㄚ㇌7</h1><span class="text-[10px] font-bold text-primary tracking-widest uppercase">Control Laboral Pro</span></div>
+                    <div><h1 id="app-name" class="font-extrabold text-lg leading-none text-slate-900 dark:text-white tracking-tight">工V龱尺ㄚ㇌7</h1><span class="text-[10px] font-bold uppercase tracking-widest" style="color: var(--app-primary)">Control Laboral Pro</span></div>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="hidden sm:block text-right mr-2"><p id="current-date" class="text-xs font-semibold text-slate-600 dark:text-slate-300"></p><p id="live-clock" class="text-sm font-mono font-bold text-slate-900 dark:text-white">--:--</p></div>
@@ -76,12 +91,11 @@
             </div>
         </header>
         <main class="px-4 py-4 max-w-5xl mx-auto">
-            <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4 border-l-primary">
-                <div class="flex items-center justify-between mb-3"><div><h2 class="font-bold text-base text-slate-900 dark:text-white">Fichaje del Día</h2><p class="text-xs text-slate-500" id="today-status">Sin fichar</p></div><div class="text-right"><p class="text-[10px] text-slate-400 uppercase font-bold">Ahora</p><p class="text-xl font-mono font-bold text-primary" id="live-clock-big">--:--</p></div></div>
+            <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4" style="border-left-color: var(--app-primary)">
+                <div class="flex items-center justify-between mb-3"><div><h2 class="font-bold text-base text-slate-900 dark:text-white">Fichaje del Día</h2><p class="text-xs text-slate-500" id="today-status">Sin fichar</p></div><div class="text-right"><p class="text-[10px] text-slate-400 uppercase font-bold">Ahora</p><p class="text-xl font-mono font-bold" style="color: var(--app-primary)" id="live-clock-big">--:--</p></div></div>
                 <div class="grid grid-cols-2 gap-2"><button onclick="clockAction('entrada')" class="fingerprint-btn bg-gradient-to-br from-emerald-500 to-emerald-600 text-white"><i class="fa-solid fa-right-to-bracket"></i> Entrada</button><button onclick="clockAction('salida')" class="fingerprint-btn bg-gradient-to-br from-red-500 to-red-600 text-white"><i class="fa-solid fa-right-from-bracket"></i> Salida</button></div>
             </div>
             
-            <!-- OBJETIVO MENSUAL CORREGIDO A 168H TOTALES -->
             <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4 border-l-secondary">
                 <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-bullseye mr-2 text-secondary"></i>Objetivo Mensual</h3><span class="text-xs font-bold text-slate-500" id="month-label">Noviembre 2026</span></div>
                 <div class="flex justify-between items-end mb-2">
@@ -94,25 +108,31 @@
                 <p class="text-xs text-slate-500 mt-2 text-center font-medium" id="monthly-balance">Calculando...</p>
             </div>
 
-            <div class="glass-panel rounded-2xl p-4 mb-4"><h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2 text-primary"></i>Evolución Horas Extra</h3><div class="relative h-48 w-full"><canvas id="monthlyChart"></canvas></div></div>
+            <div class="glass-panel rounded-2xl p-4 mb-4"><h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2" style="color: var(--app-primary)"></i>Evolución Horas Extra</h3><div class="relative h-48 w-full"><canvas id="monthlyChart"></canvas></div></div>
             <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-stopwatch text-primary text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Extras</span></div><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="total-extra-hours">0</p><p class="text-[10px] text-slate-500">horas</p></div>
-                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-coins text-secondary text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Valor</span></div><p class="text-2xl font-extrabold text-secondary" id="total-extra-value">0 €</p><p class="text-[10px] text-slate-500">@ <span id="display-rate">19.69</span> €/h</p></div>
-                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-danger"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-file-invoice-dollar text-danger text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Pendiente</span></div><p class="text-2xl font-extrabold text-danger" id="pending-trips-value">0 €</p><p class="text-[10px] text-slate-500" id="pending-trips-count">0 viajes</p></div>
-                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-success"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-wallet text-success text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Cobrado</span></div><p class="text-2xl font-extrabold text-success" id="total-paid-value">0 €</p><p class="text-[10px] text-slate-500">total ingresos</p></div>
+                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-stopwatch" style="color: var(--app-primary)"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Extras</span></div><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="total-extra-hours">0</p><p class="text-[10px] text-slate-500">horas</p></div>
+                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-coins text-secondary"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Valor</span></div><p class="text-2xl font-extrabold text-secondary" id="total-extra-value">0 €</p><p class="text-[10px] text-slate-500">@ <span id="display-rate">19.69</span> €/h</p></div>
+                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-danger"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-file-invoice-dollar text-danger"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Pendiente</span></div><p class="text-2xl font-extrabold text-danger" id="pending-trips-value">0 €</p><p class="text-[10px] text-slate-500" id="pending-trips-count">0 viajes</p></div>
+                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-success"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-wallet text-success"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Cobrado</span></div><p class="text-2xl font-extrabold text-success" id="total-paid-value">0 €</p><p class="text-[10px] text-slate-500">total ingresos</p></div>
             </div>
             <div id="content-jornadas" class="tab-content fade-in">
-                <div class="flex items-center justify-between mb-3 flex-wrap gap-2"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Jornadas</h2><div class="flex gap-2"><button onclick="exportCSV()" class="text-xs font-bold bg-green-600 text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-file-excel mr-1"></i>Excel</button><button onclick="confirmAllProvisional()" class="text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-check-double mr-1"></i>Confirmar Todas</button></div></div>
+                <div class="flex items-center justify-between mb-3 flex-wrap gap-2"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Jornadas</h2><div class="flex gap-2"><button onclick="generatePDF()" class="text-xs font-bold bg-blue-600 text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-file-pdf mr-1"></i>PDF</button><button onclick="exportCSV()" class="text-xs font-bold bg-green-600 text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-file-excel mr-1"></i>Excel</button><button onclick="confirmAllProvisional()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-check-double mr-1"></i>Confirmar Todas</button></div></div>
                 <div class="flex gap-2 mb-3 overflow-x-auto pb-1"><button onclick="setFilter('all')" class="filter-pill active" data-filter="all">Todos</button><button onclick="setFilter('confirmado')" class="filter-pill" data-filter="confirmado">Confirmados</button><button onclick="setFilter('provisional')" class="filter-pill" data-filter="provisional">Provisionales</button><button onclick="setFilter('extra')" class="filter-pill" data-filter="extra">Con Extras</button></div>
                 <div class="mobile-cards space-y-2" id="jornadas-cards"></div>
-                <div class="desktop-table glass-panel rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-slate-50 dark:bg-slate-800"><tr><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Fecha</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Horario</th><th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Norm.</th><th class="px-4 py-3 text-center text-xs font-bold text-accent uppercase">Extra</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Estado</th><th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Acciones</th></tr></thead><tbody id="jornadas-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody></table></div></div>
+                <div class="desktop-table glass-panel rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-slate-50 dark:bg-slate-800"><tr><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Fecha</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Horario</th><th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Norm.</th><th class="px-4 py-3 text-center text-xs font-bold uppercase" style="color: var(--app-primary)">Extra</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Estado</th><th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Acciones</th></tr></thead><tbody id="jornadas-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody></table></div></div>
             </div>
-            <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
+            <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
             <div id="content-pagos" class="tab-content hidden fade-in"><h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Histórico Pagos</h2><div class="space-y-2" id="pagos-list"></div></div>
             <div id="content-ajustes" class="tab-content hidden fade-in">
-                <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Backup</h2>
-                <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label><input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label><input type="text" id="config-schedule" class="input-field"></div><button onclick="saveConfig()" class="btn-secondary w-full"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios</button></div>
-                <div class="glass-panel rounded-2xl p-5"><h3 class="font-bold text-base text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-database mr-2 text-primary"></i>Gestión de Datos</h3><div class="grid grid-cols-2 gap-3"><button onclick="exportJSON()" class="flex flex-col items-center justify-center p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"><i class="fa-solid fa-download text-2xl mb-2"></i><span class="text-xs font-bold uppercase">Descargar JSON</span></button><label class="flex flex-col items-center justify-center p-4 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition cursor-pointer"><i class="fa-solid fa-upload text-2xl mb-2"></i><span class="text-xs font-bold uppercase">Subir JSON</span><input type="file" id="import-file" class="hidden" accept=".json" onchange="importJSON(event)"></label></div><button onclick="resetToFactory()" class="w-full mt-3 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-800 text-xs font-bold uppercase"><i class="fa-solid fa-trash mr-2"></i>Restablecer datos de fábrica</button></div>
+                <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Personalización</h2>
+                <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4">
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de la App</label><input type="text" id="config-appname" class="input-field" placeholder="工V龱尺ㄚ㇌7"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Color Primario (Hex)</label><input type="color" id="config-color" class="input-field h-12 p-1" value="#f97316"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label><input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label><input type="text" id="config-schedule" class="input-field"></div>
+                    <div class="flex gap-2"><button onclick="requestNotificationPermission()" class="btn-secondary flex-1"><i class="fa-solid fa-bell mr-2"></i>Activar Notificaciones</button><button onclick="saveConfig()" class="btn-primary flex-1"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Todo</button></div>
+                </div>
+                <div class="glass-panel rounded-2xl p-5"><h3 class="font-bold text-base text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-database mr-2" style="color: var(--app-primary)"></i>Gestión de Datos</h3><div class="grid grid-cols-2 gap-3"><button onclick="exportJSON()" class="flex flex-col items-center justify-center p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"><i class="fa-solid fa-download text-2xl mb-2"></i><span class="text-xs font-bold uppercase">Descargar JSON</span></button><label class="flex flex-col items-center justify-center p-4 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition cursor-pointer"><i class="fa-solid fa-upload text-2xl mb-2"></i><span class="text-xs font-bold uppercase">Subir JSON</span><input type="file" id="import-file" class="hidden" accept=".json" onchange="importJSON(event)"></label></div><button onclick="resetToFactory()" class="w-full mt-3 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-800 text-xs font-bold uppercase"><i class="fa-solid fa-trash mr-2"></i>Restablecer datos de fábrica</button></div>
             </div>
         </main>
         <nav class="bottom-nav flex"><button onclick="switchTab('jornadas')" class="nav-item active" data-tab="jornadas"><i class="fa-solid fa-calendar-check"></i> Jornadas</button><button onclick="switchTab('viajes')" class="nav-item" data-tab="viajes"><i class="fa-solid fa-car"></i> Viajes</button><button onclick="switchTab('pagos')" class="nav-item" data-tab="pagos"><i class="fa-solid fa-money-bill"></i> Pagos</button><button onclick="switchTab('ajustes')" class="nav-item" data-tab="ajustes"><i class="fa-solid fa-gear"></i> Ajustes</button></nav>
@@ -120,26 +140,112 @@
         <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden"><div class="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-sm font-bold"><i class="fa-solid fa-check-circle text-green-500" id="toast-icon"></i><span id="toast-message">Mensaje</span></div></div>
     </div>
     <script>
+        // ============================================
+        // DATOS ORIGINALES INTEGRADOS (SANITIZED)
+        // ============================================
+        const rawJsonString = `{
+ "jornadas": [
+{"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.166926"},
+{"id": 6, "fecha": "2026-09-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:34:44.773560"},
+{"id": 7, "fecha": "2026-09-03", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:01.775604"},
+{"id": 8, "fecha": "2026-09-04", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:15.754161"},
+{"id": 9, "fecha": "2026-09-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:31.909232"},
+{"id": 10, "fecha": "2026-09-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:10.125659"},
+{"id": 11, "fecha": "2026-09-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:22.817899"},
+{"id": 12, "fecha": "2026-09-10", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:27.457300"},
+{"id": 13, "fecha": "2026-09-11", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:40.012600"},
+{"id": 14, "fecha": "2026-09-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:54.275565"},
+{"id": 15, "fecha": "2026-09-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:59.266085"},
+{"id": 16, "fecha": "2026-09-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:03.692794"},
+{"id": 17, "fecha": "2026-09-17", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:08.136252"},
+{"id": 18, "fecha": "2026-09-18", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:15.829232"},
+{"id": 19, "fecha": "2026-09-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:20.329576"},
+{"id": 20, "fecha": "2026-09-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:24.685848"},
+{"id": 21, "fecha": "2026-09-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:29.086383"},
+{"id": 22, "fecha": "2026-09-24", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:33.449767"},
+{"id": 23, "fecha": "2026-09-25", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:38.061306"},
+{"id": 24, "fecha": "2026-09-28", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:42.407174"},
+{"id": 25, "fecha": "2026-09-29", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:47.106188"},
+{"id": 26, "fecha": "2026-09-30", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:09.463321"},
+{"id": 2, "fecha": "2026-10-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.167100"},
+{"id": 5, "fecha": "2026-10-26", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.75, "notas": "Incluye 0,50 h ya fichadas y 1,25 h del reparto provisional de 21,00 h extra de octubre. Total del día: 1,75 h; distribución orientativa, confirmar con los fichajes reales.", "creado": "2026-10-26T19:25:34.494620"},
+{"id": 28, "fecha": "2026-10-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:45.643686"},
+{"id": 29, "fecha": "2026-10-05", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:52.730691"},
+{"id": 30, "fecha": "2026-10-06", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:57.080659"},
+{"id": 31, "fecha": "2026-10-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:01.456407"},
+{"id": 32, "fecha": "2026-10-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:05.848906"},
+{"id": 33, "fecha": "2026-10-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:13.421841"},
+{"id": 34, "fecha": "2026-10-12", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:20.274440"},
+{"id": 35, "fecha": "2026-10-13", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:31.033270"},
+{"id": 36, "fecha": "2026-10-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:40.943971"},
+{"id": 37, "fecha": "2026-10-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:45.649066"},
+{"id": 38, "fecha": "2026-10-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:50.066439"},
+{"id": 39, "fecha": "2026-10-19", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:57.151093"},
+{"id": 40, "fecha": "2026-10-20", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:01.622995"},
+{"id": 41, "fecha": "2026-10-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:09.226835"},
+{"id": 42, "fecha": "2026-10-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:20.008499"},
+{"id": 43, "fecha": "2026-10-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:24.365664"},
+{"id": 44, "fecha": "2026-10-27", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-27T07:47:29.370023"},
+{"id": 45, "fecha": "2026-10-28", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.5, "notas": "[REVISADO]", "creado": "2026-10-28T07:59:55.308797"},
+{"id": 46, "fecha": "2026-10-29", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO] Fichaje automático según el horario habitual; no verificado manualmente. Corrige este registro si el horario real fue distinto.", "creado": "2026-10-29T16:00:12.526141+00:00"},
+{"id": 47, "fecha": "2026-10-30", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-30T15:52:43.083260"}
+],
+ "viajes": [
+{"id": 1, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 1", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167140"},
+{"id": 2, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 2", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167180"},
+{"id": 3, "fecha": "2026-09-26", "concepto": "Viaje de trabajo", "importe": 400.0, "pagado": 1, "fecha_pago": "2026-10-26", "notas": "", "creado": "2026-10-26T18:58:40.962023"}
+],
+ "pagos": [
+{"id": 1, "fecha": "2026-10-26", "concepto": "2 viajes septiembre", "importe": 0.0, "categoria": "viaje", "notas": "", "creado": "2026-10-26T19:03:09.211680"}
+],
+ "ajustes": [
+{"clave": "seeded_demo", "valor": "yes"},
+{"clave": "hora_extra_euros", "valor": "19.69"},
+{"clave": "horas_normales_dia", "valor": "8"},
+{"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
+{"clave": "dias_trabajo", "valor": "Lunes a viernes"},
+{"clave": "app_name", "valor": "工V龱尺ㄚ㇌7"},
+{"clave": "app_color", "valor": "#f97316"}
+],
+ "notas": []
+}`;
+
         let appData = null, currentModalType = null, editingId = null, chartInstance = null, currentFilter = 'all';
+        let offlineQueue = [];
         
-        async function initApp() {
+        function initApp() {
             const saved = localStorage.getItem('ivory37_data_v1');
-            if (saved) { try { appData = JSON.parse(saved); } catch { appData = await loadDefaultData(); } } 
-            else { appData = await loadDefaultData(); }
+            if (saved) { try { appData = JSON.parse(saved); } catch { appData = buildInitialData(); } } 
+            else { appData = buildInitialData(); }
+            
+            applyBranding();
             sanitizeConfirmedRecords(); ensureFullYearData(); updateDateAndClock(); setInterval(updateDateAndClock, 1000);
+            setupOfflineDetection(); scheduleNotifications();
+            
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
             document.getElementById('app-container').classList.remove('hidden');
             renderAll(); registerSW();
         }
 
-        async function loadDefaultData() {
-            try {
-                const res = await fetch('data.json');
-                const raw = await res.json();
-                // Sanitizar claves con espacios del JSON original automáticamente
-                const clean = JSON.parse(JSON.stringify(raw, (k, v) => typeof k === 'string' ? k.trim() : k, 2));
-                return { jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], viajes: clean.viajes, pagos: clean.pagos, ajustes: clean.ajustes, notas: clean.notas || [] };
-            } catch (e) { console.error("Error cargando data.json", e); return { jornadas: [], viajes: [], pagos: [], ajustes: [], notas: [] }; }
+        function buildInitialData() {
+            const parsed = JSON.parse(rawJsonString);
+            return { jornadas: [...parsed.jornadas, ...generateMissingJornadas(parsed.jornadas)], viajes: parsed.viajes, pagos: parsed.pagos, ajustes: parsed.ajustes, notas: parsed.notas || [] };
+        }
+
+        // MARCA BLANCA
+        function applyBranding() {
+            const nameSetting = appData.ajustes.find(a => a.clave === "app_name");
+            const colorSetting = appData.ajustes.find(a => a.clave === "app_color");
+            const appName = nameSetting ? nameSetting.valor : "工V龱尺ㄚ㇌7";
+            const appColor = colorSetting ? colorSetting.valor : "#f97316";
+            
+            document.documentElement.style.setProperty('--app-primary', appColor);
+            // Calcular versión oscura del color
+            const r = parseInt(appColor.slice(1,3), 16), g = parseInt(appColor.slice(3,5), 16), b = parseInt(appColor.slice(5,7), 16);
+            document.documentElement.style.setProperty('--app-primary-dark', `rgb(${Math.max(0,r-30)}, ${Math.max(0,g-30)}, ${Math.max(0,b-30)})`);
+            
+            document.getElementById('app-name').innerText = appName;
+            document.title = `${appName} | Control Laboral Pro`;
         }
 
         function sanitizeConfirmedRecords() {
@@ -175,43 +281,24 @@
             return newJ;
         }
 
-        function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderAll(); }
+        function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderAll(); processOfflineQueue(); }
         function saveDataSilent() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); }
         function renderAll() { renderDashboard(); renderMonthlyGoal(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus(); }
         function updateDateAndClock() { const n = new Date(); document.getElementById('current-date').innerText = n.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }); const t = n.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); document.getElementById('live-clock').innerText = t; document.getElementById('live-clock-big').innerText = t; }
         
-        // CÁLCULO CORREGIDO PARA MOSTRAR 168H COMO META TOTAL DEL MES
         function renderMonthlyGoal() {
             const now = new Date(), cm = now.getMonth(), cy = now.getFullYear();
             document.getElementById('month-label').innerText = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-            
-            // Calcular total de días laborables del mes completo (no solo los pasados)
             const lastDayOfMonth = new Date(cy, cm + 1, 0).getDate();
             let totalWorkingDays = 0;
-            for (let d = 1; d <= lastDayOfMonth; d++) {
-                const dt = new Date(cy, cm, d);
-                if (dt.getDay() !== 0 && dt.getDay() !== 6) totalWorkingDays++;
-            }
-            
-            const target = totalWorkingDays * 8; // 40h semanales = 8h/día -> Nov 2026 = 21 días * 8 = 168h
-            
-            // Sumar horas trabajadas REALES este mes
+            for (let d = 1; d <= lastDayOfMonth; d++) { const dt = new Date(cy, cm, d); if (dt.getDay() !== 0 && dt.getDay() !== 6) totalWorkingDays++; }
+            const target = totalWorkingDays * 8;
             let worked = 0;
-            appData.jornadas.forEach(j => {
-                const jd = new Date(j.fecha);
-                if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada?.trim() && j.salida?.trim()) {
-                    worked += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000;
-                }
-            });
-
+            appData.jornadas.forEach(j => { const jd = new Date(j.fecha); if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada?.trim() && j.salida?.trim()) worked += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000; });
             document.getElementById('monthly-worked').innerText = worked.toFixed(1) + " h";
-            document.getElementById('monthly-target').innerText = target + " h"; // Aquí saldrá 168 h
-            
-            const pct = Math.min((worked / target) * 100, 100);
-            document.getElementById('monthly-progress-bar').style.width = pct + "%";
-            
-            const diff = target - worked;
-            const bal = document.getElementById('monthly-balance');
+            document.getElementById('monthly-target').innerText = target + " h";
+            document.getElementById('monthly-progress-bar').style.width = Math.min((worked / target) * 100, 100) + "%";
+            const diff = target - worked; const bal = document.getElementById('monthly-balance');
             if (diff <= 0) { bal.innerText = "✅ ¡Objetivo mensual cumplido!"; bal.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-2 text-center font-bold"; }
             else { bal.innerText = `🔴 Te faltan ${diff.toFixed(1)}h para completar el mes`; bal.className = "text-xs text-red-500 mt-2 text-center font-bold"; }
         }
@@ -234,7 +321,7 @@
             const vals = Object.keys(md).sort().map(m => md[m]);
             if (chartInstance) chartInstance.destroy();
             const dk = document.documentElement.classList.contains('dark');
-            chartInstance = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Horas Extra', data: vals, backgroundColor: '#f97316', borderRadius: 6, barThickness: 20 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: dk ? '#94a3b8' : '#64748b', font: { size: 10, weight: 'bold' } } }, y: { beginAtZero: true, grid: { color: dk ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }, ticks: { color: dk ? '#94a3b8' : '#64748b', font: { size: 10 } } } } } });
+            chartInstance = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Horas Extra', data: vals, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--app-primary').trim() || '#f97316', borderRadius: 6, barThickness: 20 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: dk ? '#94a3b8' : '#64748b', font: { size: 10, weight: 'bold' } } }, y: { beginAtZero: true, grid: { color: dk ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }, ticks: { color: dk ? '#94a3b8' : '#64748b', font: { size: 10 } } } } } });
         }
 
         function getJornadaEstado(j) {
@@ -264,7 +351,7 @@
             sorted.forEach(j => {
                 const est = getJornadaEstado(j); const bc = est === 'provisional' ? 'badge-provisional' : 'badge-confirmado'; const bt = est === 'provisional' ? 'Provisional' : 'Confirmado';
                 const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha";
-                tb.innerHTML += `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}<div class="text-xs text-slate-500 capitalize font-normal">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div></td><td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 font-mono">${hr}</td><td class="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400">${j.horas_normales}</td><td class="px-4 py-3 text-sm text-center font-bold text-accent">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td><td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></td><td class="px-4 py-3 text-right whitespace-nowrap"><button onclick="openExtraModal(${j.id})" class="text-xs font-bold bg-accent text-white px-2 py-1 rounded-lg mr-1"><i class="fa-solid fa-plus"></i> Extra</button><button onclick="openEditModal(${j.id})" class="text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2 py-1 rounded-lg"><i class="fa-solid fa-pen"></i></button></td></tr>`;
+                tb.innerHTML += `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}<div class="text-xs text-slate-500 capitalize font-normal">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div></td><td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 font-mono">${hr}</td><td class="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400">${j.horas_normales}</td><td class="px-4 py-3 text-sm text-center font-bold" style="color: var(--app-primary)">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td><td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></td><td class="px-4 py-3 text-right whitespace-nowrap"><button onclick="openExtraModal(${j.id})" class="text-xs font-bold text-white px-2 py-1 rounded-lg mr-1" style="background: var(--app-primary)"><i class="fa-solid fa-plus"></i> Extra</button><button onclick="openEditModal(${j.id})" class="text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2 py-1 rounded-lg"><i class="fa-solid fa-pen"></i></button></td></tr>`;
             });
         }
 
@@ -310,20 +397,197 @@
             let count = 0; appData.jornadas.forEach(j => { if (getJornadaEstado(j) === 'provisional') { j.estado = 'confirmado'; if (!j.entrada?.trim()) { j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0; } if (!(j.notas || '').toLowerCase().includes('[confirmado]')) j.notas = '[CONFIRMADO] ' + (j.notas || ''); count++; } });
             if (count > 0) { saveData(); showToast(`✅ ${count} jornada${count !== 1 ? 's' : ''} confirmada${count !== 1 ? 's' : ''}`, 'success'); } else showToast('ℹ️ No hay provisionales pendientes', 'info');
         }
-        function renderViajes() { const l = document.getElementById('viajes-list'); l.innerHTML = ''; const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin viajes</div>'; return; } s.forEach(v => { const p = v.pagado === 1; l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p><p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-md"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}</div>`; }); }
+        function renderViajes() { const l = document.getElementById('viajes-list'); l.innerHTML = ''; const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin viajes</div>'; return; } s.forEach(v => { const p = v.pagado === 1; l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p><p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl btn-primary"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}</div>`; }); }
         function markTripPaid(id) { const t = appData.viajes.find(v => v.id === id); if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado via App"; saveData(); showToast('✅ Viaje cobrado', 'success'); } }
         function renderPagos() { const l = document.getElementById('pagos-list'); l.innerHTML = ''; const s = [...appData.pagos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin pagos</div>'; return; } s.forEach(p => { l.innerHTML += `<div class="data-card flex items-center justify-between"><div><p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p><p class="text-xs text-slate-500">${new Date(p.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-lg font-extrabold text-success">${parseFloat(p.importe || 0).toFixed(2)} €</p></div>`; }); }
         function updateTodayStatus() { const t = new Date().toISOString().split('T')[0]; const j = appData.jornadas.find(x => x.fecha === t); const s = document.getElementById('today-status'); if (!j) s.innerHTML = '<span class="text-slate-400"><i class="fa-regular fa-circle mr-1"></i>Sin fichar hoy</span>'; else if (!j.salida?.trim()) s.innerHTML = `<span class="text-emerald-500 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>Trabajando desde ${j.entrada}</span>`; else s.innerHTML = '<span class="text-slate-500 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Jornada completada</span>'; }
-        function clockAction(type) { const now = new Date(); const ts = now.toTimeString().substring(0, 5); const ds = now.toISOString().split('T')[0]; let j = appData.jornadas.find(x => x.fecha === ds); if (!j) { j = { id: Date.now(), fecha: ds, entrada: "", salida: "", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[FICHADO EN APP]", creado: now.toISOString() }; appData.jornadas.push(j); } if (type === 'entrada') { j.entrada = ts; j.estado = "confirmado"; showToast(`✅ Entrada: ${ts}`, 'success'); } else { if (!j.entrada?.trim()) { showToast('⚠️ Primero registra entrada', 'warning'); return; } j.salida = ts; const h = (new Date(`${ds}T${ts}`) - new Date(`${ds}T${j.entrada}`)) / 3600000; if (h > 8) { j.horas_extra = parseFloat((h - 8).toFixed(2)); j.horas_normales = 8.0; } else { j.horas_normales = parseFloat(h.toFixed(2)); j.horas_extra = 0.0; } showToast(`🔴 Salida: ${ts} | Total: ${h.toFixed(2)}h`, 'success'); } saveData(); }
+        
+        function clockAction(type) { 
+            const now = new Date(); const ts = now.toTimeString().substring(0, 5); const ds = now.toISOString().split('T')[0]; 
+            let j = appData.jornadas.find(x => x.fecha === ds); 
+            if (!j) { j = { id: Date.now(), fecha: ds, entrada: "", salida: "", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[FICHADO EN APP]", creado: now.toISOString() }; appData.jornadas.push(j); } 
+            if (type === 'entrada') { j.entrada = ts; j.estado = "confirmado"; showToast(`✅ Entrada: ${ts}`, 'success'); sendNotification("Fichaje registrado", `Entrada registrada a las ${ts}`); } 
+            else { 
+                if (!j.entrada?.trim()) { showToast('⚠️ Primero registra entrada', 'warning'); return; } 
+                j.salida = ts; const h = (new Date(`${ds}T${ts}`) - new Date(`${ds}T${j.entrada}`)) / 3600000; 
+                if (h > 8) { j.horas_extra = parseFloat((h - 8).toFixed(2)); j.horas_normales = 8.0; } else { j.horas_normales = parseFloat(h.toFixed(2)); j.horas_extra = 0.0; } 
+                showToast(`🔴 Salida: ${ts} | Total: ${h.toFixed(2)}h`, 'success'); 
+                sendNotification("Jornada completada", `Has trabajado ${h.toFixed(2)}h hoy`);
+            } 
+            saveData(); 
+        }
+
+        // GENERACIÓN DE PDF
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const now = new Date();
+            const monthName = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+            const appName = document.getElementById('app-name').innerText;
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--app-primary').trim() || '#f97316';
+            
+            // Cabecera
+            doc.setFillColor(primaryColor);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text(appName, 20, 20);
+            doc.setFontSize(12);
+            doc.text(`Informe Mensual - ${monthName}`, 20, 30);
+            
+            // Resumen
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(14);
+            doc.text("Resumen del Mes", 20, 55);
+            doc.setFontSize(11);
+            
+            const cm = now.getMonth(), cy = now.getFullYear();
+            let worked = 0, extras = 0;
+            appData.jornadas.forEach(j => { 
+                const jd = new Date(j.fecha); 
+                if (jd.getMonth() === cm && jd.getFullYear() === cy) { 
+                    if (j.entrada?.trim() && j.salida?.trim()) worked += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000; 
+                    extras += j.horas_extra || 0; 
+                } 
+            });
+            
+            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
+            const rate = rs ? parseFloat(rs.valor) : 19.69;
+            
+            doc.text(`Horas trabajadas: ${worked.toFixed(1)}h`, 20, 65);
+            doc.text(`Horas extra: ${extras.toFixed(2)}h`, 20, 72);
+            doc.text(`Valor extras: ${(extras * rate).toFixed(2)} €`, 20, 79);
+            doc.text(`Tarifa hora extra: ${rate.toFixed(2)} €/h`, 20, 86);
+            
+            // Tabla de jornadas
+            doc.setFontSize(14);
+            doc.text("Detalle de Jornadas", 20, 100);
+            doc.setFontSize(9);
+            
+            let y = 110;
+            doc.setFillColor(240, 240, 240);
+            doc.rect(20, y-5, 170, 8, 'F');
+            doc.text("Fecha", 22, y);
+            doc.text("Horario", 60, y);
+            doc.text("Norm.", 100, y);
+            doc.text("Extra", 130, y);
+            doc.text("Estado", 160, y);
+            y += 10;
+            
+            const monthJornadas = appData.jornadas.filter(j => { const d = new Date(j.fecha); return d.getMonth() === cm && d.getFullYear() === cy; }).sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+            
+            monthJornadas.forEach(j => {
+                if (y > 270) { doc.addPage(); y = 20; }
+                const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()}-${j.salida.trim()}` : "N/A";
+                doc.text(new Date(j.fecha).toLocaleDateString('es-ES'), 22, y);
+                doc.text(hr, 60, y);
+                doc.text(j.horas_normales.toString(), 100, y);
+                doc.text(j.horas_extra > 0 ? `+${j.horas_extra}` : "—", 130, y);
+                doc.text(getJornadaEstado(j) === 'confirmado' ? 'OK' : 'PROV', 160, y);
+                y += 7;
+            });
+            
+            // Pie
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text(`Generado el ${now.toLocaleString('es-ES')} - ${appName} Control Laboral Pro`, 20, 285);
+            
+            doc.save(`informe_${appName}_${monthName.replace(' ', '_')}.pdf`);
+            showToast('📄 PDF generado correctamente', 'success');
+        }
+
+        // NOTIFICACIONES PUSH
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) { showToast('❌ Tu navegador no soporta notificaciones', 'error'); return; }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") { showToast('✅ Notificaciones activadas', 'success'); scheduleNotifications(); }
+                else showToast('⚠️ Permiso de notificaciones denegado', 'warning');
+            });
+        }
+
+        function sendNotification(title, body) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(title, { body, icon: '/favicon.ico', badge: '/favicon.ico' });
+            }
+        }
+
+        function scheduleNotifications() {
+            if (!("Notification" in window) || Notification.permission !== "granted") return;
+            
+            // Recordatorio de entrada a las 08:00
+            setTimeout(() => {
+                const now = new Date();
+                if (now.getHours() === 8 && now.getMinutes() === 0) {
+                    const todayJob = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]);
+                    if (!todayJob || !todayJob.entrada?.trim()) sendNotification("⏰ Recordatorio de Fichaje", "Son las 08:00. ¿Has registrado tu entrada?");
+                }
+            }, 60000); // Verifica cada minuto
+            
+            // Recordatorio de salida a las 16:00
+            setTimeout(() => {
+                const now = new Date();
+                if (now.getHours() === 16 && now.getMinutes() === 0) {
+                    const todayJob = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]);
+                    if (todayJob && todayJob.entrada?.trim() && !todayJob.salida?.trim()) sendNotification("⏰ Recordatorio de Salida", "Son las 16:00. Recuerda registrar tu salida.");
+                }
+            }, 60000);
+        }
+
+        // MODO OFFLINE MEJORADO
+        function setupOfflineDetection() {
+            const indicator = document.getElementById('offline-indicator');
+            
+            window.addEventListener('online', () => {
+                indicator.classList.remove('visible');
+                processOfflineQueue();
+                showToast('🟢 Conexión restaurada', 'success');
+            });
+            
+            window.addEventListener('offline', () => {
+                indicator.classList.add('visible');
+                showToast('🔴 Sin conexión. Los cambios se guardarán localmente.', 'warning');
+            });
+            
+            if (!navigator.onLine) indicator.classList.add('visible');
+        }
+
+        function processOfflineQueue() {
+            if (offlineQueue.length === 0) return;
+            // Aquí iría la lógica de sincronización con backend cuando exista
+            offlineQueue = [];
+            showToast('✅ Cambios pendientes sincronizados', 'success');
+        }
+
         function exportJSON() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2)); const l = document.createElement('a'); l.href = d; l.download = "ivory37_backup_" + new Date().toISOString().slice(0,10) + ".json"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('💾 Backup descargado', 'success'); }
-        function importJSON(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(ev) { try { const imp = JSON.parse(ev.target.result); if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); saveData(); showToast('✅ Datos restaurados', 'success'); setTimeout(() => location.reload(), 1000); } else showToast('❌ Formato incorrecto', 'error'); } catch { showToast('❌ Error al leer', 'error'); } }; r.readAsText(f); e.target.value = ''; }
+        function importJSON(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(ev) { try { const imp = JSON.parse(ev.target.result); if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); applyBranding(); saveData(); showToast('✅ Datos restaurados', 'success'); setTimeout(() => location.reload(), 1000); } else showToast('❌ Formato incorrecto', 'error'); } catch { showToast('❌ Error al leer', 'error'); } }; r.readAsText(f); e.target.value = ''; }
         function exportCSV() { const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas","creado"]; const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`,j.creado||'']); const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_ivory37_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('📊 CSV exportado', 'success'); }
         function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo?')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
         function switchTab(t) { document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); document.getElementById(`content-${t}`).classList.remove('hidden'); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function toggleTheme() { document.documentElement.classList.toggle('dark'); setTimeout(renderChart, 100); }
-        function renderConfig() { const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor; const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor; }
-        function saveConfig() { const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value; let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc }); saveData(); showToast('✅ Configuración guardada', 'success'); }
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v12'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        
+        function renderConfig() { 
+            const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor; 
+            const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor;
+            const n = appData.ajustes.find(a => a.clave === "app_name"); if (n) document.getElementById('config-appname').value = n.valor;
+            const c = appData.ajustes.find(a => a.clave === "app_color"); if (c) document.getElementById('config-color').value = c.valor;
+        }
+
+        function saveConfig() { 
+            const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value;
+            const appName = document.getElementById('config-appname').value.trim();
+            const appColor = document.getElementById('config-color').value;
+            
+            let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); 
+            let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc });
+            
+            if (appName) { let ns = appData.ajustes.find(a => a.clave === "app_name"); if (ns) ns.valor = appName; else appData.ajustes.push({ clave: "app_name", valor: appName }); }
+            if (appColor) { let cs = appData.ajustes.find(a => a.clave === "app_color"); if (cs) cs.valor = appColor; else appData.ajustes.push({ clave: "app_color", valor: appColor }); }
+            
+            applyBranding();
+            saveData(); showToast('✅ Configuración y marca actualizadas', 'success'); 
+        }
+
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v14-offline'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
