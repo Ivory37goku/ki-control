@@ -14,7 +14,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Chart.js para gráficos profesionales -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -23,7 +23,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; padding-bottom: 90px; min-height: 100vh; }
         .dark body { background-color: #0f172a; }
         
-        /* Glassmorphism Premium */
         .glass-panel {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(16px);
@@ -39,7 +38,6 @@
         .goku-glow { filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6)); transition: filter 0.3s; }
         .goku-glow:hover { filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.9)); }
         
-        /* Bottom Nav Mobile */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
             background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px);
@@ -326,7 +324,7 @@
 
     <script>
         // ============================================
-        // DATOS ORIGINALES SANITIZED (SIN CONTRASEÑA)
+        // DATOS ORIGINALES SANITIZED
         // ============================================
         const rawJsonString = `{
  "jornadas": [
@@ -401,7 +399,7 @@
         let chartInstance = null;
 
         // ============================================
-        // INICIALIZACIÓN (SIN LOGIN)
+        // INICIALIZACIÓN
         // ============================================
         function initApp() {
             const saved = localStorage.getItem('ivory37_data_v1');
@@ -440,18 +438,18 @@
         }
 
         // ============================================
-        // GENERAR JORNADAS FALTANTES
+        // GENERAR JORNADAS FALTANTES (1 ENE - HOY)
         // ============================================
         function generateMissingJornadas(existingJornadas) {
             const existingDates = new Set(existingJornadas.map(j => j.fecha));
             const newJornadas = [];
             const startDate = new Date('2026-01-01');
-            const endDate = new Date('2026-08-31');
+            const endDate = new Date(); // Hasta HOY
             let idCounter = 1000;
 
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
                 const dayOfWeek = d.getDay();
-                if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+                if (dayOfWeek === 0 || dayOfWeek === 6) continue; // Solo Lunes a Viernes
 
                 const dateStr = d.toISOString().split('T')[0];
                 if (!existingDates.has(dateStr)) {
