@@ -195,12 +195,13 @@
     <script>
         let appData = null, currentModalType = null, editingId = null, chartInstance = null, currentFilter = 'all';
         let offlineQueue = [];
-        let storedPassword = "230522"; // Valor por defecto hasta cargar auth.json
+        
+        // ============================================
+        // CREDENCIALES INTEGRADAS (INFALIBLES)
+        // ============================================
+        const APP_PASSWORD = "230522"; 
         
         async function initApp() {
-            // 1. Cargar credenciales primero
-            await loadAuthCredentials();
-            
             const saved = localStorage.getItem('ivory37_data_v1');
             if (saved) { try { appData = JSON.parse(saved); } catch { appData = await loadDefaultData(); } } 
             else { appData = await loadDefaultData(); }
@@ -218,23 +219,12 @@
             registerSW();
         }
 
-        // CARGAR CREDENCIALES DESDE AUTH.JSON
-        async function loadAuthCredentials() {
-            try {
-                const res = await fetch('auth.json');
-                const auth = await res.json();
-                if (auth.password) storedPassword = auth.password;
-            } catch (e) {
-                console.warn("No se pudo cargar auth.json, usando contraseña por defecto");
-            }
-        }
-
-        // VERIFICACIÓN DE LOGIN
+        // VERIFICACIÓN DE LOGIN DIRECTA (SIN FETCH)
         function checkLogin() {
             const input = document.getElementById('login-pass').value.trim();
             const errorEl = document.getElementById('login-error');
             
-            if (input === storedPassword) {
+            if (input === APP_PASSWORD) {
                 // Login exitoso
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
@@ -638,7 +628,7 @@
             saveData(); showToast('✅ Configuración y marca actualizadas', 'success'); 
         }
 
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v15-auth'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v15-auth-fixed'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
