@@ -6,161 +6,87 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#f97316">
     <title>工V龱尺ㄚ㇌7 | Control Laboral Pro</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; padding-bottom: 90px; min-height: 100vh; }
         .dark body { background-color: #0f172a; }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06);
-        }
+        .glass-panel { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(16px); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06); }
         .dark .glass-panel { background: rgba(15, 23, 42, 0.98); border-color: rgba(51, 65, 85, 0.5); }
-        
         .goku-glow { filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6)); }
-        
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(226, 232, 240, 0.8);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border-top: 1px solid rgba(226, 232, 240, 0.8); padding-bottom: env(safe-area-inset-bottom); }
         .dark .bottom-nav { background: rgba(15, 23, 42, 0.98); border-top-color: rgba(51, 65, 85, 0.5); }
-        
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 4px; color: #94a3b8; transition: all 0.2s; font-size: 10px; font-weight: 600; background: none; border: none; cursor: pointer; }
         .nav-item.active { color: #f97316; }
         .nav-item i { font-size: 20px; margin-bottom: 2px; }
-        
         .data-card { background: white; border-radius: 16px; padding: 16px; border: 1px solid #e2e8f0; transition: all 0.2s; }
         .dark .data-card { background: #1e293b; border-color: #334155; }
         .data-card:active { transform: scale(0.98); }
-        
         .fingerprint-btn { width: 100%; padding: 18px; border-radius: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.15); border: none; cursor: pointer; }
         .fingerprint-btn:active { transform: scale(0.97); }
-        
-        .action-btn { 
-            width: 100%; padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; 
-            display: flex; align-items: center; justify-content: center; gap: 6px; 
-            transition: all 0.2s; border: none; cursor: pointer; margin-top: 8px;
-        }
+        .action-btn { width: 100%; padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; border: none; cursor: pointer; margin-top: 8px; }
         .action-btn:active { transform: scale(0.97); }
         .btn-add-extra { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.4); }
         .btn-edit { background: #f1f5f9; color: #475569; }
         .dark .btn-edit { background: #334155; color: #cbd5e1; }
-        
         .modal-content { background: white; border-radius: 20px 20px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; }
         .dark .modal-content { background: #1e293b; }
         @media (min-width: 640px) { .modal-content { border-radius: 20px; max-width: 480px; margin: 0 auto; } }
-        
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
-        
         .fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        
         .badge-provisional { background: #fef3c7; color: #92400e; }
         .dark .badge-provisional { background: rgba(234, 179, 8, 0.2); color: #fde047; }
         .badge-confirmado { background: #d1fae5; color: #065f46; }
         .dark .badge-confirmado { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
-        
         @media (max-width: 768px) { .desktop-table { display: none; } }
         @media (min-width: 769px) { .mobile-cards { display: none; } }
-        
         .input-field { width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; transition: all 0.2s; outline: none; }
         .dark .input-field { background: #0f172a; border-color: #334155; color: white; }
         .input-field:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1); }
-        
         .btn-primary { background: linear-gradient(135deg, #f97316, #ea580c); color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px -4px rgba(249, 115, 22, 0.4); }
         .btn-primary:active { transform: scale(0.97); }
         .btn-secondary { background: #1e293b; color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .btn-secondary { background: white; color: #0f172a; }
         .btn-secondary:active { transform: scale(0.97); }
-
-        .filter-pill { 
-            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; 
-            background: #f1f5f9; color: #64748b; border: none; cursor: pointer; transition: all 0.2s; 
-        }
+        .filter-pill { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #f1f5f9; color: #64748b; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .filter-pill { background: #1e293b; color: #94a3b8; }
         .filter-pill.active { background: #f97316; color: white; }
     </style>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } };
-    </script>
+    <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } }; </script>
 </head>
 <body class="text-slate-800 dark:text-slate-100 min-h-screen">
-
-    <div id="app-container" class="fade-in">
+    <div id="app-container" class="fade-in hidden">
         <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
             <div class="px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center goku-glow text-white shadow-lg">
                         <svg viewBox="0 0 24 24" class="w-7 h-7 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
                     </div>
-                    <div>
-                        <h1 class="font-extrabold text-lg leading-none text-slate-900 dark:text-white tracking-tight">工V龱尺ㄚ㇌7</h1>
-                        <span class="text-[10px] font-bold text-primary tracking-widest uppercase">Control Laboral Pro</span>
-                    </div>
+                    <div><h1 class="font-extrabold text-lg leading-none text-slate-900 dark:text-white tracking-tight">工V龱尺ㄚ㇌7</h1><span class="text-[10px] font-bold text-primary tracking-widest uppercase">Control Laboral Pro</span></div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="hidden sm:block text-right mr-2">
-                        <p id="current-date" class="text-xs font-semibold text-slate-600 dark:text-slate-300"></p>
-                        <p id="live-clock" class="text-sm font-mono font-bold text-slate-900 dark:text-white">--:--</p>
-                    </div>
-                    <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
-                        <i class="fa-solid fa-moon dark:hidden text-sm"></i>
-                        <i class="fa-solid fa-sun hidden dark:inline text-sm text-yellow-400"></i>
-                    </button>
+                    <div class="hidden sm:block text-right mr-2"><p id="current-date" class="text-xs font-semibold text-slate-600 dark:text-slate-300"></p><p id="live-clock" class="text-sm font-mono font-bold text-slate-900 dark:text-white">--:--</p></div>
+                    <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"><i class="fa-solid fa-moon dark:hidden text-sm"></i><i class="fa-solid fa-sun hidden dark:inline text-sm text-yellow-400"></i></button>
                 </div>
             </div>
         </header>
-
         <main class="px-4 py-4 max-w-5xl mx-auto">
-            
-            <!-- FICHAJE DEL DÍA -->
             <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4 border-l-primary">
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <h2 class="font-bold text-base text-slate-900 dark:text-white">Fichaje del Día</h2>
-                        <p class="text-xs text-slate-500" id="today-status">Sin fichar</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-400 uppercase font-bold">Ahora</p>
-                        <p class="text-xl font-mono font-bold text-primary" id="live-clock-big">--:--</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="clockAction('entrada')" class="fingerprint-btn bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
-                        <i class="fa-solid fa-right-to-bracket"></i> <span>Entrada</span>
-                    </button>
-                    <button onclick="clockAction('salida')" class="fingerprint-btn bg-gradient-to-br from-red-500 to-red-600 text-white">
-                        <i class="fa-solid fa-right-from-bracket"></i> <span>Salida</span>
-                    </button>
-                </div>
+                <div class="flex items-center justify-between mb-3"><div><h2 class="font-bold text-base text-slate-900 dark:text-white">Fichaje del Día</h2><p class="text-xs text-slate-500" id="today-status">Sin fichar</p></div><div class="text-right"><p class="text-[10px] text-slate-400 uppercase font-bold">Ahora</p><p class="text-xl font-mono font-bold text-primary" id="live-clock-big">--:--</p></div></div>
+                <div class="grid grid-cols-2 gap-2"><button onclick="clockAction('entrada')" class="fingerprint-btn bg-gradient-to-br from-emerald-500 to-emerald-600 text-white"><i class="fa-solid fa-right-to-bracket"></i> Entrada</button><button onclick="clockAction('salida')" class="fingerprint-btn bg-gradient-to-br from-red-500 to-red-600 text-white"><i class="fa-solid fa-right-from-bracket"></i> Salida</button></div>
             </div>
-
-            <!-- OBJETIVO MENSUAL -->
+            
+            <!-- OBJETIVO MENSUAL CORREGIDO A 168H TOTALES -->
             <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4 border-l-secondary">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="font-bold text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-bullseye mr-2 text-secondary"></i>Objetivo Mensual</h3>
-                    <span class="text-xs font-bold text-slate-500" id="month-label">Noviembre 2026</span>
-                </div>
+                <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-bullseye mr-2 text-secondary"></i>Objetivo Mensual</h3><span class="text-xs font-bold text-slate-500" id="month-label">Noviembre 2026</span></div>
                 <div class="flex justify-between items-end mb-2">
-                    <div>
-                        <p class="text-[10px] text-slate-500 uppercase font-bold">Llevas trabajadas</p>
-                        <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-worked">0 h</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-500 uppercase font-bold">Objetivo a fecha de hoy</p>
-                        <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-target">0 h</p>
-                    </div>
+                    <div><p class="text-[10px] text-slate-500 uppercase font-bold">Llevas trabajadas</p><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-worked">0 h</p></div>
+                    <div class="text-right"><p class="text-[10px] text-slate-500 uppercase font-bold">Meta mensual (40h/sem)</p><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-target">168 h</p></div>
                 </div>
                 <div class="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div id="monthly-progress-bar" class="absolute top-0 left-0 h-full bg-secondary rounded-full transition-all duration-500" style="width: 0%"></div>
@@ -168,301 +94,60 @@
                 <p class="text-xs text-slate-500 mt-2 text-center font-medium" id="monthly-balance">Calculando...</p>
             </div>
 
-            <!-- GRÁFICO MENSUAL -->
-            <div class="glass-panel rounded-2xl p-4 mb-4">
-                <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2 text-primary"></i>Evolución Horas Extra</h3>
-                <div class="relative h-48 w-full">
-                    <canvas id="monthlyChart"></canvas>
-                </div>
-            </div>
-
-            <!-- DASHBOARD CARDS -->
+            <div class="glass-panel rounded-2xl p-4 mb-4"><h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2 text-primary"></i>Evolución Horas Extra</h3><div class="relative h-48 w-full"><canvas id="monthlyChart"></canvas></div></div>
             <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="glass-panel rounded-2xl p-4">
-                    <div class="flex items-center justify-between mb-1">
-                        <i class="fa-solid fa-stopwatch text-primary text-lg"></i>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">Extras</span>
-                    </div>
-                    <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="total-extra-hours">0</p>
-                    <p class="text-[10px] text-slate-500">horas</p>
-                </div>
-                <div class="glass-panel rounded-2xl p-4">
-                    <div class="flex items-center justify-between mb-1">
-                        <i class="fa-solid fa-coins text-secondary text-lg"></i>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">Valor</span>
-                    </div>
-                    <p class="text-2xl font-extrabold text-secondary" id="total-extra-value">0 €</p>
-                    <p class="text-[10px] text-slate-500">@ <span id="display-rate">19.69</span> €/h</p>
-                </div>
-                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-danger">
-                    <div class="flex items-center justify-between mb-1">
-                        <i class="fa-solid fa-file-invoice-dollar text-danger text-lg"></i>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">Pendiente</span>
-                    </div>
-                    <p class="text-2xl font-extrabold text-danger" id="pending-trips-value">0 €</p>
-                    <p class="text-[10px] text-slate-500" id="pending-trips-count">0 viajes</p>
-                </div>
-                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-success">
-                    <div class="flex items-center justify-between mb-1">
-                        <i class="fa-solid fa-wallet text-success text-lg"></i>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">Cobrado</span>
-                    </div>
-                    <p class="text-2xl font-extrabold text-success" id="total-paid-value">0 €</p>
-                    <p class="text-[10px] text-slate-500">total ingresos</p>
-                </div>
+                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-stopwatch text-primary text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Extras</span></div><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="total-extra-hours">0</p><p class="text-[10px] text-slate-500">horas</p></div>
+                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-coins text-secondary text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Valor</span></div><p class="text-2xl font-extrabold text-secondary" id="total-extra-value">0 €</p><p class="text-[10px] text-slate-500">@ <span id="display-rate">19.69</span> €/h</p></div>
+                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-danger"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-file-invoice-dollar text-danger text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Pendiente</span></div><p class="text-2xl font-extrabold text-danger" id="pending-trips-value">0 €</p><p class="text-[10px] text-slate-500" id="pending-trips-count">0 viajes</p></div>
+                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-success"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-wallet text-success text-lg"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Cobrado</span></div><p class="text-2xl font-extrabold text-success" id="total-paid-value">0 €</p><p class="text-[10px] text-slate-500">total ingresos</p></div>
             </div>
-
-            <!-- TAB: JORNADAS CON FILTROS Y EDICIÓN -->
             <div id="content-jornadas" class="tab-content fade-in">
-                <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-                    <h2 class="font-bold text-lg text-slate-900 dark:text-white">Jornadas</h2>
-                    <div class="flex gap-2">
-                        <button onclick="exportCSV()" class="text-xs font-bold bg-green-600 text-white px-3 py-1.5 rounded-full shadow-md">
-                            <i class="fa-solid fa-file-excel mr-1"></i>Excel
-                        </button>
-                        <button onclick="confirmAllProvisional()" class="text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-full shadow-md">
-                            <i class="fa-solid fa-check-double mr-1"></i>Confirmar Todas
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Filtros rápidos -->
-                <div class="flex gap-2 mb-3 overflow-x-auto pb-1">
-                    <button onclick="setFilter('all')" class="filter-pill active" data-filter="all">Todos</button>
-                    <button onclick="setFilter('confirmado')" class="filter-pill" data-filter="confirmado">Confirmados</button>
-                    <button onclick="setFilter('provisional')" class="filter-pill" data-filter="provisional">Provisionales</button>
-                    <button onclick="setFilter('extra')" class="filter-pill" data-filter="extra">Con Extras</button>
-                </div>
-
+                <div class="flex items-center justify-between mb-3 flex-wrap gap-2"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Jornadas</h2><div class="flex gap-2"><button onclick="exportCSV()" class="text-xs font-bold bg-green-600 text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-file-excel mr-1"></i>Excel</button><button onclick="confirmAllProvisional()" class="text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-check-double mr-1"></i>Confirmar Todas</button></div></div>
+                <div class="flex gap-2 mb-3 overflow-x-auto pb-1"><button onclick="setFilter('all')" class="filter-pill active" data-filter="all">Todos</button><button onclick="setFilter('confirmado')" class="filter-pill" data-filter="confirmado">Confirmados</button><button onclick="setFilter('provisional')" class="filter-pill" data-filter="provisional">Provisionales</button><button onclick="setFilter('extra')" class="filter-pill" data-filter="extra">Con Extras</button></div>
                 <div class="mobile-cards space-y-2" id="jornadas-cards"></div>
-                
-                <div class="desktop-table glass-panel rounded-2xl overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full">
-                            <thead class="bg-slate-50 dark:bg-slate-800">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Fecha</th>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Horario</th>
-                                    <th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Norm.</th>
-                                    <th class="px-4 py-3 text-center text-xs font-bold text-accent uppercase">Extra</th>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Estado</th>
-                                    <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="jornadas-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-                        </table>
-                    </div>
-                </div>
+                <div class="desktop-table glass-panel rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-slate-50 dark:bg-slate-800"><tr><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Fecha</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Horario</th><th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Norm.</th><th class="px-4 py-3 text-center text-xs font-bold text-accent uppercase">Extra</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Estado</th><th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Acciones</th></tr></thead><tbody id="jornadas-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody></table></div></div>
             </div>
-
-            <!-- TAB: VIAJES -->
-            <div id="content-viajes" class="tab-content hidden fade-in">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2>
-                    <button onclick="openTripModal()" class="text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-full shadow-md">
-                        <i class="fa-solid fa-plus mr-1"></i>Nuevo
-                    </button>
-                </div>
-                <div class="space-y-2" id="viajes-list"></div>
-            </div>
-
-            <!-- TAB: PAGOS -->
-            <div id="content-pagos" class="tab-content hidden fade-in">
-                <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Histórico Pagos</h2>
-                <div class="space-y-2" id="pagos-list"></div>
-            </div>
-
-            <!-- TAB: AJUSTES -->
+            <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
+            <div id="content-pagos" class="tab-content hidden fade-in"><h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Histórico Pagos</h2><div class="space-y-2" id="pagos-list"></div></div>
             <div id="content-ajustes" class="tab-content hidden fade-in">
                 <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Backup</h2>
-                <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label>
-                        <input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label>
-                        <input type="text" id="config-schedule" class="input-field">
-                    </div>
-                    <button onclick="saveConfig()" class="btn-secondary w-full">
-                        <i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios
-                    </button>
-                </div>
-                <div class="glass-panel rounded-2xl p-5">
-                    <h3 class="font-bold text-base text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-database mr-2 text-primary"></i>Gestión de Datos</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="exportJSON()" class="flex flex-col items-center justify-center p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition">
-                            <i class="fa-solid fa-download text-2xl mb-2"></i>
-                            <span class="text-xs font-bold uppercase">Descargar JSON</span>
-                        </button>
-                        <label class="flex flex-col items-center justify-center p-4 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition cursor-pointer">
-                            <i class="fa-solid fa-upload text-2xl mb-2"></i>
-                            <span class="text-xs font-bold uppercase">Subir JSON</span>
-                            <input type="file" id="import-file" class="hidden" accept=".json" onchange="importJSON(event)">
-                        </label>
-                    </div>
-                    <button onclick="resetToFactory()" class="w-full mt-3 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-800 text-xs font-bold uppercase">
-                        <i class="fa-solid fa-trash mr-2"></i>Restablecer datos de fábrica
-                    </button>
-                </div>
+                <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label><input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold"></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label><input type="text" id="config-schedule" class="input-field"></div><button onclick="saveConfig()" class="btn-secondary w-full"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Cambios</button></div>
+                <div class="glass-panel rounded-2xl p-5"><h3 class="font-bold text-base text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-database mr-2 text-primary"></i>Gestión de Datos</h3><div class="grid grid-cols-2 gap-3"><button onclick="exportJSON()" class="flex flex-col items-center justify-center p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"><i class="fa-solid fa-download text-2xl mb-2"></i><span class="text-xs font-bold uppercase">Descargar JSON</span></button><label class="flex flex-col items-center justify-center p-4 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition cursor-pointer"><i class="fa-solid fa-upload text-2xl mb-2"></i><span class="text-xs font-bold uppercase">Subir JSON</span><input type="file" id="import-file" class="hidden" accept=".json" onchange="importJSON(event)"></label></div><button onclick="resetToFactory()" class="w-full mt-3 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-800 text-xs font-bold uppercase"><i class="fa-solid fa-trash mr-2"></i>Restablecer datos de fábrica</button></div>
             </div>
-
         </main>
-
-        <!-- BOTTOM NAV -->
-        <nav class="bottom-nav flex">
-            <button onclick="switchTab('jornadas')" class="nav-item active" data-tab="jornadas">
-                <i class="fa-solid fa-calendar-check"></i> <span>Jornadas</span>
-            </button>
-            <button onclick="switchTab('viajes')" class="nav-item" data-tab="viajes">
-                <i class="fa-solid fa-car"></i> <span>Viajes</span>
-            </button>
-            <button onclick="switchTab('pagos')" class="nav-item" data-tab="pagos">
-                <i class="fa-solid fa-money-bill"></i> <span>Pagos</span>
-            </button>
-            <button onclick="switchTab('ajustes')" class="nav-item" data-tab="ajustes">
-                <i class="fa-solid fa-gear"></i> <span>Ajustes</span>
-            </button>
-        </nav>
-
-        <!-- MODAL GENÉRICO -->
-        <div id="generic-modal" class="fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
-            <div class="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:-translate-y-1/2">
-                <div class="modal-content">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="modal-title">Título</h3>
-                        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
-                    </div>
-                    <div class="space-y-3" id="modal-content"></div>
-                    <button onclick="saveModalData()" class="btn-primary w-full mt-5">Guardar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TOAST NOTIFICATION -->
-        <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden">
-            <div class="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-sm font-bold">
-                <i class="fa-solid fa-check-circle text-green-500" id="toast-icon"></i>
-                <span id="toast-message">Mensaje</span>
-            </div>
-        </div>
+        <nav class="bottom-nav flex"><button onclick="switchTab('jornadas')" class="nav-item active" data-tab="jornadas"><i class="fa-solid fa-calendar-check"></i> Jornadas</button><button onclick="switchTab('viajes')" class="nav-item" data-tab="viajes"><i class="fa-solid fa-car"></i> Viajes</button><button onclick="switchTab('pagos')" class="nav-item" data-tab="pagos"><i class="fa-solid fa-money-bill"></i> Pagos</button><button onclick="switchTab('ajustes')" class="nav-item" data-tab="ajustes"><i class="fa-solid fa-gear"></i> Ajustes</button></nav>
+        <div id="generic-modal" class="fixed inset-0 z-50 hidden"><div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div><div class="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:-translate-y-1/2"><div class="modal-content"><div class="flex items-center justify-between mb-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white" id="modal-title">Título</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div><div class="space-y-3" id="modal-content"></div><button onclick="saveModalData()" class="btn-primary w-full mt-5">Guardar</button></div></div></div>
+        <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden"><div class="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-sm font-bold"><i class="fa-solid fa-check-circle text-green-500" id="toast-icon"></i><span id="toast-message">Mensaje</span></div></div>
     </div>
-
     <script>
-        // ============================================
-        // DATOS ORIGINALES SANITIZED
-        // ============================================
-        const rawJsonString = `{
- "jornadas": [
-{"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.166926"},
-{"id": 6, "fecha": "2026-09-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:34:44.773560"},
-{"id": 7, "fecha": "2026-09-03", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:01.775604"},
-{"id": 8, "fecha": "2026-09-04", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:15.754161"},
-{"id": 9, "fecha": "2026-09-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:31.909232"},
-{"id": 10, "fecha": "2026-09-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:10.125659"},
-{"id": 11, "fecha": "2026-09-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:22.817899"},
-{"id": 12, "fecha": "2026-09-10", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:27.457300"},
-{"id": 13, "fecha": "2026-09-11", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:40.012600"},
-{"id": 14, "fecha": "2026-09-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:54.275565"},
-{"id": 15, "fecha": "2026-09-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:59.266085"},
-{"id": 16, "fecha": "2026-09-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:03.692794"},
-{"id": 17, "fecha": "2026-09-17", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:08.136252"},
-{"id": 18, "fecha": "2026-09-18", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:15.829232"},
-{"id": 19, "fecha": "2026-09-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:20.329576"},
-{"id": 20, "fecha": "2026-09-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:24.685848"},
-{"id": 21, "fecha": "2026-09-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:29.086383"},
-{"id": 22, "fecha": "2026-09-24", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:33.449767"},
-{"id": 23, "fecha": "2026-09-25", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:38.061306"},
-{"id": 24, "fecha": "2026-09-28", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:42.407174"},
-{"id": 25, "fecha": "2026-09-29", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:47.106188"},
-{"id": 26, "fecha": "2026-09-30", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:09.463321"},
-{"id": 2, "fecha": "2026-10-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.167100"},
-{"id": 5, "fecha": "2026-10-26", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.75, "notas": "Incluye 0,50 h ya fichadas y 1,25 h del reparto provisional de 21,00 h extra de octubre. Total del día: 1,75 h; distribución orientativa, confirmar con los fichajes reales.", "creado": "2026-10-26T19:25:34.494620"},
-{"id": 28, "fecha": "2026-10-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:45.643686"},
-{"id": 29, "fecha": "2026-10-05", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:52.730691"},
-{"id": 30, "fecha": "2026-10-06", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:57.080659"},
-{"id": 31, "fecha": "2026-10-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:01.456407"},
-{"id": 32, "fecha": "2026-10-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:05.848906"},
-{"id": 33, "fecha": "2026-10-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:13.421841"},
-{"id": 34, "fecha": "2026-10-12", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:20.274440"},
-{"id": 35, "fecha": "2026-10-13", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:31.033270"},
-{"id": 36, "fecha": "2026-10-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:40.943971"},
-{"id": 37, "fecha": "2026-10-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:45.649066"},
-{"id": 38, "fecha": "2026-10-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:50.066439"},
-{"id": 39, "fecha": "2026-10-19", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:57.151093"},
-{"id": 40, "fecha": "2026-10-20", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:01.622995"},
-{"id": 41, "fecha": "2026-10-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:09.226835"},
-{"id": 42, "fecha": "2026-10-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:20.008499"},
-{"id": 43, "fecha": "2026-10-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:24.365664"},
-{"id": 44, "fecha": "2026-10-27", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-27T07:47:29.370023"},
-{"id": 45, "fecha": "2026-10-28", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.5, "notas": "[REVISADO]", "creado": "2026-10-28T07:59:55.308797"},
-{"id": 46, "fecha": "2026-10-29", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO] Fichaje automático según el horario habitual; no verificado manualmente. Corrige este registro si el horario real fue distinto.", "creado": "2026-10-29T16:00:12.526141+00:00"},
-{"id": 47, "fecha": "2026-10-30", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-30T15:52:43.083260"}
-],
- "viajes": [
-{"id": 1, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 1", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167140"},
-{"id": 2, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 2", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167180"},
-{"id": 3, "fecha": "2026-09-26", "concepto": "Viaje de trabajo", "importe": 400.0, "pagado": 1, "fecha_pago": "2026-10-26", "notas": "", "creado": "2026-10-26T18:58:40.962023"}
-],
- "pagos": [
-{"id": 1, "fecha": "2026-10-26", "concepto": "2 viajes septiembre", "importe": 0.0, "categoria": "viaje", "notas": "", "creado": "2026-10-26T19:03:09.211680"}
-],
- "ajustes": [
-{"clave": "seeded_demo", "valor": "yes"},
-{"clave": "hora_extra_euros", "valor": "19.69"},
-{"clave": "horas_normales_dia", "valor": "8"},
-{"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
-{"clave": "dias_trabajo", "valor": "Lunes a viernes"}
-],
- "notas": []
-}`;
-
-        let appData = null;
-        let currentModalType = null;
-        let editingId = null;
-        let chartInstance = null;
-        let currentFilter = 'all';
-
-        function initApp() {
+        let appData = null, currentModalType = null, editingId = null, chartInstance = null, currentFilter = 'all';
+        
+        async function initApp() {
             const saved = localStorage.getItem('ivory37_data_v1');
-            if (saved) {
-                try { appData = JSON.parse(saved); } catch (e) { appData = buildInitialData(); }
-            } else {
-                appData = buildInitialData();
-            }
-
-            // CORRECCIÓN AUTOMÁTICA DE DATOS
-            sanitizeConfirmedRecords();
-            ensureFullYearData();
-
-            updateDateAndClock();
-            setInterval(updateDateAndClock, 1000);
+            if (saved) { try { appData = JSON.parse(saved); } catch { appData = await loadDefaultData(); } } 
+            else { appData = await loadDefaultData(); }
+            sanitizeConfirmedRecords(); ensureFullYearData(); updateDateAndClock(); setInterval(updateDateAndClock, 1000);
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
-            renderAll();
-            registerSW();
+            document.getElementById('app-container').classList.remove('hidden');
+            renderAll(); registerSW();
         }
 
-        function buildInitialData() {
-            const parsed = JSON.parse(rawJsonString);
-            return {
-                jornadas: [...parsed.jornadas, ...generateMissingJornadas(parsed.jornadas)],
-                viajes: parsed.viajes, pagos: parsed.pagos, ajustes: parsed.ajustes, notas: parsed.notas || []
-            };
+        async function loadDefaultData() {
+            try {
+                const res = await fetch('data.json');
+                const raw = await res.json();
+                // Sanitizar claves con espacios del JSON original automáticamente
+                const clean = JSON.parse(JSON.stringify(raw, (k, v) => typeof k === 'string' ? k.trim() : k, 2));
+                return { jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], viajes: clean.viajes, pagos: clean.pagos, ajustes: clean.ajustes, notas: clean.notas || [] };
+            } catch (e) { console.error("Error cargando data.json", e); return { jornadas: [], viajes: [], pagos: [], ajustes: [], notas: [] }; }
         }
 
-        // CORREGIR REGISTROS CONFIRMADOS SIN HORARIO
         function sanitizeConfirmedRecords() {
             let updated = false;
             appData.jornadas.forEach(j => {
-                const estado = getJornadaEstado(j);
-                if (estado === 'confirmado' && (!j.entrada || !j.entrada.trim() || !j.salida || !j.salida.trim())) {
-                    j.entrada = "08:00";
-                    j.salida = "16:00";
-                    j.horas_normales = 8.0;
-                    if (!j.notas.toLowerCase().includes('horario asignado')) {
-                        j.notas = (j.notas ? j.notas + ' | ' : '') + '⚠️ Horario asignado automáticamente por sistema.';
-                    }
+                if (getJornadaEstado(j) === 'confirmado' && (!j.entrada?.trim() || !j.salida?.trim())) {
+                    j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0;
+                    if (!(j.notas || '').toLowerCase().includes('horario asignado')) j.notas = (j.notas || '') + ' ⚠️ Horario asignado automáticamente.';
                     updated = true;
                 }
             });
@@ -470,96 +155,76 @@
         }
 
         function ensureFullYearData() {
-            const existingDates = new Set(appData.jornadas.map(j => j.fecha));
-            const startDate = new Date('2026-01-01');
-            const endDate = new Date();
-            let needsUpdate = false;
-            let idCounter = Math.max(...appData.jornadas.map(j => j.id), 999) + 1;
-
-            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+            const dates = new Set(appData.jornadas.map(j => j.fecha));
+            let needsUpdate = false, id = Math.max(...appData.jornadas.map(j => j.id), 999) + 1;
+            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
                 if (d.getDay() === 0 || d.getDay() === 6) continue;
-                const dateStr = d.toISOString().split('T')[0];
-                if (!existingDates.has(dateStr)) {
-                    appData.jornadas.push({
-                        id: idCounter++, fecha: dateStr, entrada: "08:00", salida: "16:00",
-                        horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado",
-                        notas: "[CONFIRMADO] Jornada estándar verificada.", creado: d.toISOString()
-                    });
-                    needsUpdate = true;
-                }
+                const ds = d.toISOString().split('T')[0];
+                if (!dates.has(ds)) { appData.jornadas.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() }); needsUpdate = true; }
             }
             if (needsUpdate) saveDataSilent();
         }
 
         function generateMissingJornadas(existing) {
-            const dates = new Set(existing.map(j => j.fecha));
-            const newJ = [];
-            let id = 1000;
+            const dates = new Set(existing.map(j => j.fecha)); const newJ = []; let id = 1000;
             for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
                 if (d.getDay() === 0 || d.getDay() === 6) continue;
                 const ds = d.toISOString().split('T')[0];
-                if (!dates.has(ds)) newJ.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar verificada.", creado: d.toISOString() });
+                if (!dates.has(ds)) newJ.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() });
             }
             return newJ;
         }
 
         function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderAll(); }
         function saveDataSilent() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); }
-
-        function renderAll() {
-            renderDashboard(); renderMonthlyGoal(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus();
-        }
-
-        function updateDateAndClock() {
-            const now = new Date();
-            document.getElementById('current-date').innerText = now.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
-            const t = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('live-clock').innerText = t;
-            document.getElementById('live-clock-big').innerText = t;
-        }
-
+        function renderAll() { renderDashboard(); renderMonthlyGoal(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus(); }
+        function updateDateAndClock() { const n = new Date(); document.getElementById('current-date').innerText = n.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }); const t = n.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); document.getElementById('live-clock').innerText = t; document.getElementById('live-clock-big').innerText = t; }
+        
+        // CÁLCULO CORREGIDO PARA MOSTRAR 168H COMO META TOTAL DEL MES
         function renderMonthlyGoal() {
-            const now = new Date();
-            const cm = now.getMonth(), cy = now.getFullYear(), td = now.getDate();
+            const now = new Date(), cm = now.getMonth(), cy = now.getFullYear();
             document.getElementById('month-label').innerText = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
             
-            let wpd = 0;
-            for (let d = 1; d <= td; d++) { const dt = new Date(cy, cm, d); if (dt.getDay() !== 0 && dt.getDay() !== 6) wpd++; }
+            // Calcular total de días laborables del mes completo (no solo los pasados)
+            const lastDayOfMonth = new Date(cy, cm + 1, 0).getDate();
+            let totalWorkingDays = 0;
+            for (let d = 1; d <= lastDayOfMonth; d++) {
+                const dt = new Date(cy, cm, d);
+                if (dt.getDay() !== 0 && dt.getDay() !== 6) totalWorkingDays++;
+            }
             
-            const target = wpd * 8;
+            const target = totalWorkingDays * 8; // 40h semanales = 8h/día -> Nov 2026 = 21 días * 8 = 168h
+            
+            // Sumar horas trabajadas REALES este mes
             let worked = 0;
             appData.jornadas.forEach(j => {
                 const jd = new Date(j.fecha);
-                if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada && j.salida && j.entrada.trim() && j.salida.trim()) {
+                if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada?.trim() && j.salida?.trim()) {
                     worked += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000;
                 }
             });
 
             document.getElementById('monthly-worked').innerText = worked.toFixed(1) + " h";
-            document.getElementById('monthly-target').innerText = target + " h";
-            document.getElementById('monthly-progress-bar').style.width = Math.min((worked / target) * 100, 100) + "%";
+            document.getElementById('monthly-target').innerText = target + " h"; // Aquí saldrá 168 h
             
-            const diff = worked - target;
+            const pct = Math.min((worked / target) * 100, 100);
+            document.getElementById('monthly-progress-bar').style.width = pct + "%";
+            
+            const diff = target - worked;
             const bal = document.getElementById('monthly-balance');
-            if (Math.abs(diff) < 0.1) { bal.innerText = "✅ Vas exactamente al día"; bal.className = "text-xs text-slate-500 mt-2 text-center font-bold"; }
-            else if (diff > 0) { bal.innerText = `🟢 Vas ${diff.toFixed(1)}h por delante`; bal.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-2 text-center font-bold"; }
-            else { bal.innerText = `🔴 Te faltan ${Math.abs(diff).toFixed(1)}h para ir al día`; bal.className = "text-xs text-red-500 mt-2 text-center font-bold"; }
+            if (diff <= 0) { bal.innerText = "✅ ¡Objetivo mensual cumplido!"; bal.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-2 text-center font-bold"; }
+            else { bal.innerText = `🔴 Te faltan ${diff.toFixed(1)}h para completar el mes`; bal.className = "text-xs text-red-500 mt-2 text-center font-bold"; }
         }
 
         function renderDashboard() {
             let te = 0; appData.jornadas.forEach(j => te += parseFloat(j.horas_extra || 0));
-            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
-            const rate = rs ? parseFloat(rs.valor) : 19.69;
+            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); const rate = rs ? parseFloat(rs.valor) : 19.69;
             let ptv = 0, ptc = 0, tp = 0;
             appData.viajes.forEach(v => { const a = parseFloat(v.importe || 0); if (v.pagado === 1) tp += a; else { ptv += a; ptc++; } });
             appData.pagos.forEach(p => { const a = parseFloat(p.importe || 0); if (a > 0 && p.categoria !== 'viaje') tp += a; });
-            
-            document.getElementById('total-extra-hours').innerText = te.toFixed(2);
-            document.getElementById('total-extra-value').innerText = (te * rate).toFixed(2) + " €";
-            document.getElementById('display-rate').innerText = rate.toFixed(2);
-            document.getElementById('pending-trips-value').innerText = ptv.toFixed(2) + " €";
-            document.getElementById('pending-trips-count').innerText = `${ptc} viaje${ptc !== 1 ? 's' : ''}`;
-            document.getElementById('total-paid-value').innerText = tp.toFixed(2) + " €";
+            document.getElementById('total-extra-hours').innerText = te.toFixed(2); document.getElementById('total-extra-value').innerText = (te * rate).toFixed(2) + " €";
+            document.getElementById('display-rate').innerText = rate.toFixed(2); document.getElementById('pending-trips-value').innerText = ptv.toFixed(2) + " €";
+            document.getElementById('pending-trips-count').innerText = `${ptc} viaje${ptc !== 1 ? 's' : ''}`; document.getElementById('total-paid-value').innerText = tp.toFixed(2) + " €";
         }
 
         function renderChart() {
@@ -573,19 +238,14 @@
         }
 
         function getJornadaEstado(j) {
-            if (j.estado === 'confirmado') return 'confirmado';
-            if (j.estado === 'provisional') return 'provisional';
+            if (j.estado === 'confirmado') return 'confirmado'; if (j.estado === 'provisional') return 'provisional';
             const n = (j.notas || '').toLowerCase();
             if (n.includes('[confirmado]') || n.includes('[revisado]')) return 'confirmado';
             if (n.includes('provisional') || n.includes('orientativa')) return 'provisional';
             return 'confirmado';
         }
 
-        function setFilter(f) {
-            currentFilter = f;
-            document.querySelectorAll('.filter-pill').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
-            renderJornadas();
-        }
+        function setFilter(f) { currentFilter = f; document.querySelectorAll('.filter-pill').forEach(b => b.classList.toggle('active', b.dataset.filter === f)); renderJornadas(); }
 
         function renderJornadas() {
             let sorted = [...appData.jornadas].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
@@ -595,70 +255,30 @@
 
             const cc = document.getElementById('jornadas-cards'); cc.innerHTML = '';
             sorted.slice(0, 50).forEach(j => {
-                const est = getJornadaEstado(j);
-                const bc = est === 'provisional' ? 'badge-provisional' : 'badge-confirmado';
-                const bt = est === 'provisional' ? 'Provisional' : 'Confirmado';
+                const est = getJornadaEstado(j); const bc = est === 'provisional' ? 'badge-provisional' : 'badge-confirmado'; const bt = est === 'provisional' ? 'Provisional' : 'Confirmado';
                 const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha";
-                cc.innerHTML += `<div class="data-card">
-                    <div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}</p><p class="text-xs text-slate-500 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'long'})}</p></div><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></div>
-                    <div class="flex items-center justify-between text-sm"><span class="text-slate-600 dark:text-slate-300"><i class="fa-regular fa-clock mr-1"></i>${hr}</span><span class="font-bold ${j.horas_extra > 0 ? 'text-accent' : 'text-slate-400'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span></div>
-                    <div class="grid grid-cols-2 gap-2 mt-2">
-                        <button onclick="openExtraModal(${j.id})" class="action-btn btn-add-extra"><i class="fa-solid fa-plus"></i> Añadir Extra</button>
-                        <button onclick="openEditModal(${j.id})" class="action-btn btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
-                    </div>
-                </div>`;
+                cc.innerHTML += `<div class="data-card"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'})}</p><p class="text-xs text-slate-500 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'long'})}</p></div><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></div><div class="flex items-center justify-between text-sm"><span class="text-slate-600 dark:text-slate-300"><i class="fa-regular fa-clock mr-1"></i>${hr}</span><span class="font-bold ${j.horas_extra > 0 ? 'text-accent' : 'text-slate-400'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span></div><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="openExtraModal(${j.id})" class="action-btn btn-add-extra"><i class="fa-solid fa-plus"></i> Añadir Extra</button><button onclick="openEditModal(${j.id})" class="action-btn btn-edit"><i class="fa-solid fa-pen"></i> Editar</button></div></div>`;
             });
 
             const tb = document.getElementById('jornadas-body'); tb.innerHTML = '';
             sorted.forEach(j => {
-                const est = getJornadaEstado(j);
-                const bc = est === 'provisional' ? 'badge-provisional' : 'badge-confirmado';
-                const bt = est === 'provisional' ? 'Provisional' : 'Confirmado';
+                const est = getJornadaEstado(j); const bc = est === 'provisional' ? 'badge-provisional' : 'badge-confirmado'; const bt = est === 'provisional' ? 'Provisional' : 'Confirmado';
                 const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha";
-                tb.innerHTML += `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                    <td class="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}<div class="text-xs text-slate-500 capitalize font-normal">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div></td>
-                    <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 font-mono">${hr}</td>
-                    <td class="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400">${j.horas_normales}</td>
-                    <td class="px-4 py-3 text-sm text-center font-bold text-accent">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td>
-                    <td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></td>
-                    <td class="px-4 py-3 text-right whitespace-nowrap">
-                        <button onclick="openExtraModal(${j.id})" class="text-xs font-bold bg-accent text-white px-2 py-1 rounded-lg mr-1"><i class="fa-solid fa-plus"></i> Extra</button>
-                        <button onclick="openEditModal(${j.id})" class="text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2 py-1 rounded-lg"><i class="fa-solid fa-pen"></i></button>
-                    </td>
-                </tr>`;
+                tb.innerHTML += `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-sm font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}<div class="text-xs text-slate-500 capitalize font-normal">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div></td><td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 font-mono">${hr}</td><td class="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400">${j.horas_normales}</td><td class="px-4 py-3 text-sm text-center font-bold text-accent">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td><td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${bc}">${bt}</span></td><td class="px-4 py-3 text-right whitespace-nowrap"><button onclick="openExtraModal(${j.id})" class="text-xs font-bold bg-accent text-white px-2 py-1 rounded-lg mr-1"><i class="fa-solid fa-plus"></i> Extra</button><button onclick="openEditModal(${j.id})" class="text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2 py-1 rounded-lg"><i class="fa-solid fa-pen"></i></button></td></tr>`;
             });
         }
 
-        // MODAL AÑADIR EXTRA
         function openExtraModal(id) {
-            editingId = id; currentModalType = 'add_extra';
-            const j = appData.jornadas.find(x => x.id === id);
+            editingId = id; currentModalType = 'add_extra'; const j = appData.jornadas.find(x => x.id === id);
             document.getElementById('modal-title').innerText = `Añadir Horas Extra - ${new Date(j.fecha).toLocaleDateString('es-ES')}`;
-            document.getElementById('modal-content').innerHTML = `
-                <p class="text-sm text-slate-500 mb-2">Horas extra actuales: <strong>${j.horas_extra}h</strong></p>
-                <input type="number" step="0.25" id="m-extra-hours" placeholder="Horas extra a añadir (ej: 1.5)" class="input-field">
-                <textarea id="m-extra-note" placeholder="Nota opcional sobre estas horas extra..." class="input-field mt-2" rows="2"></textarea>
-            `;
+            document.getElementById('modal-content').innerHTML = `<p class="text-sm text-slate-500 mb-2">Horas extra actuales: <strong>${j.horas_extra}h</strong></p><input type="number" step="0.25" id="m-extra-hours" placeholder="Horas extra a añadir (ej: 1.5)" class="input-field"><textarea id="m-extra-note" placeholder="Nota opcional..." class="input-field mt-2" rows="2"></textarea>`;
             document.getElementById('generic-modal').classList.remove('hidden');
         }
 
-        // MODAL EDITAR JORNADA
         function openEditModal(id) {
-            editingId = id; currentModalType = 'edit_jornada';
-            const j = appData.jornadas.find(x => x.id === id);
+            editingId = id; currentModalType = 'edit_jornada'; const j = appData.jornadas.find(x => x.id === id);
             document.getElementById('modal-title').innerText = `Editar Jornada - ${new Date(j.fecha).toLocaleDateString('es-ES')}`;
-            document.getElementById('modal-content').innerHTML = `
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-xs font-bold text-slate-500 uppercase">Entrada</label><input type="time" id="m-entrada" value="${j.entrada || ''}" class="input-field mt-1"></div>
-                    <div><label class="text-xs font-bold text-slate-500 uppercase">Salida</label><input type="time" id="m-salida" value="${j.salida || ''}" class="input-field mt-1"></div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 mt-3">
-                    <div><label class="text-xs font-bold text-slate-500 uppercase">H. Normales</label><input type="number" step="0.5" id="m-normales" value="${j.horas_normales}" class="input-field mt-1"></div>
-                    <div><label class="text-xs font-bold text-slate-500 uppercase">H. Extra</label><input type="number" step="0.25" id="m-extra" value="${j.horas_extra}" class="input-field mt-1"></div>
-                </div>
-                <label class="text-xs font-bold text-slate-500 uppercase mt-3 block">Notas</label>
-                <textarea id="m-notas" class="input-field mt-1" rows="3">${j.notas || ''}</textarea>
-            `;
+            document.getElementById('modal-content').innerHTML = `<div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-bold text-slate-500 uppercase">Entrada</label><input type="time" id="m-entrada" value="${j.entrada || ''}" class="input-field mt-1"></div><div><label class="text-xs font-bold text-slate-500 uppercase">Salida</label><input type="time" id="m-salida" value="${j.salida || ''}" class="input-field mt-1"></div></div><div class="grid grid-cols-2 gap-3 mt-3"><div><label class="text-xs font-bold text-slate-500 uppercase">H. Normales</label><input type="number" step="0.5" id="m-normales" value="${j.horas_normales}" class="input-field mt-1"></div><div><label class="text-xs font-bold text-slate-500 uppercase">H. Extra</label><input type="number" step="0.25" id="m-extra" value="${j.horas_extra}" class="input-field mt-1"></div></div><label class="text-xs font-bold text-slate-500 uppercase mt-3 block">Notas</label><textarea id="m-notas" class="input-field mt-1" rows="3">${j.notas || ''}</textarea>`;
             document.getElementById('generic-modal').classList.remove('hidden');
         }
 
@@ -666,21 +286,16 @@
 
         function saveModalData() {
             if (currentModalType === 'add_extra') {
-                const hrs = parseFloat(document.getElementById('m-extra-hours').value);
-                const note = document.getElementById('m-extra-note').value.trim();
+                const hrs = parseFloat(document.getElementById('m-extra-hours').value); const note = document.getElementById('m-extra-note').value.trim();
                 if (isNaN(hrs) || hrs <= 0) { showToast('⚠️ Introduce horas válidas', 'warning'); return; }
-                const j = appData.jornadas.find(x => x.id === editingId);
-                j.horas_extra = parseFloat((j.horas_extra + hrs).toFixed(2));
+                const j = appData.jornadas.find(x => x.id === editingId); j.horas_extra = parseFloat((j.horas_extra + hrs).toFixed(2));
                 if (note) j.notas = (j.notas ? j.notas + ' | ' : '') + `+${hrs}h extra: ${note}`;
                 showToast(`✅ Añadidas ${hrs}h extra`, 'success');
             } else if (currentModalType === 'edit_jornada') {
                 const j = appData.jornadas.find(x => x.id === editingId);
-                j.entrada = document.getElementById('m-entrada').value;
-                j.salida = document.getElementById('m-salida').value;
-                j.horas_normales = parseFloat(document.getElementById('m-normales').value) || 0;
-                j.horas_extra = parseFloat(document.getElementById('m-extra').value) || 0;
-                j.notas = document.getElementById('m-notas').value;
-                showToast('✅ Jornada actualizada', 'success');
+                j.entrada = document.getElementById('m-entrada').value; j.salida = document.getElementById('m-salida').value;
+                j.horas_normales = parseFloat(document.getElementById('m-normales').value) || 0; j.horas_extra = parseFloat(document.getElementById('m-extra').value) || 0;
+                j.notas = document.getElementById('m-notas').value; showToast('✅ Jornada actualizada', 'success');
             } else if (currentModalType === 'viaje') {
                 const c = document.getElementById('m-concepto').value.trim(), f = document.getElementById('m-fecha').value, i = parseFloat(document.getElementById('m-importe').value);
                 if (!c || !f || isNaN(i)) { showToast('⚠️ Rellena todos los campos', 'warning'); return; }
@@ -690,147 +305,26 @@
             closeModal(); saveData();
         }
 
-        function openTripModal() {
-            currentModalType = 'viaje'; editingId = null;
-            document.getElementById('modal-title').innerText = 'Nuevo Viaje';
-            document.getElementById('modal-content').innerHTML = `
-                <input type="text" id="m-concepto" placeholder="Concepto del viaje" class="input-field">
-                <input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-field">
-                <input type="number" step="0.01" id="m-importe" placeholder="Importe (€)" class="input-field">
-            `;
-            document.getElementById('generic-modal').classList.remove('hidden');
-        }
-
+        function openTripModal() { currentModalType = 'viaje'; editingId = null; document.getElementById('modal-title').innerText = 'Nuevo Viaje'; document.getElementById('modal-content').innerHTML = `<input type="text" id="m-concepto" placeholder="Concepto del viaje" class="input-field"><input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-field"><input type="number" step="0.01" id="m-importe" placeholder="Importe (€)" class="input-field">`; document.getElementById('generic-modal').classList.remove('hidden'); }
         function confirmAllProvisional() {
-            let count = 0;
-            appData.jornadas.forEach(j => {
-                if (getJornadaEstado(j) === 'provisional') {
-                    j.estado = 'confirmado';
-                    // Asignar horario si no tiene
-                    if (!j.entrada || !j.entrada.trim()) { j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0; }
-                    if (!(j.notas || '').toLowerCase().includes('[confirmado]')) j.notas = '[CONFIRMADO] ' + (j.notas || '');
-                    count++;
-                }
-            });
-            if (count > 0) { saveData(); showToast(`✅ ${count} jornada${count !== 1 ? 's' : ''} confirmada${count !== 1 ? 's' : ''}`, 'success'); }
-            else showToast('ℹ️ No hay provisionales pendientes', 'info');
+            let count = 0; appData.jornadas.forEach(j => { if (getJornadaEstado(j) === 'provisional') { j.estado = 'confirmado'; if (!j.entrada?.trim()) { j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0; } if (!(j.notas || '').toLowerCase().includes('[confirmado]')) j.notas = '[CONFIRMADO] ' + (j.notas || ''); count++; } });
+            if (count > 0) { saveData(); showToast(`✅ ${count} jornada${count !== 1 ? 's' : ''} confirmada${count !== 1 ? 's' : ''}`, 'success'); } else showToast('ℹ️ No hay provisionales pendientes', 'info');
         }
-
-        function renderViajes() {
-            const l = document.getElementById('viajes-list'); l.innerHTML = '';
-            const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-            if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin viajes</div>'; return; }
-            s.forEach(v => {
-                const p = v.pagado === 1;
-                l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}">
-                    <div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p><p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>
-                    ${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-md"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}
-                </div>`;
-            });
-        }
-
-        function markTripPaid(id) {
-            const t = appData.viajes.find(v => v.id === id);
-            if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado via App"; saveData(); showToast('✅ Viaje cobrado', 'success'); }
-        }
-
-        function renderPagos() {
-            const l = document.getElementById('pagos-list'); l.innerHTML = '';
-            const s = [...appData.pagos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-            if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin pagos</div>'; return; }
-            s.forEach(p => { l.innerHTML += `<div class="data-card flex items-center justify-between"><div><p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p><p class="text-xs text-slate-500">${new Date(p.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-lg font-extrabold text-success">${parseFloat(p.importe || 0).toFixed(2)} €</p></div>`; });
-        }
-
-        function updateTodayStatus() {
-            const t = new Date().toISOString().split('T')[0];
-            const j = appData.jornadas.find(x => x.fecha === t);
-            const s = document.getElementById('today-status');
-            if (!j) s.innerHTML = '<span class="text-slate-400"><i class="fa-regular fa-circle mr-1"></i>Sin fichar hoy</span>';
-            else if (!j.salida || !j.salida.trim()) s.innerHTML = `<span class="text-emerald-500 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>Trabajando desde ${j.entrada}</span>`;
-            else s.innerHTML = '<span class="text-slate-500 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Jornada completada</span>';
-        }
-
-        function clockAction(type) {
-            const now = new Date(); const ts = now.toTimeString().substring(0, 5); const ds = now.toISOString().split('T')[0];
-            let j = appData.jornadas.find(x => x.fecha === ds);
-            if (!j) { j = { id: Date.now(), fecha: ds, entrada: "", salida: "", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[FICHADO EN APP]", creado: now.toISOString() }; appData.jornadas.push(j); }
-            if (type === 'entrada') { j.entrada = ts; j.estado = "confirmado"; showToast(`✅ Entrada: ${ts}`, 'success'); }
-            else {
-                if (!j.entrada || !j.entrada.trim()) { showToast('⚠️ Primero registra entrada', 'warning'); return; }
-                j.salida = ts;
-                const h = (new Date(`${ds}T${ts}`) - new Date(`${ds}T${j.entrada}`)) / 3600000;
-                if (h > 8) { j.horas_extra = parseFloat((h - 8).toFixed(2)); j.horas_normales = 8.0; } else { j.horas_normales = parseFloat(h.toFixed(2)); j.horas_extra = 0.0; }
-                showToast(`🔴 Salida: ${ts} | Total: ${h.toFixed(2)}h`, 'success');
-            }
-            saveData();
-        }
-
-        function exportJSON() {
-            const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const l = document.createElement('a'); l.href = d; l.download = "ivory37_backup_" + new Date().toISOString().slice(0,10) + ".json"; document.body.appendChild(l); l.click(); document.body.removeChild(l);
-            showToast('💾 Backup descargado', 'success');
-        }
-
-        function importJSON(e) {
-            const f = e.target.files[0]; if (!f) return;
-            const r = new FileReader();
-            r.onload = function(ev) {
-                try {
-                    const imp = JSON.parse(ev.target.result);
-                    if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); saveData(); showToast('✅ Datos restaurados', 'success'); setTimeout(() => location.reload(), 1000); }
-                    else showToast('❌ Formato incorrecto', 'error');
-                } catch { showToast('❌ Error al leer', 'error'); }
-            };
-            r.readAsText(f); e.target.value = '';
-        }
-
-        function exportCSV() {
-            const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas","creado"];
-            const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`,j.creado||'']);
-            const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n");
-            const b = new Blob([c], { type: 'text/csv;charset=utf-8;' });
-            const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_ivory37_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l);
-            showToast('📊 CSV exportado', 'success');
-        }
-
+        function renderViajes() { const l = document.getElementById('viajes-list'); l.innerHTML = ''; const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin viajes</div>'; return; } s.forEach(v => { const p = v.pagado === 1; l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p><p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-md"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}</div>`; }); }
+        function markTripPaid(id) { const t = appData.viajes.find(v => v.id === id); if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado via App"; saveData(); showToast('✅ Viaje cobrado', 'success'); } }
+        function renderPagos() { const l = document.getElementById('pagos-list'); l.innerHTML = ''; const s = [...appData.pagos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin pagos</div>'; return; } s.forEach(p => { l.innerHTML += `<div class="data-card flex items-center justify-between"><div><p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p><p class="text-xs text-slate-500">${new Date(p.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-lg font-extrabold text-success">${parseFloat(p.importe || 0).toFixed(2)} €</p></div>`; }); }
+        function updateTodayStatus() { const t = new Date().toISOString().split('T')[0]; const j = appData.jornadas.find(x => x.fecha === t); const s = document.getElementById('today-status'); if (!j) s.innerHTML = '<span class="text-slate-400"><i class="fa-regular fa-circle mr-1"></i>Sin fichar hoy</span>'; else if (!j.salida?.trim()) s.innerHTML = `<span class="text-emerald-500 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>Trabajando desde ${j.entrada}</span>`; else s.innerHTML = '<span class="text-slate-500 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Jornada completada</span>'; }
+        function clockAction(type) { const now = new Date(); const ts = now.toTimeString().substring(0, 5); const ds = now.toISOString().split('T')[0]; let j = appData.jornadas.find(x => x.fecha === ds); if (!j) { j = { id: Date.now(), fecha: ds, entrada: "", salida: "", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[FICHADO EN APP]", creado: now.toISOString() }; appData.jornadas.push(j); } if (type === 'entrada') { j.entrada = ts; j.estado = "confirmado"; showToast(`✅ Entrada: ${ts}`, 'success'); } else { if (!j.entrada?.trim()) { showToast('⚠️ Primero registra entrada', 'warning'); return; } j.salida = ts; const h = (new Date(`${ds}T${ts}`) - new Date(`${ds}T${j.entrada}`)) / 3600000; if (h > 8) { j.horas_extra = parseFloat((h - 8).toFixed(2)); j.horas_normales = 8.0; } else { j.horas_normales = parseFloat(h.toFixed(2)); j.horas_extra = 0.0; } showToast(`🔴 Salida: ${ts} | Total: ${h.toFixed(2)}h`, 'success'); } saveData(); }
+        function exportJSON() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2)); const l = document.createElement('a'); l.href = d; l.download = "ivory37_backup_" + new Date().toISOString().slice(0,10) + ".json"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('💾 Backup descargado', 'success'); }
+        function importJSON(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(ev) { try { const imp = JSON.parse(ev.target.result); if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); saveData(); showToast('✅ Datos restaurados', 'success'); setTimeout(() => location.reload(), 1000); } else showToast('❌ Formato incorrecto', 'error'); } catch { showToast('❌ Error al leer', 'error'); } }; r.readAsText(f); e.target.value = ''; }
+        function exportCSV() { const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas","creado"]; const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`,j.creado||'']); const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_ivory37_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('📊 CSV exportado', 'success'); }
         function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo?')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
-
-        function switchTab(t) {
-            document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden'));
-            document.getElementById(`content-${t}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
+        function switchTab(t) { document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); document.getElementById(`content-${t}`).classList.remove('hidden'); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function toggleTheme() { document.documentElement.classList.toggle('dark'); setTimeout(renderChart, 100); }
-
-        function renderConfig() {
-            const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor;
-            const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor;
-        }
-
-        function saveConfig() {
-            const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value;
-            let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r });
-            let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc });
-            saveData(); showToast('✅ Configuración guardada', 'success');
-        }
-
-        function registerSW() {
-            if ('serviceWorker' in navigator) {
-                const c = `const C='ivory37-v10'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
-                navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{});
-            }
-        }
-
-        function showToast(m, t = 'success') {
-            const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message');
-            msg.innerText = m;
-            icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500';
-            toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000);
-        }
-
+        function renderConfig() { const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor; const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor; }
+        function saveConfig() { const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value; let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc }); saveData(); showToast('✅ Configuración guardada', 'success'); }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v12'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
 </body>
