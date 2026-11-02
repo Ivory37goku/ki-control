@@ -128,25 +128,32 @@
             </div>
             <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
             <div id="content-pagos" class="tab-content hidden fade-in"><h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Histórico Pagos</h2><div class="space-y-2" id="pagos-list"></div></div>
+            
+            <!-- TAB AJUSTES CON LOGO MEJORADO -->
             <div id="content-ajustes" class="tab-content hidden fade-in">
                 <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Personalización</h2>
                 <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4">
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de la App</label><input type="text" id="config-appname" class="input-field" placeholder="工V龱尺ㄚ㇌7"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Color Primario (Hex)</label><input type="color" id="config-color" class="input-field h-12 p-1" value="#f97316"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Color Primario (Hex)</label><input type="color" id="config-color" class="input-field h-12 p-1 w-full" value="#f97316"></div>
+                    
+                    <!-- SECCIÓN DE LOGO MEJORADA Y VISIBLE -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Logo Personalizado</label>
-                        <div class="flex items-center gap-3">
-                            <label class="flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-dashed border-slate-300 dark:border-slate-600 cursor-pointer hover:border-primary transition overflow-hidden bg-slate-50 dark:bg-slate-800">
-                                <img id="logo-preview" src="" class="w-full h-full object-cover hidden">
-                                <i id="logo-placeholder" class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
-                                <input type="file" id="config-logo" class="hidden" accept="image/*" onchange="handleLogoUpload(event)">
-                            </label>
-                            <div class="flex-1">
-                                <p class="text-xs text-slate-500 mb-1">Sube PNG, JPG o SVG (se ajustará al círculo)</p>
-                                <button onclick="removeCustomLogo()" class="text-xs text-red-500 font-bold hover:underline">Restaurar logo por defecto</button>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Logo Personalizado</label>
+                        <div class="flex flex-col items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 transition hover:border-primary dark:hover:border-primary cursor-pointer" onclick="document.getElementById('config-logo').click()">
+                            <div class="relative w-24 h-24 rounded-full overflow-hidden bg-white dark:bg-slate-700 shadow-inner flex items-center justify-center">
+                                <img id="logo-preview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
+                                <i id="logo-placeholder" class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400"></i>
                             </div>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-200">📁 Toca o arrastra tu logo aquí</p>
+                            <p class="text-xs text-slate-500">Formatos: JPG, PNG o SVG • Máx 2MB</p>
+                            <input type="file" id="config-logo" class="hidden" accept="image/jpeg,image/png,image/svg+xml" onchange="handleLogoUpload(event)">
                         </div>
+                        <button onclick="removeCustomLogo()" class="w-full mt-2 py-2 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/40 transition">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Restaurar logo por defecto (Goku)
+                        </button>
                     </div>
+                    <!-- FIN SECCIÓN LOGO MEJORADA -->
+
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label><input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold"></div>
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label><input type="text" id="config-schedule" class="input-field"></div>
                     <div class="flex gap-2"><button onclick="requestNotificationPermission()" class="btn-secondary flex-1"><i class="fa-solid fa-bell mr-2"></i>Activar Notificaciones</button><button onclick="saveConfig()" class="btn-primary flex-1"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Todo</button></div>
