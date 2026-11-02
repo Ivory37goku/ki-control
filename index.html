@@ -68,6 +68,10 @@
         
         /* Variables CSS para marca blanca */
         :root { --app-primary: #f97316; --app-primary-dark: #ea580c; }
+        
+        /* Logo personalizado */
+        #custom-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        #default-logo-svg { display: block; }
     </style>
     <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } }; </script>
 </head>
@@ -79,8 +83,9 @@
         <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
             <div class="px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div id="app-logo" class="w-11 h-11 rounded-full flex items-center justify-center goku-glow text-white shadow-lg" style="background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark))">
-                        <svg viewBox="0 0 24 24" class="w-7 h-7 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
+                    <div id="app-logo" class="w-11 h-11 rounded-full flex items-center justify-center goku-glow text-white shadow-lg overflow-hidden" style="background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark))">
+                        <img id="custom-logo-img" src="" alt="Logo" class="hidden">
+                        <svg id="default-logo-svg" viewBox="0 0 24 24" class="w-7 h-7 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
                     </div>
                     <div><h1 id="app-name" class="font-extrabold text-lg leading-none text-slate-900 dark:text-white tracking-tight">工V龱尺ㄚ㇌7</h1><span class="text-[10px] font-bold uppercase tracking-widest" style="color: var(--app-primary)">Control Laboral Pro</span></div>
                 </div>
@@ -128,6 +133,20 @@
                 <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4">
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de la App</label><input type="text" id="config-appname" class="input-field" placeholder="工V龱尺ㄚ㇌7"></div>
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Color Primario (Hex)</label><input type="color" id="config-color" class="input-field h-12 p-1" value="#f97316"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Logo Personalizado</label>
+                        <div class="flex items-center gap-3">
+                            <label class="flex flex-col items-center justify-center w-16 h-16 rounded-full border-2 border-dashed border-slate-300 dark:border-slate-600 cursor-pointer hover:border-primary transition overflow-hidden bg-slate-50 dark:bg-slate-800">
+                                <img id="logo-preview" src="" class="w-full h-full object-cover hidden">
+                                <i id="logo-placeholder" class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
+                                <input type="file" id="config-logo" class="hidden" accept="image/*" onchange="handleLogoUpload(event)">
+                            </label>
+                            <div class="flex-1">
+                                <p class="text-xs text-slate-500 mb-1">Sube PNG, JPG o SVG (se ajustará al círculo)</p>
+                                <button onclick="removeCustomLogo()" class="text-xs text-red-500 font-bold hover:underline">Restaurar logo por defecto</button>
+                            </div>
+                        </div>
+                    </div>
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label><input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold"></div>
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label><input type="text" id="config-schedule" class="input-field"></div>
                     <div class="flex gap-2"><button onclick="requestNotificationPermission()" class="btn-secondary flex-1"><i class="fa-solid fa-bell mr-2"></i>Activar Notificaciones</button><button onclick="saveConfig()" class="btn-primary flex-1"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Todo</button></div>
@@ -140,83 +159,13 @@
         <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden"><div class="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-sm font-bold"><i class="fa-solid fa-check-circle text-green-500" id="toast-icon"></i><span id="toast-message">Mensaje</span></div></div>
     </div>
     <script>
-        // ============================================
-        // DATOS ORIGINALES INTEGRADOS (SANITIZED)
-        // ============================================
-        const rawJsonString = `{
- "jornadas": [
-{"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.166926"},
-{"id": 6, "fecha": "2026-09-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:34:44.773560"},
-{"id": 7, "fecha": "2026-09-03", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:01.775604"},
-{"id": 8, "fecha": "2026-09-04", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:15.754161"},
-{"id": 9, "fecha": "2026-09-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:31.909232"},
-{"id": 10, "fecha": "2026-09-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:10.125659"},
-{"id": 11, "fecha": "2026-09-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:22.817899"},
-{"id": 12, "fecha": "2026-09-10", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:27.457300"},
-{"id": 13, "fecha": "2026-09-11", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:40.012600"},
-{"id": 14, "fecha": "2026-09-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:54.275565"},
-{"id": 15, "fecha": "2026-09-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:59.266085"},
-{"id": 16, "fecha": "2026-09-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:03.692794"},
-{"id": 17, "fecha": "2026-09-17", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:08.136252"},
-{"id": 18, "fecha": "2026-09-18", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:15.829232"},
-{"id": 19, "fecha": "2026-09-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:20.329576"},
-{"id": 20, "fecha": "2026-09-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:24.685848"},
-{"id": 21, "fecha": "2026-09-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:29.086383"},
-{"id": 22, "fecha": "2026-09-24", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:33.449767"},
-{"id": 23, "fecha": "2026-09-25", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:38.061306"},
-{"id": 24, "fecha": "2026-09-28", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:42.407174"},
-{"id": 25, "fecha": "2026-09-29", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:47.106188"},
-{"id": 26, "fecha": "2026-09-30", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:09.463321"},
-{"id": 2, "fecha": "2026-10-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.167100"},
-{"id": 5, "fecha": "2026-10-26", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.75, "notas": "Incluye 0,50 h ya fichadas y 1,25 h del reparto provisional de 21,00 h extra de octubre. Total del día: 1,75 h; distribución orientativa, confirmar con los fichajes reales.", "creado": "2026-10-26T19:25:34.494620"},
-{"id": 28, "fecha": "2026-10-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:45.643686"},
-{"id": 29, "fecha": "2026-10-05", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:52.730691"},
-{"id": 30, "fecha": "2026-10-06", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:57.080659"},
-{"id": 31, "fecha": "2026-10-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:01.456407"},
-{"id": 32, "fecha": "2026-10-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:05.848906"},
-{"id": 33, "fecha": "2026-10-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:13.421841"},
-{"id": 34, "fecha": "2026-10-12", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:20.274440"},
-{"id": 35, "fecha": "2026-10-13", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:31.033270"},
-{"id": 36, "fecha": "2026-10-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:40.943971"},
-{"id": 37, "fecha": "2026-10-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:45.649066"},
-{"id": 38, "fecha": "2026-10-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:50.066439"},
-{"id": 39, "fecha": "2026-10-19", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:57.151093"},
-{"id": 40, "fecha": "2026-10-20", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:01.622995"},
-{"id": 41, "fecha": "2026-10-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:09.226835"},
-{"id": 42, "fecha": "2026-10-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:20.008499"},
-{"id": 43, "fecha": "2026-10-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:24.365664"},
-{"id": 44, "fecha": "2026-10-27", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-27T07:47:29.370023"},
-{"id": 45, "fecha": "2026-10-28", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.5, "notas": "[REVISADO]", "creado": "2026-10-28T07:59:55.308797"},
-{"id": 46, "fecha": "2026-10-29", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO] Fichaje automático según el horario habitual; no verificado manualmente. Corrige este registro si el horario real fue distinto.", "creado": "2026-10-29T16:00:12.526141+00:00"},
-{"id": 47, "fecha": "2026-10-30", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-30T15:52:43.083260"}
-],
- "viajes": [
-{"id": 1, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 1", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167140"},
-{"id": 2, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 2", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167180"},
-{"id": 3, "fecha": "2026-09-26", "concepto": "Viaje de trabajo", "importe": 400.0, "pagado": 1, "fecha_pago": "2026-10-26", "notas": "", "creado": "2026-10-26T18:58:40.962023"}
-],
- "pagos": [
-{"id": 1, "fecha": "2026-10-26", "concepto": "2 viajes septiembre", "importe": 0.0, "categoria": "viaje", "notas": "", "creado": "2026-10-26T19:03:09.211680"}
-],
- "ajustes": [
-{"clave": "seeded_demo", "valor": "yes"},
-{"clave": "hora_extra_euros", "valor": "19.69"},
-{"clave": "horas_normales_dia", "valor": "8"},
-{"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
-{"clave": "dias_trabajo", "valor": "Lunes a viernes"},
-{"clave": "app_name", "valor": "工V龱尺ㄚ㇌7"},
-{"clave": "app_color", "valor": "#f97316"}
-],
- "notas": []
-}`;
-
         let appData = null, currentModalType = null, editingId = null, chartInstance = null, currentFilter = 'all';
         let offlineQueue = [];
         
-        function initApp() {
+        async function initApp() {
             const saved = localStorage.getItem('ivory37_data_v1');
-            if (saved) { try { appData = JSON.parse(saved); } catch { appData = buildInitialData(); } } 
-            else { appData = buildInitialData(); }
+            if (saved) { try { appData = JSON.parse(saved); } catch { appData = await loadDefaultData(); } } 
+            else { appData = await loadDefaultData(); }
             
             applyBranding();
             sanitizeConfirmedRecords(); ensureFullYearData(); updateDateAndClock(); setInterval(updateDateAndClock, 1000);
@@ -227,25 +176,77 @@
             renderAll(); registerSW();
         }
 
-        function buildInitialData() {
-            const parsed = JSON.parse(rawJsonString);
-            return { jornadas: [...parsed.jornadas, ...generateMissingJornadas(parsed.jornadas)], viajes: parsed.viajes, pagos: parsed.pagos, ajustes: parsed.ajustes, notas: parsed.notas || [] };
+        async function loadDefaultData() {
+            try {
+                const res = await fetch('data.json');
+                const raw = await res.json();
+                // Sanitizar claves con espacios del JSON original automáticamente
+                const clean = JSON.parse(JSON.stringify(raw, (k, v) => typeof k === 'string' ? k.trim() : k, 2));
+                return { jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], viajes: clean.viajes, pagos: clean.pagos, ajustes: clean.ajustes, notas: clean.notas || [] };
+            } catch (e) { console.error("Error cargando data.json", e); return { jornadas: [], viajes: [], pagos: [], ajustes: [], notas: [] }; }
         }
 
-        // MARCA BLANCA
+        // MARCA BLANCA Y LOGO
         function applyBranding() {
             const nameSetting = appData.ajustes.find(a => a.clave === "app_name");
             const colorSetting = appData.ajustes.find(a => a.clave === "app_color");
+            const logoSetting = appData.ajustes.find(a => a.clave === "app_logo");
+            
             const appName = nameSetting ? nameSetting.valor : "工V龱尺ㄚ㇌7";
             const appColor = colorSetting ? colorSetting.valor : "#f97316";
             
             document.documentElement.style.setProperty('--app-primary', appColor);
-            // Calcular versión oscura del color
             const r = parseInt(appColor.slice(1,3), 16), g = parseInt(appColor.slice(3,5), 16), b = parseInt(appColor.slice(5,7), 16);
             document.documentElement.style.setProperty('--app-primary-dark', `rgb(${Math.max(0,r-30)}, ${Math.max(0,g-30)}, ${Math.max(0,b-30)})`);
             
             document.getElementById('app-name').innerText = appName;
             document.title = `${appName} | Control Laboral Pro`;
+            
+            // Aplicar logo si existe
+            const imgEl = document.getElementById('custom-logo-img');
+            const svgEl = document.getElementById('default-logo-svg');
+            const previewEl = document.getElementById('logo-preview');
+            const placeholderEl = document.getElementById('logo-placeholder');
+            
+            if (logoSetting && logoSetting.valor) {
+                imgEl.src = logoSetting.valor;
+                imgEl.classList.remove('hidden');
+                svgEl.style.display = 'none';
+                if(previewEl) { previewEl.src = logoSetting.valor; previewEl.classList.remove('hidden'); }
+                if(placeholderEl) placeholderEl.style.display = 'none';
+            } else {
+                imgEl.classList.add('hidden');
+                svgEl.style.display = 'block';
+                if(previewEl) previewEl.classList.add('hidden');
+                if(placeholderEl) placeholderEl.style.display = 'block';
+            }
+        }
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Logo = e.target.result;
+                // Guardar temporalmente en ajustes para persistir al guardar configuración
+                let logoSetting = appData.ajustes.find(a => a.clave === "app_logo");
+                if (logoSetting) logoSetting.valor = base64Logo;
+                else appData.ajustes.push({ clave: "app_logo", valor: base64Logo });
+                
+                // Actualizar vista previa inmediatamente
+                applyBranding();
+                showToast('✅ Logo cargado. Pulsa "Guardar Todo" para confirmar.', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeCustomLogo() {
+            const logoSetting = appData.ajustes.find(a => a.clave === "app_logo");
+            if (logoSetting) logoSetting.valor = "";
+            applyBranding();
+            saveData();
+            showToast('🔄 Logo restaurado por defecto', 'info');
         }
 
         function sanitizeConfirmedRecords() {
@@ -426,7 +427,6 @@
             const appName = document.getElementById('app-name').innerText;
             const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--app-primary').trim() || '#f97316';
             
-            // Cabecera
             doc.setFillColor(primaryColor);
             doc.rect(0, 0, 210, 40, 'F');
             doc.setTextColor(255, 255, 255);
@@ -435,7 +435,6 @@
             doc.setFontSize(12);
             doc.text(`Informe Mensual - ${monthName}`, 20, 30);
             
-            // Resumen
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(14);
             doc.text("Resumen del Mes", 20, 55);
@@ -459,7 +458,6 @@
             doc.text(`Valor extras: ${(extras * rate).toFixed(2)} €`, 20, 79);
             doc.text(`Tarifa hora extra: ${rate.toFixed(2)} €/h`, 20, 86);
             
-            // Tabla de jornadas
             doc.setFontSize(14);
             doc.text("Detalle de Jornadas", 20, 100);
             doc.setFontSize(9);
@@ -487,7 +485,6 @@
                 y += 7;
             });
             
-            // Pie
             doc.setFontSize(8);
             doc.setTextColor(150, 150, 150);
             doc.text(`Generado el ${now.toLocaleString('es-ES')} - ${appName} Control Laboral Pro`, 20, 285);
@@ -513,17 +510,13 @@
 
         function scheduleNotifications() {
             if (!("Notification" in window) || Notification.permission !== "granted") return;
-            
-            // Recordatorio de entrada a las 08:00
             setTimeout(() => {
                 const now = new Date();
                 if (now.getHours() === 8 && now.getMinutes() === 0) {
                     const todayJob = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]);
                     if (!todayJob || !todayJob.entrada?.trim()) sendNotification("⏰ Recordatorio de Fichaje", "Son las 08:00. ¿Has registrado tu entrada?");
                 }
-            }, 60000); // Verifica cada minuto
-            
-            // Recordatorio de salida a las 16:00
+            }, 60000);
             setTimeout(() => {
                 const now = new Date();
                 if (now.getHours() === 16 && now.getMinutes() === 0) {
@@ -536,24 +529,13 @@
         // MODO OFFLINE MEJORADO
         function setupOfflineDetection() {
             const indicator = document.getElementById('offline-indicator');
-            
-            window.addEventListener('online', () => {
-                indicator.classList.remove('visible');
-                processOfflineQueue();
-                showToast('🟢 Conexión restaurada', 'success');
-            });
-            
-            window.addEventListener('offline', () => {
-                indicator.classList.add('visible');
-                showToast('🔴 Sin conexión. Los cambios se guardarán localmente.', 'warning');
-            });
-            
+            window.addEventListener('online', () => { indicator.classList.remove('visible'); processOfflineQueue(); showToast('🟢 Conexión restaurada', 'success'); });
+            window.addEventListener('offline', () => { indicator.classList.add('visible'); showToast('🔴 Sin conexión. Los cambios se guardarán localmente.', 'warning'); });
             if (!navigator.onLine) indicator.classList.add('visible');
         }
 
         function processOfflineQueue() {
             if (offlineQueue.length === 0) return;
-            // Aquí iría la lógica de sincronización con backend cuando exista
             offlineQueue = [];
             showToast('✅ Cambios pendientes sincronizados', 'success');
         }
