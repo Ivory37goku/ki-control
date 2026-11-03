@@ -102,9 +102,9 @@
                 <div class="grid grid-cols-2 gap-2"><button onclick="clockAction('entrada')" class="fingerprint-btn bg-gradient-to-br from-emerald-500 to-emerald-600 text-white"><i class="fa-solid fa-right-to-bracket"></i> Entrada</button><button onclick="clockAction('salida')" class="fingerprint-btn bg-gradient-to-br from-red-500 to-red-600 text-white"><i class="fa-solid fa-right-from-bracket"></i> Salida</button></div>
             </div>
             
-            <!-- DASHBOARD EJECUTIVO NUEVO -->
+            <!-- ÚNICO PANEL DE OBJETIVO MENSUAL (CON EL ROSCO) -->
             <div class="glass-panel rounded-2xl p-4 mb-4">
-                <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-chart-pie mr-2" style="color: var(--app-primary)"></i>Resumen Ejecutivo</h3>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-chart-pie mr-2" style="color: var(--app-primary)"></i>Objetivo Mensual</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                     <!-- Gráfico Donut -->
@@ -135,19 +135,7 @@
                     </div>
                 </div>
             </div>
-            <!-- FIN DASHBOARD EJECUTIVO -->
-
-            <div class="glass-panel rounded-2xl p-4 mb-4 border-l-4 border-l-secondary">
-                <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-bullseye mr-2 text-secondary"></i>Objetivo Mensual</h3><span class="text-xs font-bold text-slate-500" id="month-label">Noviembre 2026</span></div>
-                <div class="flex justify-between items-end mb-2">
-                    <div><p class="text-[10px] text-slate-500 uppercase font-bold">Llevas trabajadas</p><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-worked">0 h</p></div>
-                    <div class="text-right"><p class="text-[10px] text-slate-500 uppercase font-bold">Meta mensual (40h/sem)</p><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="monthly-target">168 h</p></div>
-                </div>
-                <div class="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div id="monthly-progress-bar" class="absolute top-0 left-0 h-full bg-secondary rounded-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-                <p class="text-xs text-slate-500 mt-2 text-center font-medium" id="monthly-balance">Calculando...</p>
-            </div>
+            <!-- FIN PANEL ÚNICO -->
 
             <div class="glass-panel rounded-2xl p-4 mb-4"><h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2" style="color: var(--app-primary)"></i>Evolución Horas Extra</h3><div class="relative h-48 w-full"><canvas id="monthlyChart"></canvas></div></div>
             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -403,10 +391,10 @@
 
         function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderAll(); processOfflineQueue(); }
         function saveDataSilent() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); }
-        function renderAll() { renderDashboard(); renderExecutiveDashboard(); renderMonthlyGoal(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus(); }
+        function renderAll() { renderDashboard(); renderExecutiveDashboard(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus(); }
         function updateDateAndClock() { const n = new Date(); document.getElementById('current-date').innerText = n.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }); const t = n.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); document.getElementById('live-clock').innerText = t; document.getElementById('live-clock-big').innerText = t; }
         
-        // DASHBOARD EJECUTIVO CON KPIs Y GRÁFICO DONUT
+        // DASHBOARD EJECUTIVO / OBJETIVO MENSUAL (ÚNICO PANEL CON ROSCO)
         function renderExecutiveDashboard() {
             const now = new Date(), cm = now.getMonth(), cy = now.getFullYear();
             const lastDayOfMonth = new Date(cy, cm + 1, 0).getDate();
@@ -483,23 +471,6 @@
             });
             
             document.getElementById('donut-percentage').innerText = Math.round(completionPct) + "%";
-        }
-        
-        function renderMonthlyGoal() {
-            const now = new Date(), cm = now.getMonth(), cy = now.getFullYear();
-            document.getElementById('month-label').innerText = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-            const lastDayOfMonth = new Date(cy, cm + 1, 0).getDate();
-            let totalWorkingDays = 0;
-            for (let d = 1; d <= lastDayOfMonth; d++) { const dt = new Date(cy, cm, d); if (dt.getDay() !== 0 && dt.getDay() !== 6) totalWorkingDays++; }
-            const target = totalWorkingDays * 8;
-            let worked = 0;
-            appData.jornadas.forEach(j => { const jd = new Date(j.fecha); if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada?.trim() && j.salida?.trim()) worked += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000; });
-            document.getElementById('monthly-worked').innerText = worked.toFixed(1) + " h";
-            document.getElementById('monthly-target').innerText = target + " h";
-            document.getElementById('monthly-progress-bar').style.width = Math.min((worked / target) * 100, 100) + "%";
-            const diff = target - worked; const bal = document.getElementById('monthly-balance');
-            if (diff <= 0) { bal.innerText = "✅ ¡Objetivo mensual cumplido!"; bal.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-2 text-center font-bold"; }
-            else { bal.innerText = `🔴 Te faltan ${diff.toFixed(1)}h para completar el mes`; bal.className = "text-xs text-red-500 mt-2 text-center font-bold"; }
         }
 
         function renderDashboard() {
