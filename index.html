@@ -16,7 +16,6 @@
         body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; padding-bottom: 80px; min-height: 100vh; }
         .light body { background: #f8fafc; color: #1e293b; }
         
-        /* Estética Financial Terminal */
         .terminal-card { 
             background: rgba(30, 41, 59, 0.7); 
             backdrop-filter: blur(12px); 
@@ -120,7 +119,7 @@
     
     <div id="offline-indicator"><i class="fa-solid fa-wifi-slash mr-2"></i>OFFLINE</div>
     
-    <div id="app-container" class="fade-in">
+    <div id="app-container" class="fade-in hidden">
         <header class="sticky top-0 z-30 bg-[#0f172a]/95 light:bg-white/95 backdrop-blur-xl border-b border-white/10 light:border-slate-200">
             <div class="px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -139,14 +138,13 @@
         
         <main class="px-4 py-5 max-w-6xl mx-auto">
             
-            <!-- DASHBOARD EJECUTIVO ÚNICO (SIN DUPLICIDADES) -->
+            <!-- DASHBOARD -->
             <div id="content-dashboard" class="tab-content fade-in">
                 <div class="flex items-center justify-between mb-5">
                     <h2 class="text-lg font-bold text-white light:text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-line text-orange-500"></i> Resumen Ejecutivo</h2>
                     <span class="text-[10px] font-semibold px-2 py-1 rounded bg-orange-500/10 text-orange-500 border border-orange-500/20">EN VIVO</span>
                 </div>
                 
-                <!-- KPIs Principales en Grid Compacto -->
                 <div class="terminal-card mb-4">
                     <div class="kpi-grid">
                         <div class="kpi-item border-r border-white/10 light:border-slate-200">
@@ -168,7 +166,6 @@
                     </div>
                 </div>
                 
-                <!-- Gráfico Único de Flujo + Objetivo Integrado -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                     <div class="terminal-card lg:col-span-2">
                         <h3 class="text-sm font-semibold text-white light:text-slate-900 mb-3 flex items-center gap-2"><i class="fa-solid fa-chart-column text-blue-400"></i> Flujo de Caja (6M)</h3>
@@ -190,7 +187,6 @@
                     </div>
                 </div>
                 
-                <!-- Métricas Secundarias Compactas -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                     <div class="terminal-card !p-3 text-center">
                         <p class="text-lg font-bold mono text-orange-400" id="metric-extras-h">0</p>
@@ -210,7 +206,6 @@
                     </div>
                 </div>
 
-                <!-- Fichaje Rápido Integrado -->
                 <div class="terminal-card border-l-2 border-orange-500 mb-5">
                     <div class="flex items-center justify-between mb-3">
                         <div><h3 class="font-semibold text-white light:text-slate-900">Fichaje Rápido</h3><p class="text-xs text-slate-400" id="today-status">Sin registrar</p></div>
@@ -222,7 +217,6 @@
                     </div>
                 </div>
 
-                <!-- Evolución Extras (Única gráfica de líneas) -->
                 <div class="terminal-card">
                     <h3 class="text-sm font-semibold text-white light:text-slate-900 mb-3 flex items-center gap-2"><i class="fa-solid fa-chart-line text-orange-500"></i> Evolución Horas Extra</h3>
                     <div class="relative h-40 w-full"><canvas id="trendChart"></canvas></div>
@@ -323,57 +317,58 @@
     <script>
         let appData = null, currentModalType = null, editingId = null, charts = {}, currentFilter = 'all';
         
+        // TUS DATOS REALES COMPLETOS RESTAURADOS
         const RAW_DATA = {
          "jornadas": [
-        {"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional septiembre.", "creado": "2026-10-26T16:52:46.166926"},
-        {"id": 6, "fecha": "2026-09-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:34:44.773560"},
-        {"id": 7, "fecha": "2026-09-03", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:35:01.775604"},
-        {"id": 8, "fecha": "2026-09-04", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:35:15.754161"},
-        {"id": 9, "fecha": "2026-09-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:35:31.909232"},
-        {"id": 10, "fecha": "2026-09-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:36:10.125659"},
-        {"id": 11, "fecha": "2026-09-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:36:22.817899"},
-        {"id": 12, "fecha": "2026-09-10", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:36:27.457300"},
-        {"id": 13, "fecha": "2026-09-11", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:36:40.012600"},
-        {"id": 14, "fecha": "2026-09-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:36:54.275565"},
-        {"id": 15, "fecha": "2026-09-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:36:59.266085"},
-        {"id": 16, "fecha": "2026-09-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:03.692794"},
-        {"id": 17, "fecha": "2026-09-17", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:08.136252"},
-        {"id": 18, "fecha": "2026-09-18", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:15.829232"},
-        {"id": 19, "fecha": "2026-09-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:20.329576"},
-        {"id": 20, "fecha": "2026-09-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:24.685848"},
-        {"id": 21, "fecha": "2026-09-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:29.086383"},
-        {"id": 22, "fecha": "2026-09-24", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:33.449767"},
-        {"id": 23, "fecha": "2026-09-25", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:38.061306"},
-        {"id": 24, "fecha": "2026-09-28", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:42.407174"},
-        {"id": 25, "fecha": "2026-09-29", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:37:47.106188"},
-        {"id": 26, "fecha": "2026-09-30", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional.", "creado": "2026-10-26T20:38:09.463321"},
-        {"id": 2, "fecha": "2026-10-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional octubre.", "creado": "2026-10-26T16:52:46.167100"},
-        {"id": 5, "fecha": "2026-10-26", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.75, "notas": "Incluye reparto provisional.", "creado": "2026-10-26T19:25:34.494620"},
-        {"id": 28, "fecha": "2026-10-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:38:45.643686"},
-        {"id": 29, "fecha": "2026-10-05", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:38:52.730691"},
-        {"id": 30, "fecha": "2026-10-06", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:38:57.080659"},
-        {"id": 31, "fecha": "2026-10-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:39:01.456407"},
-        {"id": 32, "fecha": "2026-10-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:39:05.848906"},
-        {"id": 33, "fecha": "2026-10-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:39:13.421841"},
-        {"id": 34, "fecha": "2026-10-12", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:45:20.274440"},
-        {"id": 35, "fecha": "2026-10-13", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:45:31.033270"},
-        {"id": 36, "fecha": "2026-10-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:45:40.943971"},
-        {"id": 37, "fecha": "2026-10-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional.", "creado": "2026-10-26T20:45:45.649066"},
-        {"id": 38, "fecha": "2026-10-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:45:50.066439"},
-        {"id": 39, "fecha": "2026-10-19", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:45:57.151093"},
-        {"id": 40, "fecha": "2026-10-20", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:46:01.622995"},
-        {"id": 41, "fecha": "2026-10-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:46:09.226835"},
-        {"id": 42, "fecha": "2026-10-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:46:20.008499"},
-        {"id": 43, "fecha": "2026-10-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional.", "creado": "2026-10-26T20:46:24.365664"},
+        {"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.166926"},
+        {"id": 6, "fecha": "2026-09-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:34:44.773560"},
+        {"id": 7, "fecha": "2026-09-03", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:01.775604"},
+        {"id": 8, "fecha": "2026-09-04", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:15.754161"},
+        {"id": 9, "fecha": "2026-09-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:31.909232"},
+        {"id": 10, "fecha": "2026-09-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:10.125659"},
+        {"id": 11, "fecha": "2026-09-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:22.817899"},
+        {"id": 12, "fecha": "2026-09-10", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:27.457300"},
+        {"id": 13, "fecha": "2026-09-11", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:40.012600"},
+        {"id": 14, "fecha": "2026-09-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:54.275565"},
+        {"id": 15, "fecha": "2026-09-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:59.266085"},
+        {"id": 16, "fecha": "2026-09-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:03.692794"},
+        {"id": 17, "fecha": "2026-09-17", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:08.136252"},
+        {"id": 18, "fecha": "2026-09-18", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:15.829232"},
+        {"id": 19, "fecha": "2026-09-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:20.329576"},
+        {"id": 20, "fecha": "2026-09-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:24.685848"},
+        {"id": 21, "fecha": "2026-09-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:29.086383"},
+        {"id": 22, "fecha": "2026-09-24", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:33.449767"},
+        {"id": 23, "fecha": "2026-09-25", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:38.061306"},
+        {"id": 24, "fecha": "2026-09-28", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:42.407174"},
+        {"id": 25, "fecha": "2026-09-29", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:47.106188"},
+        {"id": 26, "fecha": "2026-09-30", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:09.463321"},
+        {"id": 2, "fecha": "2026-10-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.167100"},
+        {"id": 5, "fecha": "2026-10-26", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.75, "notas": "Incluye 0,50 h ya fichadas y 1,25 h del reparto provisional de 21,00 h extra de octubre. Total del día: 1,75 h; distribución orientativa, confirmar con los fichajes reales.", "creado": "2026-10-26T19:25:34.494620"},
+        {"id": 28, "fecha": "2026-10-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:45.643686"},
+        {"id": 29, "fecha": "2026-10-05", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:52.730691"},
+        {"id": 30, "fecha": "2026-10-06", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:57.080659"},
+        {"id": 31, "fecha": "2026-10-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:01.456407"},
+        {"id": 32, "fecha": "2026-10-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:05.848906"},
+        {"id": 33, "fecha": "2026-10-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:13.421841"},
+        {"id": 34, "fecha": "2026-10-12", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:20.274440"},
+        {"id": 35, "fecha": "2026-10-13", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:31.033270"},
+        {"id": 36, "fecha": "2026-10-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:40.943971"},
+        {"id": 37, "fecha": "2026-10-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:45.649066"},
+        {"id": 38, "fecha": "2026-10-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:50.066439"},
+        {"id": 39, "fecha": "2026-10-19", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:57.151093"},
+        {"id": 40, "fecha": "2026-10-20", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:01.622995"},
+        {"id": 41, "fecha": "2026-10-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:09.226835"},
+        {"id": 42, "fecha": "2026-10-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:20.008499"},
+        {"id": 43, "fecha": "2026-10-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:24.365664"},
         {"id": 44, "fecha": "2026-10-27", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-27T07:47:29.370023"},
         {"id": 45, "fecha": "2026-10-28", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.5, "notas": "[REVISADO]", "creado": "2026-10-28T07:59:55.308797"},
-        {"id": 46, "fecha": "2026-10-29", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-29T16:00:12.526141+00:00"},
+        {"id": 46, "fecha": "2026-10-29", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO] Fichaje automático según el horario habitual; no verificado manualmente. Corrige este registro si el horario real fue distinto.", "creado": "2026-10-29T16:00:12.526141+00:00"},
         {"id": 47, "fecha": "2026-10-30", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-30T15:52:43.083260"}
         ],
          "viajes": [
-        {"id": 1, "fecha": "2026-10-31", "concepto": "Viaje octubre 1", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "", "creado": "2026-10-26T16:52:46.167140"},
-        {"id": 2, "fecha": "2026-10-31", "concepto": "Viaje octubre 2", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "", "creado": "2026-10-26T16:52:46.167180"},
-        {"id": 3, "fecha": "2026-09-26", "concepto": "Viaje septiembre", "importe": 400.0, "pagado": 1, "fecha_pago": "2026-10-26", "notas": "", "creado": "2026-10-26T18:58:40.962023"}
+        {"id": 1, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 1", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167140"},
+        {"id": 2, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 2", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167180"},
+        {"id": 3, "fecha": "2026-09-26", "concepto": "Viaje de trabajo", "importe": 400.0, "pagado": 1, "fecha_pago": "2026-10-26", "notas": "", "creado": "2026-10-26T18:58:40.962023"}
         ],
          "pagos": [],
          "ajustes": [
@@ -382,20 +377,35 @@
         {"clave": "horas_normales_dia", "valor": "8"},
         {"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
         {"clave": "dias_trabajo", "valor": "Lunes a viernes"},
-        {"clave": "app_name", "valor": "工V龱尺㇌7"},
+        {"clave": "app_name", "valor": "工V龱尺7"},
         {"clave": "app_color", "valor": "#f97316"}
         ],
          "notas": []
         };
 
         async function initApp() {
+            // Cargar datos guardados o usar los originales
             const saved = localStorage.getItem('ivory37_data_v1');
-            if (saved) { try { appData = JSON.parse(saved); } catch { appData = buildInitialData(); } } 
-            else { appData = buildInitialData(); }
+            if (saved) { 
+                try { appData = JSON.parse(saved); } 
+                catch { appData = buildInitialData(); } 
+            } else { 
+                appData = buildInitialData(); 
+            }
             
-            applyBranding(); sanitizeConfirmedRecords(); ensureFullYearData(); updateDateAndClock(); setInterval(updateDateAndClock, 1000);
-            setupOfflineDetection(); scheduleNotifications();
-            if (!window.matchMedia || !window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.classList.add('light');
+            applyBranding(); 
+            sanitizeConfirmedRecords(); 
+            ensureFullYearData(); 
+            updateDateAndClock(); 
+            setInterval(updateDateAndClock, 1000);
+            setupOfflineDetection(); 
+            scheduleNotifications();
+            
+            // Detectar tema del sistema
+            if (!window.matchMedia || !window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('light');
+            }
+            
             document.getElementById('app-container').classList.remove('hidden');
             switchTab('dashboard');
             registerSW();
@@ -403,7 +413,13 @@
 
         function buildInitialData() {
             const clean = JSON.parse(JSON.stringify(RAW_DATA, (k, v) => typeof k === 'string' ? k.trim() : k, 2));
-            return { jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], viajes: clean.viajes, pagos: clean.pagos || [], ajustes: clean.ajustes, notas: clean.notas || [] };
+            return { 
+                jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], 
+                viajes: clean.viajes, 
+                pagos: clean.pagos || [], 
+                ajustes: clean.ajustes, 
+                notas: clean.notas || [] 
+            };
         }
 
         function applyBranding() {
@@ -416,8 +432,15 @@
             document.getElementById('app-name').innerText = appName;
             document.title = `${appName} | Executive Dashboard`;
             const imgEl = document.getElementById('custom-logo-img'), svgEl = document.getElementById('default-logo-svg'), previewEl = document.getElementById('logo-preview'), placeholderEl = document.getElementById('logo-placeholder');
-            if (logoSetting && logoSetting.valor) { imgEl.src = logoSetting.valor; imgEl.classList.remove('hidden'); svgEl.style.display = 'none'; if(previewEl) { previewEl.src = logoSetting.valor; previewEl.classList.remove('hidden'); } if(placeholderEl) placeholderEl.style.display = 'none'; } 
-            else { imgEl.classList.add('hidden'); svgEl.style.display = 'block'; if(previewEl) previewEl.classList.add('hidden'); if(placeholderEl) placeholderEl.style.display = 'block'; }
+            if (logoSetting && logoSetting.valor) { 
+                imgEl.src = logoSetting.valor; imgEl.classList.remove('hidden'); svgEl.style.display = 'none'; 
+                if(previewEl) { previewEl.src = logoSetting.valor; previewEl.classList.remove('hidden'); } 
+                if(placeholderEl) placeholderEl.style.display = 'none'; 
+            } else { 
+                imgEl.classList.add('hidden'); svgEl.style.display = 'block'; 
+                if(previewEl) previewEl.classList.add('hidden'); 
+                if(placeholderEl) placeholderEl.style.display = 'block'; 
+            }
         }
 
         function handleLogoUpload(event) {
@@ -456,7 +479,10 @@
             for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
                 if (d.getDay() === 0 || d.getDay() === 6) continue;
                 const ds = d.toISOString().split('T')[0];
-                if (!dates.has(ds)) { appData.jornadas.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() }); needsUpdate = true; }
+                if (!dates.has(ds)) { 
+                    appData.jornadas.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() }); 
+                    needsUpdate = true; 
+                }
             }
             if (needsUpdate) saveDataSilent();
         }
@@ -471,13 +497,17 @@
             return newJ;
         }
 
-        function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderAll(); }
+        function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderCurrentView(); }
         function saveDataSilent() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); }
         
-        function renderAll() { 
+        function renderCurrentView() {
             const activeTab = document.querySelector('.nav-item.active')?.dataset.tab || 'dashboard';
             if (activeTab === 'dashboard') renderDashboard();
-            renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus(); 
+            else if (activeTab === 'jornadas') renderJornadas();
+            else if (activeTab === 'viajes') renderViajes();
+            else if (activeTab === 'pagos') renderPagos();
+            else if (activeTab === 'ajustes') renderConfig();
+            updateTodayStatus();
         }
         
         function updateDateAndClock() { 
@@ -488,7 +518,6 @@
             document.getElementById('live-clock-big').innerText = t; 
         }
         
-        // DASHBOARD ÚNICO SIN DUPLICIDADES
         function renderDashboard() {
             const now = new Date(), cm = now.getMonth(), cy = now.getFullYear();
             const lastDayOfMonth = new Date(cy, cm + 1, 0).getDate();
@@ -529,19 +558,15 @@
             const totalPending = tripPending + extrasPendingValue;
             const completionPct = Math.min((workedHours / targetHours) * 100, 100);
             
-            // Actualizar KPIs principales
             document.getElementById('kpi-income').innerText = `€${totalIncome.toFixed(0)}`;
             document.getElementById('kpi-pending').innerText = `€${totalPending.toFixed(0)}`;
             document.getElementById('kpi-compliance').innerText = `${Math.round(completionPct)}%`;
             document.getElementById('kpi-hours-detail').innerText = `${workedHours.toFixed(1)}h / ${targetHours}h`;
-            
-            // Métricas secundarias
             document.getElementById('metric-extras-h').innerText = totalExtras.toFixed(1);
             document.getElementById('metric-extras-v').innerText = `€${(totalExtras * rate).toFixed(0)}`;
             document.getElementById('metric-trips').innerText = `€${(tripPaid + tripPending).toFixed(0)}`;
             document.getElementById('metric-payrolls').innerText = `€${payrollsTotal.toFixed(0)}`;
             
-            // Ritmo y proyección
             const remainingHours = Math.max(0, targetHours - workedHours);
             const remainingDays = Math.max(1, totalWorkingDays - workingDaysPassed);
             const dailyPace = remainingHours / remainingDays;
@@ -555,13 +580,8 @@
             else if (dailyPace > 8.5) { statusEl.innerText = `⚠️ RITMO ALTO (${dailyPace.toFixed(1)}h/día)`; statusEl.className = "font-semibold text-amber-400"; }
             else { statusEl.innerText = `🟢 EN CURSO (${dailyPace.toFixed(1)}h/día)`; statusEl.className = "font-semibold text-emerald-400"; }
             
-            // Gráfico de Objetivo (Donut único)
             renderGoalChart(workedHours, remainingHours, completionPct);
-            
-            // Gráfico de Flujo de Caja
             renderCashFlowChart(rate);
-            
-            // Gráfico de Tendencia
             renderTrendChart();
         }
 
@@ -572,7 +592,7 @@
             const isLight = document.body.classList.contains('light');
             charts.goal = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels: ['Trabajadas', 'Pendientes'], datasets: [{ data: [worked, remaining], backgroundColor: ['#f97316', isLight ? '#e2e8f0' : '#334155'], borderWidth: 0, cutout: '75%' }] },
+                 { labels: ['Trabajadas', 'Pendientes'], datasets: [{ data: [worked, remaining], backgroundColor: ['#f97316', isLight ? '#e2e8f0' : '#334155'], borderWidth: 0, cutout: '75%' }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { animateScale: true, animateRotate: true } }
             });
             document.getElementById('goal-pct').innerText = `${Math.round(pct)}%`;
@@ -779,23 +799,33 @@
         function exportJSON() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2)); const l = document.createElement('a'); l.href = d; l.download = "backup_" + new Date().toISOString().slice(0,10) + ".json"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('💾 Backup', 'success'); }
         function importJSON(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(ev) { try { const imp = JSON.parse(ev.target.result); if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); applyBranding(); saveData(); showToast('✅ Restaurado', 'success'); setTimeout(() => location.reload(), 1000); } else showToast('❌ Formato inválido', 'error'); } catch { showToast('❌ Error', 'error'); } }; r.readAsText(f); e.target.value = ''; }
         function exportCSV() { const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas"]; const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`]); const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('📊 CSV', 'success'); }
-        function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo?')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
+        function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo? Se perderán tus datos actuales.')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
         
+        // NAVEGACIÓN CORREGIDA Y FUNCIONAL
         function switchTab(tabName) {
+            // Ocultar todas las secciones
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Mostrar solo la seleccionada
             const target = document.getElementById(`content-${tabName}`);
             if (target) target.classList.remove('hidden');
+            
+            // Actualizar menú activo
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
             if (activeBtn) activeBtn.classList.add('active');
+            
+            // Scroll al inicio
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (tabName === 'dashboard') setTimeout(renderDashboard, 50);
+            
+            // Renderizar vista actual
+            renderCurrentView();
         }
         
-        function toggleTheme() { document.body.classList.toggle('light'); setTimeout(() => { const activeTab = document.querySelector('.nav-item.active')?.dataset.tab; if (activeTab === 'dashboard') renderDashboard(); }, 50); }
+        function toggleTheme() { document.body.classList.toggle('light'); setTimeout(renderCurrentView, 50); }
         function renderConfig() { const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor; const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor; const n = appData.ajustes.find(a => a.clave === "app_name"); if (n) document.getElementById('config-appname').value = n.valor; const c = appData.ajustes.find(a => a.clave === "app_color"); if (c) document.getElementById('config-color').value = c.valor; }
         function saveConfig() { const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value, appName = document.getElementById('config-appname').value.trim(), appColor = document.getElementById('config-color').value; let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc }); if (appName) { let ns = appData.ajustes.find(a => a.clave === "app_name"); if (ns) ns.valor = appName; else appData.ajustes.push({ clave: "app_name", valor: appName }); } if (appColor) { let cs = appData.ajustes.find(a => a.clave === "app_color"); if (cs) cs.valor = appColor; else appData.ajustes.push({ clave: "app_color", valor: appColor }); } applyBranding(); saveData(); showToast('✅ Guardado', 'success'); }
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v24-enterprise'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v25-final'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
