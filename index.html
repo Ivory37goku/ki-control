@@ -15,45 +15,78 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; padding-bottom: 90px; min-height: 100vh; }
         .dark body { background-color: #0f172a; }
-        .glass-panel { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(16px); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06); }
-        .dark .glass-panel { background: rgba(15, 23, 42, 0.98); border-color: rgba(51, 65, 85, 0.5); }
+        
+        /* Estética Premium */
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.98); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(226, 232, 240, 0.6); 
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03); 
+            border-radius: 1rem;
+        }
+        .dark .glass-panel { 
+            background: rgba(15, 23, 42, 0.98); 
+            border-color: rgba(51, 65, 85, 0.4); 
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+        }
+        
         .goku-glow { filter: drop-shadow(0 0 8px var(--app-primary, #f97316)); }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border-top: 1px solid rgba(226, 232, 240, 0.8); padding-bottom: env(safe-area-inset-bottom); }
-        .dark .bottom-nav { background: rgba(15, 23, 42, 0.98); border-top-color: rgba(51, 65, 85, 0.5); }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 4px; color: #94a3b8; transition: all 0.2s; font-size: 10px; font-weight: 600; background: none; border: none; cursor: pointer; }
+        
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; 
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); 
+            border-top: 1px solid rgba(226, 232, 240, 0.6); 
+            padding-bottom: env(safe-area-inset-bottom); 
+        }
+        .dark .bottom-nav { background: rgba(15, 23, 42, 0.98); border-top-color: rgba(51, 65, 85, 0.4); }
+        
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 4px; color: #94a3b8; transition: all 0.2s; font-size: 10px; font-weight: 600; background: none; border: none; cursor: pointer; }
         .nav-item.active { color: var(--app-primary, #f97316); }
-        .nav-item i { font-size: 20px; margin-bottom: 2px; }
-        .data-card { background: white; border-radius: 16px; padding: 16px; border: 1px solid #e2e8f0; transition: all 0.2s; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        
+        .data-card { background: white; border-radius: 12px; padding: 16px; border: 1px solid #e2e8f0; transition: all 0.2s; }
         .dark .data-card { background: #1e293b; border-color: #334155; }
         .data-card:active { transform: scale(0.98); }
-        .fingerprint-btn { width: 100%; padding: 18px; border-radius: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.15); border: none; cursor: pointer; }
+        
+        .fingerprint-btn { width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: none; cursor: pointer; }
         .fingerprint-btn:active { transform: scale(0.97); }
-        .action-btn { width: 100%; padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; border: none; cursor: pointer; margin-top: 8px; }
+        
+        .action-btn { width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; border: none; cursor: pointer; margin-top: 8px; }
         .action-btn:active { transform: scale(0.97); }
-        .btn-add-extra { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.4); }
+        .btn-add-extra { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.3); }
         .btn-edit { background: #f1f5f9; color: #475569; }
         .dark .btn-edit { background: #334155; color: #cbd5e1; }
+        
         .modal-content { background: white; border-radius: 20px 20px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; }
         .dark .modal-content { background: #1e293b; }
         @media (min-width: 640px) { .modal-content { border-radius: 20px; max-width: 480px; margin: 0 auto; } }
+        
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+        
         .fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        
         .badge-provisional { background: #fef3c7; color: #92400e; }
-        .dark .badge-provisional { background: rgba(234, 179, 8, 0.2); color: #fde047; }
+        .dark .badge-provisional { background: rgba(234, 179, 8, 0.15); color: #fde047; }
         .badge-confirmado { background: #d1fae5; color: #065f46; }
-        .dark .badge-confirmado { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .dark .badge-confirmado { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+        .badge-paid { background: #dbeafe; color: #1e40af; }
+        .dark .badge-paid { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
+        
         @media (max-width: 768px) { .desktop-table { display: none; } }
         @media (min-width: 769px) { .mobile-cards { display: none; } }
-        .input-field { width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; transition: all 0.2s; outline: none; }
+        
+        .input-field { width: 100%; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; transition: all 0.2s; outline: none; }
         .dark .input-field { background: #0f172a; border-color: #334155; color: white; }
         .input-field:focus { border-color: var(--app-primary, #f97316); box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1); }
-        .btn-primary { background: linear-gradient(135deg, var(--app-primary, #f97316), var(--app-primary-dark, #ea580c)); color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px -4px rgba(249, 115, 22, 0.4); }
+        
+        .btn-primary { background: linear-gradient(135deg, var(--app-primary, #f97316), var(--app-primary-dark, #ea580c)); color: white; font-weight: 700; padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2); }
         .btn-primary:active { transform: scale(0.97); }
-        .btn-secondary { background: #1e293b; color: white; font-weight: 700; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-secondary { background: #1e293b; color: white; font-weight: 600; padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .btn-secondary { background: white; color: #0f172a; }
         .btn-secondary:active { transform: scale(0.97); }
+        
         .filter-pill { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #f1f5f9; color: #64748b; border: none; cursor: pointer; transition: all 0.2s; }
         .dark .filter-pill { background: #1e293b; color: #94a3b8; }
         .filter-pill.active { background: var(--app-primary, #f97316); color: white; }
@@ -66,12 +99,22 @@
         }
         #offline-indicator.visible { transform: translateY(0); }
         
-        /* Variables CSS para marca blanca */
+        /* Variables CSS */
         :root { --app-primary: #f97316; --app-primary-dark: #ea580c; }
         
-        /* Logo personalizado */
+        /* Logo */
         #custom-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         #default-logo-svg { display: block; }
+
+        /* Checkbox personalizado para selección de pagos */
+        .pay-checkbox { 
+            width: 20px; height: 20px; border: 2px solid #cbd5e1; border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; 
+            transition: all 0.2s; background: white; 
+        }
+        .dark .pay-checkbox { background: #1e293b; border-color: #475569; }
+        .pay-checkbox.checked { background: var(--app-primary); border-color: var(--app-primary); }
+        .pay-checkbox.checked::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: white; font-size: 12px; }
     </style>
     <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } }; </script>
 </head>
@@ -84,15 +127,15 @@
         <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
             <div class="px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div id="app-logo" class="w-11 h-11 rounded-full flex items-center justify-center goku-glow text-white shadow-lg overflow-hidden" style="background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark))">
+                    <div id="app-logo" class="w-10 h-10 rounded-full flex items-center justify-center goku-glow text-white shadow-md overflow-hidden" style="background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark))">
                         <img id="custom-logo-img" src="" alt="Logo" class="hidden">
-                        <svg id="default-logo-svg" viewBox="0 0 24 24" class="w-7 h-7 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
+                        <svg id="default-logo-svg" viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
                     </div>
                     <div><h1 id="app-name" class="font-extrabold text-lg leading-none text-slate-900 dark:text-white tracking-tight">工V龱尺ㄚ㇌7</h1><span class="text-[10px] font-bold uppercase tracking-widest" style="color: var(--app-primary)">Control Laboral Pro</span></div>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="hidden sm:block text-right mr-2"><p id="current-date" class="text-xs font-semibold text-slate-600 dark:text-slate-300"></p><p id="live-clock" class="text-sm font-mono font-bold text-slate-900 dark:text-white">--:--</p></div>
-                    <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"><i class="fa-solid fa-moon dark:hidden text-sm"></i><i class="fa-solid fa-sun hidden dark:inline text-sm text-yellow-400"></i></button>
+                    <button onclick="toggleTheme()" class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"><i class="fa-solid fa-moon dark:hidden text-xs"></i><i class="fa-solid fa-sun hidden dark:inline text-xs text-yellow-400"></i></button>
                 </div>
             </div>
         </header>
@@ -102,24 +145,20 @@
                 <div class="grid grid-cols-2 gap-2"><button onclick="clockAction('entrada')" class="fingerprint-btn bg-gradient-to-br from-emerald-500 to-emerald-600 text-white"><i class="fa-solid fa-right-to-bracket"></i> Entrada</button><button onclick="clockAction('salida')" class="fingerprint-btn bg-gradient-to-br from-red-500 to-red-600 text-white"><i class="fa-solid fa-right-from-bracket"></i> Salida</button></div>
             </div>
             
-            <!-- ÚNICO PANEL DE OBJETIVO MENSUAL (CON EL ROSCO) -->
+            <!-- OBJETIVO MENSUAL CON ROSCO -->
             <div class="glass-panel rounded-2xl p-4 mb-4">
                 <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4"><i class="fa-solid fa-chart-pie mr-2" style="color: var(--app-primary)"></i>Objetivo Mensual</h3>
-                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                    <!-- Gráfico Donut -->
-                    <div class="relative h-40 w-40 mx-auto">
+                    <div class="relative h-36 w-36 mx-auto">
                         <canvas id="executiveDonutChart"></canvas>
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                             <span id="donut-percentage" class="text-2xl font-extrabold text-slate-900 dark:text-white">0%</span>
                             <span class="text-[10px] text-slate-500 uppercase font-bold">Completado</span>
                         </div>
                     </div>
-                    
-                    <!-- KPIs -->
                     <div class="md:col-span-2 grid grid-cols-2 gap-3">
                         <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
-                            <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Ritmo Diario Necesario</p>
+                            <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Ritmo Diario</p>
                             <p class="text-xl font-extrabold text-slate-900 dark:text-white" id="kpi-daily-pace">0 h</p>
                             <p class="text-[10px] text-slate-400">para cumplir objetivo</p>
                         </div>
@@ -135,32 +174,69 @@
                     </div>
                 </div>
             </div>
-            <!-- FIN PANEL ÚNICO -->
 
             <div class="glass-panel rounded-2xl p-4 mb-4"><h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-chart-column mr-2" style="color: var(--app-primary)"></i>Evolución Horas Extra</h3><div class="relative h-48 w-full"><canvas id="monthlyChart"></canvas></div></div>
+            
+            <!-- DASHBOARD FINANCIERO PREMIUM -->
             <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-stopwatch" style="color: var(--app-primary)"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Extras</span></div><p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="total-extra-hours">0</p><p class="text-[10px] text-slate-500">horas</p></div>
-                <div class="glass-panel rounded-2xl p-4"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-coins text-secondary"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Valor</span></div><p class="text-2xl font-extrabold text-secondary" id="total-extra-value">0 €</p><p class="text-[10px] text-slate-500">@ <span id="display-rate">19.69</span> €/h</p></div>
-                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-danger"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-file-invoice-dollar text-danger"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Pendiente</span></div><p class="text-2xl font-extrabold text-danger" id="pending-trips-value">0 €</p><p class="text-[10px] text-slate-500" id="pending-trips-count">0 viajes</p></div>
-                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-success"><div class="flex items-center justify-between mb-1"><i class="fa-solid fa-wallet text-success"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Cobrado</span></div><p class="text-2xl font-extrabold text-success" id="total-paid-value">0 €</p><p class="text-[10px] text-slate-500">total ingresos</p></div>
+                <div class="glass-panel rounded-2xl p-4">
+                    <div class="flex items-center justify-between mb-1"><i class="fa-solid fa-stopwatch" style="color: var(--app-primary)"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Extras Totales</span></div>
+                    <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="total-extra-hours">0</p>
+                    <p class="text-[10px] text-slate-500">horas acumuladas</p>
+                </div>
+                <div class="glass-panel rounded-2xl p-4">
+                    <div class="flex items-center justify-between mb-1"><i class="fa-solid fa-coins text-secondary"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Valor Bruto</span></div>
+                    <p class="text-2xl font-extrabold text-secondary" id="total-extra-value">0 €</p>
+                    <p class="text-[10px] text-slate-500">@ <span id="display-rate">19.69</span> €/h</p>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-danger">
+                    <div class="flex items-center justify-between mb-1"><i class="fa-solid fa-file-invoice-dollar text-danger"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Pendiente Cobro</span></div>
+                    <p class="text-2xl font-extrabold text-danger" id="pending-trips-value">0 €</p>
+                    <p class="text-[10px] text-slate-500" id="pending-trips-count">0 viajes + extras</p>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-success">
+                    <div class="flex items-center justify-between mb-1"><i class="fa-solid fa-wallet text-success"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Total Cobrado</span></div>
+                    <p class="text-2xl font-extrabold text-success" id="total-paid-value">0 €</p>
+                    <p class="text-[10px] text-slate-500">viajes + nóminas</p>
+                </div>
             </div>
+
             <div id="content-jornadas" class="tab-content fade-in">
                 <div class="flex items-center justify-between mb-3 flex-wrap gap-2"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Jornadas</h2><div class="flex gap-2"><button onclick="generatePDF()" class="text-xs font-bold bg-blue-600 text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-file-pdf mr-1"></i>PDF</button><button onclick="exportCSV()" class="text-xs font-bold bg-green-600 text-white px-3 py-1.5 rounded-full shadow-md"><i class="fa-solid fa-file-excel mr-1"></i>Excel</button><button onclick="confirmAllProvisional()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-check-double mr-1"></i>Confirmar Todas</button></div></div>
                 <div class="flex gap-2 mb-3 overflow-x-auto pb-1"><button onclick="setFilter('all')" class="filter-pill active" data-filter="all">Todos</button><button onclick="setFilter('confirmado')" class="filter-pill" data-filter="confirmado">Confirmados</button><button onclick="setFilter('provisional')" class="filter-pill" data-filter="provisional">Provisionales</button><button onclick="setFilter('extra')" class="filter-pill" data-filter="extra">Con Extras</button></div>
                 <div class="mobile-cards space-y-2" id="jornadas-cards"></div>
                 <div class="desktop-table glass-panel rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full"><thead class="bg-slate-50 dark:bg-slate-800"><tr><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Fecha</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Horario</th><th class="px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase">Norm.</th><th class="px-4 py-3 text-center text-xs font-bold uppercase" style="color: var(--app-primary)">Extra</th><th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Estado</th><th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Acciones</th></tr></thead><tbody id="jornadas-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody></table></div></div>
             </div>
-            <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
-            <div id="content-pagos" class="tab-content hidden fade-in"><h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Histórico Pagos</h2><div class="space-y-2" id="pagos-list"></div></div>
             
-            <!-- TAB AJUSTES CON LOGO MEJORADO -->
+            <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
+            
+            <!-- PESTAÑA PAGOS / NÓMINAS MEJORADA -->
+            <div id="content-pagos" class="tab-content hidden fade-in">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-bold text-lg text-slate-900 dark:text-white">Gestión de Pagos</h2>
+                    <button onclick="openPayrollModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-money-bill-transfer mr-1"></i>Registrar Nómina</button>
+                </div>
+                
+                <!-- Resumen de Pagos -->
+                <div class="glass-panel rounded-2xl p-4 mb-4">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-receipt mr-2 text-accent"></i>Historial de Nóminas</h3>
+                    <div class="space-y-2" id="payroll-list"></div>
+                </div>
+                
+                <!-- Extras Pendientes de Pago -->
+                <div class="glass-panel rounded-2xl p-4">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-hourglass-half mr-2 text-danger"></i>Extras Pendientes de Cobro</h3>
+                    <div class="space-y-2" id="unpaid-extras-list"></div>
+                </div>
+            </div>
+            
+            <!-- TAB AJUSTES -->
             <div id="content-ajustes" class="tab-content hidden fade-in">
                 <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Ajustes & Personalización</h2>
                 <div class="glass-panel rounded-2xl p-5 space-y-4 mb-4">
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de la App</label><input type="text" id="config-appname" class="input-field" placeholder="工V龱尺ㄚ㇌7"></div>
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Color Primario (Hex)</label><input type="color" id="config-color" class="input-field h-12 p-1 w-full" value="#f97316"></div>
                     
-                    <!-- SECCIÓN DE LOGO MEJORADA Y VISIBLE -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Logo Personalizado</label>
                         <div class="flex flex-col items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 transition hover:border-primary dark:hover:border-primary cursor-pointer" onclick="document.getElementById('config-logo').click()">
@@ -176,7 +252,6 @@
                             <i class="fa-solid fa-trash-can mr-1"></i> Restaurar logo por defecto (Goku)
                         </button>
                     </div>
-                    <!-- FIN SECCIÓN LOGO MEJORADA -->
 
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tarifa Hora Extra (€)</label><input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold"></div>
                     <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Horario Habitual</label><input type="text" id="config-schedule" class="input-field"></div>
@@ -192,9 +267,10 @@
     <script>
         let appData = null, currentModalType = null, editingId = null, chartInstance = null, executiveChartInstance = null, currentFilter = 'all';
         let offlineQueue = [];
+        let selectedForPayroll = new Set(); // IDs de jornadas seleccionadas para pagar
         
         // ============================================
-        // DATOS INTEGRADOS DIRECTAMENTE EN EL CÓDIGO
+        // DATOS INTEGRADOS
         // ============================================
         const RAW_DATA = {
          "jornadas": [
@@ -248,9 +324,7 @@
         {"id": 2, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 2", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167180"},
         {"id": 3, "fecha": "2026-09-26", "concepto": "Viaje de trabajo", "importe": 400.0, "pagado": 1, "fecha_pago": "2026-10-26", "notas": "", "creado": "2026-10-26T18:58:40.962023"}
         ],
-         "pagos": [
-        {"id": 1, "fecha": "2026-10-26", "concepto": "2 viajes septiembre", "importe": 0.0, "categoria": "viaje", "notas": "", "creado": "2026-10-26T19:03:09.211680"}
-        ],
+         "pagos": [], // Array vacío inicial para nóminas
          "ajustes": [
         {"clave": "seeded_demo", "valor": "yes"},
         {"clave": "hora_extra_euros", "valor": "19.69"},
@@ -278,7 +352,6 @@
             
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
             
-            // SIN LOGIN: Mostrar app directamente
             document.getElementById('app-container').classList.remove('hidden');
             
             renderAll();
@@ -290,7 +363,7 @@
             return { 
                 jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], 
                 viajes: clean.viajes, 
-                pagos: clean.pagos, 
+                pagos: clean.pagos || [], 
                 ajustes: clean.ajustes, 
                 notas: clean.notas || [] 
             };
@@ -394,12 +467,11 @@
         function renderAll() { renderDashboard(); renderExecutiveDashboard(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus(); }
         function updateDateAndClock() { const n = new Date(); document.getElementById('current-date').innerText = n.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }); const t = n.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); document.getElementById('live-clock').innerText = t; document.getElementById('live-clock-big').innerText = t; }
         
-        // DASHBOARD EJECUTIVO / OBJETIVO MENSUAL (ÚNICO PANEL CON ROSCO)
+        // DASHBOARD EJECUTIVO / OBJETIVO MENSUAL
         function renderExecutiveDashboard() {
             const now = new Date(), cm = now.getMonth(), cy = now.getFullYear();
             const lastDayOfMonth = new Date(cy, cm + 1, 0).getDate();
             
-            // Calcular días laborables totales y transcurridos
             let totalWorkingDays = 0, workingDaysPassed = 0;
             for (let d = 1; d <= lastDayOfMonth; d++) {
                 const dt = new Date(cy, cm, d);
@@ -424,7 +496,6 @@
             const projection = workedHours + (dailyPace * (totalWorkingDays - workingDaysPassed));
             const completionPct = Math.min((workedHours / targetHours) * 100, 100);
             
-            // Actualizar KPIs
             document.getElementById('kpi-daily-pace').innerText = dailyPace.toFixed(1) + " h/día";
             document.getElementById('kpi-projection').innerText = projection.toFixed(1) + " h";
             
@@ -443,7 +514,6 @@
                 statusMsg.className = "text-base font-bold text-red-500";
             }
             
-            // Renderizar gráfico donut
             const ctx = document.getElementById('executiveDonutChart');
             if (!ctx) return;
             if (executiveChartInstance) executiveChartInstance.destroy();
@@ -476,12 +546,30 @@
         function renderDashboard() {
             let te = 0; appData.jornadas.forEach(j => te += parseFloat(j.horas_extra || 0));
             const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); const rate = rs ? parseFloat(rs.valor) : 19.69;
-            let ptv = 0, ptc = 0, tp = 0;
-            appData.viajes.forEach(v => { const a = parseFloat(v.importe || 0); if (v.pagado === 1) tp += a; else { ptv += a; ptc++; } });
-            appData.pagos.forEach(p => { const a = parseFloat(p.importe || 0); if (a > 0 && p.categoria !== 'viaje') tp += a; });
-            document.getElementById('total-extra-hours').innerText = te.toFixed(2); document.getElementById('total-extra-value').innerText = (te * rate).toFixed(2) + " €";
-            document.getElementById('display-rate').innerText = rate.toFixed(2); document.getElementById('pending-trips-value').innerText = ptv.toFixed(2) + " €";
-            document.getElementById('pending-trips-count').innerText = `${ptc} viaje${ptc !== 1 ? 's' : ''}`; document.getElementById('total-paid-value').innerText = tp.toFixed(2) + " €";
+            
+            // Calcular totales financieros incluyendo extras pagados
+            let tripPending = 0, tripPaid = 0;
+            appData.viajes.forEach(v => { const a = parseFloat(v.importe || 0); if (v.pagado === 1) tripPaid += a; else tripPending += a; });
+            
+            // Calcular extras pagados desde la sección de pagos/nóminas
+            let extrasPaid = 0;
+            if (appData.pagos) {
+                appData.pagos.forEach(p => {
+                    if (p.tipo === 'nomina_extras') extrasPaid += parseFloat(p.importe || 0);
+                });
+            }
+            
+            const totalExtraValue = te * rate;
+            const pendingExtrasValue = totalExtraValue - extrasPaid;
+            
+            document.getElementById('total-extra-hours').innerText = te.toFixed(2); 
+            document.getElementById('total-extra-value').innerText = totalExtraValue.toFixed(2) + " €";
+            document.getElementById('display-rate').innerText = rate.toFixed(2); 
+            
+            document.getElementById('pending-trips-value').innerText = (tripPending + Math.max(0, pendingExtrasValue)).toFixed(2) + " €";
+            document.getElementById('pending-trips-count').innerText = `${appData.viajes.filter(v=>!v.pagado).length} viajes + extras`; 
+            
+            document.getElementById('total-paid-value').innerText = (tripPaid + extrasPaid).toFixed(2) + " €";
         }
 
         function renderChart() {
@@ -539,7 +627,7 @@
             document.getElementById('generic-modal').classList.remove('hidden');
         }
 
-        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; }
+        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; selectedForPayroll.clear(); }
 
         function saveModalData() {
             if (currentModalType === 'add_extra') {
@@ -558,18 +646,101 @@
                 if (!c || !f || isNaN(i)) { showToast('⚠️ Rellena todos los campos', 'warning'); return; }
                 appData.viajes.push({ id: Date.now(), fecha: f, concepto: c, importe: i, pagado: 0, fecha_pago: "", notas: "Pendiente", creado: new Date().toISOString() });
                 showToast('✅ Viaje añadido', 'success');
+            } else if (currentModalType === 'payroll') {
+                const date = document.getElementById('m-payroll-date').value;
+                const amount = parseFloat(document.getElementById('m-payroll-amount').value);
+                const note = document.getElementById('m-payroll-note').value.trim();
+                
+                if (!date || isNaN(amount) || amount <= 0) { showToast('⚠️ Completa fecha e importe', 'warning'); return; }
+                
+                // Registrar nómina
+                appData.pagos.push({
+                    id: Date.now(),
+                    fecha: date,
+                    concepto: note || "Pago de horas extra",
+                    importe: amount,
+                    tipo: "nomina_extras",
+                    created: new Date().toISOString()
+                });
+                
+                showToast(`✅ Nómina de ${amount.toFixed(2)}€ registrada`, 'success');
             }
             closeModal(); saveData();
         }
 
         function openTripModal() { currentModalType = 'viaje'; editingId = null; document.getElementById('modal-title').innerText = 'Nuevo Viaje'; document.getElementById('modal-content').innerHTML = `<input type="text" id="m-concepto" placeholder="Concepto del viaje" class="input-field"><input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-field"><input type="number" step="0.01" id="m-importe" placeholder="Importe (€)" class="input-field">`; document.getElementById('generic-modal').classList.remove('hidden'); }
+        
+        // MODAL PARA REGISTRAR NÓMINA DE EXTRAS
+        function openPayrollModal() {
+            currentModalType = 'payroll'; editingId = null;
+            document.getElementById('modal-title').innerText = 'Registrar Pago de Extras';
+            document.getElementById('modal-content').innerHTML = `
+                <div class="space-y-3">
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Fecha de Pago</label><input type="date" id="m-payroll-date" value="${new Date().toISOString().split('T')[0]}" class="input-field mt-1"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Importe Total (€)</label><input type="number" step="0.01" id="m-payroll-amount" placeholder="Ej: 350.00" class="input-field mt-1"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase">Notas / Concepto</label><input type="text" id="m-payroll-note" placeholder="Ej: Nómina Octubre 2026" class="input-field mt-1"></div>
+                </div>
+            `;
+            document.getElementById('generic-modal').classList.remove('hidden');
+        }
+
         function confirmAllProvisional() {
             let count = 0; appData.jornadas.forEach(j => { if (getJornadaEstado(j) === 'provisional') { j.estado = 'confirmado'; if (!j.entrada?.trim()) { j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0; } if (!(j.notas || '').toLowerCase().includes('[confirmado]')) j.notas = '[CONFIRMADO] ' + (j.notas || ''); count++; } });
             if (count > 0) { saveData(); showToast(`✅ ${count} jornada${count !== 1 ? 's' : ''} confirmada${count !== 1 ? 's' : ''}`, 'success'); } else showToast('ℹ️ No hay provisionales pendientes', 'info');
         }
+        
         function renderViajes() { const l = document.getElementById('viajes-list'); l.innerHTML = ''; const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin viajes</div>'; return; } s.forEach(v => { const p = v.pagado === 1; l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p><p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl btn-primary"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}</div>`; }); }
         function markTripPaid(id) { const t = appData.viajes.find(v => v.id === id); if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado via App"; saveData(); showToast('✅ Viaje cobrado', 'success'); } }
-        function renderPagos() { const l = document.getElementById('pagos-list'); l.innerHTML = ''; const s = [...appData.pagos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin pagos</div>'; return; } s.forEach(p => { l.innerHTML += `<div class="data-card flex items-center justify-between"><div><p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p><p class="text-xs text-slate-500">${new Date(p.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-lg font-extrabold text-success">${parseFloat(p.importe || 0).toFixed(2)} €</p></div>`; }); }
+        
+        // RENDERIZAR PESTAÑA PAGOS/NÓMINAS
+        function renderPagos() {
+            // Historial de nóminas
+            const payrollList = document.getElementById('payroll-list');
+            payrollList.innerHTML = '';
+            const payrolls = (appData.pagos || []).filter(p => p.tipo === 'nomina_extras').sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            
+            if (payrolls.length === 0) {
+                payrollList.innerHTML = '<div class="data-card text-center text-slate-400 py-6 text-sm">No hay nóminas registradas aún</div>';
+            } else {
+                payrolls.forEach(p => {
+                    payrollList.innerHTML += `
+                        <div class="data-card border-l-4 border-l-success flex items-center justify-between">
+                            <div>
+                                <p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p>
+                                <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES')}</p>
+                            </div>
+                            <p class="text-xl font-extrabold text-success">${parseFloat(p.importe).toFixed(2)} €</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Lista de extras pendientes (jornadas con horas_extra > 0)
+            const unpaidList = document.getElementById('unpaid-extras-list');
+            unpaidList.innerHTML = '';
+            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
+            const rate = rs ? parseFloat(rs.valor) : 19.69;
+            
+            const extrasWithHours = appData.jornadas.filter(j => j.horas_extra > 0).sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            
+            if (extrasWithHours.length === 0) {
+                unpaidList.innerHTML = '<div class="data-card text-center text-slate-400 py-6 text-sm">No hay horas extra registradas</div>';
+            } else {
+                extrasWithHours.forEach(j => {
+                    const value = (j.horas_extra * rate).toFixed(2);
+                    unpaidList.innerHTML += `
+                        <div class="data-card flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')} <span class="text-accent font-bold">+${j.horas_extra}h</span></p>
+                                <p class="text-xs text-slate-500">${value} € @ ${rate.toFixed(2)}€/h</p>
+                            </div>
+                            <span class="text-xs font-bold text-danger bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full">Pendiente</span>
+                        </div>
+                    `;
+                });
+            }
+        }
+
         function updateTodayStatus() { const t = new Date().toISOString().split('T')[0]; const j = appData.jornadas.find(x => x.fecha === t); const s = document.getElementById('today-status'); if (!j) s.innerHTML = '<span class="text-slate-400"><i class="fa-regular fa-circle mr-1"></i>Sin fichar hoy</span>'; else if (!j.salida?.trim()) s.innerHTML = `<span class="text-emerald-500 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>Trabajando desde ${j.entrada}</span>`; else s.innerHTML = '<span class="text-slate-500 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Jornada completada</span>'; }
         
         function clockAction(type) { 
@@ -738,7 +909,7 @@
             saveData(); showToast('✅ Configuración y marca actualizadas', 'success'); 
         }
 
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v16-no-login'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v17-executive'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
