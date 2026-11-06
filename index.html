@@ -2,20 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工V龱尺㇌7 | Control Laboral Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>工V龱尺7 | Executive Dashboard</title>
     
-    <!-- Librerías CDN -->
+    <!-- Librerías -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
-        /* ESTILO BASE FORZADO PARA EVITAR PANTALLA NEGRA */
+        /* ESTÉTICA TERMINAL PREMIUM */
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #0f172a; 
+            background-color: #0f172a; /* Azul noche profundo */
             color: #e2e8f0; 
             margin: 0; 
             padding-bottom: 80px; 
@@ -24,13 +25,18 @@
         
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Tarjetas Premium Dark Mode */
+        /* Tarjetas con efecto cristal oscuro */
         .card {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: rgba(249, 115, 22, 0.3);
+            transform: translateY(-2px);
         }
 
         /* Navegación Inferior Fija */
@@ -50,26 +56,26 @@
         .nav-btn.active { color: #f97316; transform: translateY(-2px); }
         .nav-btn i { font-size: 20px; margin-bottom: 4px; }
 
-        /* Botones */
+        /* Botones Estilo Terminal */
         .btn {
             padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px;
             cursor: pointer; transition: all 0.2s; border: none;
             display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
-        .btn-primary { background: #f97316; color: white; }
+        .btn-primary { background: #f97316; color: white; box-shadow: 0 2px 4px rgba(249, 115, 22, 0.3); }
         .btn-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .btn-danger { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
         .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1; }
-        .btn:hover { opacity: 0.9; }
+        .btn:hover { opacity: 0.9; filter: brightness(1.1); }
 
-        /* Inputs */
+        /* Inputs Oscuros */
         input, select, textarea {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white; padding: 10px; border-radius: 6px; width: 100%;
             outline: none; font-family: inherit;
         }
-        input:focus { border-color: #f97316; }
+        input:focus, select:focus { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2); }
 
         /* Utilidades Visibles */
         .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
@@ -88,18 +94,14 @@
             width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* Texto Ayuda Debug */
-        #debug-msg {
-            position: fixed; top: 10px; right: 10px; background: red; color: white;
-            padding: 5px 10px; border-radius: 4px; font-size: 10px; z-index: 999;
-            display: none;
-        }
+        /* Badges de Estado */
+        .badge-prov { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge-ok { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-paid { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
     </style>
+    <script> tailwind.config = { darkMode: 'class' }; </script>
 </head>
-<body>
-
-    <!-- Mensaje de error si algo falla (se oculta automáticamente) -->
-    <div id="debug-msg">Error cargando datos</div>
+<body class="min-h-screen text-slate-200">
 
     <!-- HEADER -->
     <header class="sticky top-0 z-40 bg-[#0f172a]/90 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
@@ -108,7 +110,7 @@
                 <i class="fa-solid fa-chart-line"></i>
             </div>
             <div>
-                <h1 class="font-bold text-sm leading-none text-white">工V龱尺ㄚ㇌7</h1>
+                <h1 id="app-name-display" class="font-bold text-sm leading-none text-white">工V龱尺㇌7</h1>
                 <span class="text-[10px] text-slate-400 uppercase tracking-wider">Executive Control</span>
             </div>
         </div>
@@ -118,7 +120,7 @@
         </div>
     </header>
 
-    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="p-4 max-w-4xl mx-auto pb-24">
 
         <!-- PESTAÑA: DASHBOARD -->
@@ -370,18 +372,15 @@
             
             init() {
                 try {
-                    // Intentar cargar de localStorage
-                    const saved = localStorage.getItem('ivory_exec_v2');
+                    const saved = localStorage.getItem('ivory_exec_v3');
                     if (saved) {
                         this.data = JSON.parse(saved);
-                        // Validar estructura mínima
-                        if (!this.data.jornadas || !Array.isArray(this.data.jornadas)) throw new Error("Datos corruptos");
+                        if (!this.data.jornadas || !Array.isArray(this.data.jornadas)) throw new Error("Corrupt");
                     } else {
-                        // Usar datos iniciales incrustados
                         this.data = JSON.parse(JSON.stringify(INITIAL_DATA));
                     }
                     
-                    // Asegurar campos opcionales existen
+                    // Asegurar estructura
                     if(!this.data.pagos) this.data.pagos = [];
                     if(!this.data.ajustes) this.data.ajustes = { rate: 19.69, schedule: "08:00-16:00" };
 
@@ -390,17 +389,14 @@
                     this.renderAll();
                     
                 } catch (err) {
-                    console.error("Error inicialización:", err);
-                    document.getElementById('debug-msg').style.display = 'block';
-                    document.getElementById('debug-msg').innerText = "Usando datos de respaldo...";
-                    // Forzar carga de datos iniciales si falla todo
+                    console.error(err);
                     this.data = JSON.parse(JSON.stringify(INITIAL_DATA));
                     this.renderAll();
                 }
             },
 
             save() {
-                localStorage.setItem('ivory_exec_v2', JSON.stringify(this.data));
+                localStorage.setItem('ivory_exec_v3', JSON.stringify(this.data));
                 this.renderAll();
             },
 
@@ -584,7 +580,7 @@
 
                 list.slice(0, 30).forEach(j => {
                     const isProv = j.estado === 'provisional';
-                    const badge = isProv ? '<span class="bg-yellow-500/20 text-yellow-400 text-[10px] px-1 rounded">PROV</span>' : '<span class="bg-green-500/20 text-green-400 text-[10px] px-1 rounded">OK</span>';
+                    const badge = isProv ? '<span class="badge-prov text-[10px] px-1 rounded">PROV</span>' : '<span class="badge-ok text-[10px] px-1 rounded">OK</span>';
                     const extraTxt = j.horas_extra > 0 ? `<span class="text-orange-400 font-bold ml-2">+${j.horas_extra}h</span>` : '';
                     
                     container.innerHTML += `
@@ -822,7 +818,7 @@
 
             resetApp() {
                 if(confirm("¿Borrar todo y volver a los datos originales?")) {
-                    localStorage.removeItem('ivory_exec_v2');
+                    localStorage.removeItem('ivory_exec_v3');
                     location.reload();
                 }
             }
