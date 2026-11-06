@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#f97316">
+    <meta name="theme-color" content="#0f172a">
     <title>工V龱尺㇌7 | Control Laboral Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -48,6 +48,7 @@
         .btn-add-extra { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.3); }
         .btn-edit { background: rgba(255,255,255,0.05); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); }
         .btn-mark-paid { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.3); }
+        .btn-confirm-nomina { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 2px 8px -2px rgba(59, 130, 246, 0.3); }
         
         .modal-content { background: #1e293b; border-radius: 20px 20px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); }
         @media (min-width: 640px) { .modal-content { border-radius: 20px; max-width: 480px; margin: 0 auto; } }
@@ -61,6 +62,7 @@
         .badge-provisional { background: rgba(234, 179, 8, 0.15); color: #fde047; }
         .badge-confirmado { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
         .badge-paid { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
+        .badge-auto-gen { background: rgba(139, 92, 246, 0.15); color: #c4b5fd; }
         
         @media (max-width: 768px) { .desktop-table { display: none; } }
         @media (min-width: 769px) { .mobile-cards { display: none; } }
@@ -76,7 +78,6 @@
         .filter-pill { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s; }
         .filter-pill.active { background: var(--app-primary, #f97316); color: white; border-color: var(--app-primary, #f97316); }
         
-        /* Indicador Offline */
         #offline-indicator { 
             position: fixed; top: 0; left: 0; right: 0; z-index: 50; 
             background: #ef4444; color: white; text-align: center; padding: 6px; 
@@ -84,15 +85,16 @@
         }
         #offline-indicator.visible { transform: translateY(0); }
         
-        /* Variables CSS */
         :root { --app-primary: #f97316; --app-primary-dark: #ea580c; }
         
-        /* Logo */
         #custom-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         #default-logo-svg { display: block; }
         
-        /* Tipografía Monoespaciada para Números */
         .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Animación pulso para elementos pendientes */
+        @keyframes pulse-border { 0%, 100% { border-color: rgba(239, 68, 68, 0.3); } 50% { border-color: rgba(239, 68, 68, 0.8); } }
+        .pulse-pending { animation: pulse-border 2s infinite; }
     </style>
     <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } }; </script>
 </head>
@@ -188,28 +190,33 @@
             
             <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
             
-            <!-- PESTAÑA PAGOS COMPLETA: NÓMINAS + EXTRAS INDIVIDUALES -->
+            <!-- PESTAÑA PAGOS COMPLETA: NÓMINAS AUTOGENERADAS + EXTRAS INDIVIDUALES -->
             <div id="content-pagos" class="tab-content hidden fade-in">
                 <h2 class="font-bold text-lg text-white mb-3">Gestión de Pagos</h2>
                 
-                <!-- SECCIÓN 1: REGISTRO DE NÓMINAS MENSUALES -->
+                <!-- SECCIÓN 1: NÓMINAS AUTOGENERADAS POR MES -->
                 <div class="glass-panel rounded-2xl p-4 mb-4">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-file-invoice-dollar mr-2 text-accent"></i>Nóminas Mensuales</h3>
-                        <button onclick="openPayrollModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-plus mr-1"></i>Añadir Nómina</button>
+                        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-file-invoice-dollar mr-2 text-accent"></i>Nóminas Mensuales Auto-generadas</h3>
+                        <button onclick="regeneratePayrolls()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-arrows-rotate mr-1"></i>Recalcular</button>
                     </div>
+                    <p class="text-[10px] text-slate-400 mb-3">Las nóminas se generan automáticamente sumando horas normales × tarifa base. Confirma cada una cuando esté correcta.</p>
                     <div class="space-y-2" id="payroll-history-list"></div>
                 </div>
                 
                 <!-- SECCIÓN 2: RESUMEN RÁPIDO -->
                 <div class="glass-panel rounded-2xl p-4 mb-4">
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-3 gap-3">
                         <div class="text-center">
-                            <p class="text-[10px] text-slate-400 uppercase font-bold">Extras Pendientes</p>
-                            <p class="text-2xl font-bold mono text-danger" id="summary-pending-extras">0 €</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Nóminas Pendientes</p>
+                            <p class="text-2xl font-bold mono text-danger" id="summary-pending-payrolls">0 €</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-[10px] text-slate-400 uppercase font-bold">Extras Pagados</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Extras Pendientes</p>
+                            <p class="text-2xl font-bold mono text-warning" id="summary-pending-extras">0 €</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Total Confirmado</p>
                             <p class="text-2xl font-bold mono text-success" id="summary-paid-extras">0 €</p>
                         </div>
                     </div>
@@ -245,6 +252,7 @@
                         </button>
                     </div>
 
+                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Tarifa Hora Normal (€/h)</label><input type="number" step="0.01" id="config-normal-rate" class="input-field text-lg font-bold mono"></div>
                     <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Tarifa Hora Extra (€)</label><input type="number" step="0.01" id="config-rate" class="input-field text-lg font-bold mono"></div>
                     <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Horario Habitual</label><input type="text" id="config-schedule" class="input-field"></div>
                     <div class="flex gap-2"><button onclick="requestNotificationPermission()" class="btn-secondary flex-1"><i class="fa-solid fa-bell mr-2"></i>Activar Notificaciones</button><button onclick="saveConfig()" class="btn-primary flex-1"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar Todo</button></div>
@@ -319,6 +327,7 @@
          "ajustes": [
         {"clave": "seeded_demo", "valor": "yes"},
         {"clave": "hora_extra_euros", "valor": "19.69"},
+        {"clave": "hora_normal_euros", "valor": "12.50"},
         {"clave": "horas_normales_dia", "valor": "8"},
         {"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
         {"clave": "dias_trabajo", "valor": "Lunes a viernes"},
@@ -338,7 +347,7 @@
             }
             
             applyBranding();
-            sanitizeConfirmedRecords(); ensureFullYearData(); updateDateAndClock(); setInterval(updateDateAndClock, 1000);
+            sanitizeConfirmedRecords(); ensureFullYearData(); generateMonthlyPayrolls(); updateDateAndClock(); setInterval(updateDateAndClock, 1000);
             setupOfflineDetection(); scheduleNotifications();
             
             document.getElementById('app-container').classList.remove('hidden');
@@ -451,6 +460,98 @@
             return newJ;
         }
 
+        // =============================================
+        // NUEVO: GENERACIÓN AUTOMÁTICA DE NÓMINAS MENSUALES
+        // =============================================
+        function generateMonthlyPayrolls() {
+            const normalRateSetting = appData.ajustes.find(a => a.clave === "hora_normal_euros");
+            const normalRate = normalRateSetting ? parseFloat(normalRateSetting.valor) : 12.50;
+            
+            // Agrupar jornadas por mes/año
+            const monthlyGroups = {};
+            appData.jornadas.forEach(j => {
+                const key = j.fecha.substring(0, 7); // "YYYY-MM"
+                if (!monthlyGroups[key]) monthlyGroups[key] = { totalNormalHours: 0, totalExtraHours: 0, daysCount: 0 };
+                monthlyGroups[key].totalNormalHours += parseFloat(j.horas_normales || 0);
+                monthlyGroups[key].totalExtraHours += parseFloat(j.horas_extra || 0);
+                monthlyGroups[key].daysCount++;
+            });
+            
+            // Generar nómina provisional para cada mes que tenga datos
+            Object.keys(monthlyGroups).sort().forEach(monthKey => {
+                const group = monthlyGroups[monthKey];
+                const payrollAmount = parseFloat((group.totalNormalHours * normalRate).toFixed(2));
+                const monthLabel = new Date(monthKey + '-01').toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+                
+                // Verificar si ya existe una nómina autogenerada para ese mes
+                const existingIndex = appData.pagos.findIndex(p => p.tipo === 'nomina_auto' && p.mes_key === monthKey);
+                
+                if (existingIndex >= 0) {
+                    // Actualizar importe si cambió
+                    if (appData.pagos[existingIndex].importe !== payrollAmount && !appData.pagos[existingIndex].confirmado) {
+                        appData.pagos[existingIndex].importe = payrollAmount;
+                        appData.pagos[existingIndex].actualizado = new Date().toISOString();
+                    }
+                } else {
+                    // Crear nueva nómina autogenerada (pendiente de confirmación)
+                    appData.pagos.push({
+                        id: Date.now() + Math.random(),
+                        fecha: monthKey + '-28', // fecha representativa del mes
+                        concepto: `Nómina ${monthLabel}`,
+                        importe: payrollAmount,
+                        tipo: 'nomina_auto',
+                        mes_key: monthKey,
+                        confirmado: false,
+                        horas_normales_mes: group.totalNormalHours,
+                        dias_laborables: group.daysCount,
+                        created: new Date().toISOString()
+                    });
+                }
+            });
+            
+            saveDataSilent();
+        }
+
+        function regeneratePayrolls() {
+            // Eliminar todas las nóminas autogeneradas NO confirmadas y regenerarlas
+            appData.pagos = appData.pagos.filter(p => !(p.tipo === 'nomina_auto' && !p.confirmado));
+            generateMonthlyPayrolls();
+            saveData();
+            showToast('✅ Nóminas recalculadas correctamente', 'success');
+        }
+
+        function confirmPayroll(id) {
+            const p = appData.pagos.find(x => x.id === id);
+            if (p) {
+                p.confirmado = true;
+                p.fecha_confirmacion = new Date().toISOString().split('T')[0];
+                saveData();
+                showToast(`✅ Nómina "${p.concepto}" confirmada`, 'success');
+            }
+        }
+
+        function unconfirmPayroll(id) {
+            const p = appData.pagos.find(x => x.id === id);
+            if (p) {
+                p.confirmado = false;
+                delete p.fecha_confirmacion;
+                saveData();
+                showToast(`↩️ Nómina marcada como pendiente`, 'info');
+            }
+        }
+
+        function editPayrollAmount(id) {
+            const p = appData.pagos.find(x => x.id === id);
+            if (!p) return;
+            const newAmount = prompt(`Nuevo importe para "${p.concepto}":`, p.importe.toFixed(2));
+            if (newAmount !== null && !isNaN(parseFloat(newAmount))) {
+                p.importe = parseFloat(newAmount);
+                p.manual_edit = true;
+                saveData();
+                showToast('✅ Importe actualizado', 'success');
+            }
+        }
+
         function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderAll(); processOfflineQueue(); }
         function saveDataSilent() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); }
         function renderAll() { renderDashboard(); renderExecutiveDashboard(); renderChart(); renderJornadas(); renderViajes(); renderPagos(); renderConfig(); updateTodayStatus(); }
@@ -549,6 +650,12 @@
                 }
             });
             
+            // Sumar nóminas confirmadas como cobradas
+            let confirmedPayrolls = 0;
+            appData.pagos.forEach(p => {
+                if ((p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual') && p.confirmado) confirmedPayrolls += parseFloat(p.importe || 0);
+            });
+            
             const totalExtraValue = te * rate;
             
             document.getElementById('total-extra-hours').innerText = te.toFixed(2); 
@@ -558,7 +665,7 @@
             document.getElementById('pending-trips-value').innerText = (tripPending + extrasPendingValue).toFixed(2) + " €";
             document.getElementById('pending-trips-count').innerText = `${appData.viajes.filter(v=>!v.pagado).length} viajes + extras`; 
             
-            document.getElementById('total-paid-value').innerText = (tripPaid + extrasPaidValue).toFixed(2) + " €";
+            document.getElementById('total-paid-value').innerText = (tripPaid + extrasPaidValue + confirmedPayrolls).toFixed(2) + " €";
         }
 
         function renderChart() {
@@ -641,13 +748,13 @@
                 
                 if (!date || isNaN(amount) || amount <= 0) { showToast('⚠️ Completa fecha e importe', 'warning'); return; }
                 
-                // Registrar nómina mensual
                 appData.pagos.push({
                     id: Date.now(),
                     fecha: date,
                     concepto: note || "Nómina mensual",
                     importe: amount,
                     tipo: "nomina_mensual",
+                    confirmado: true,
                     created: new Date().toISOString()
                 });
                 
@@ -658,10 +765,9 @@
 
         function openTripModal() { currentModalType = 'viaje'; editingId = null; document.getElementById('modal-title').innerText = 'Nuevo Viaje'; document.getElementById('modal-content').innerHTML = `<input type="text" id="m-concepto" placeholder="Concepto del viaje" class="input-field"><input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-field"><input type="number" step="0.01" id="m-importe" placeholder="Importe (€)" class="input-field">`; document.getElementById('generic-modal').classList.remove('hidden'); }
         
-        // MODAL PARA REGISTRAR NÓMINA MENSUAL
         function openPayrollModal() {
             currentModalType = 'payroll'; editingId = null;
-            document.getElementById('modal-title').innerText = 'Registrar Nómina Mensual';
+            document.getElementById('modal-title').innerText = 'Registrar Nómina Manual';
             document.getElementById('modal-content').innerHTML = `
                 <div class="space-y-3">
                     <div><label class="text-xs font-bold text-slate-400 uppercase">Mes/Año de la Nómina</label><input type="date" id="m-payroll-date" value="${new Date().toISOString().split('T')[0]}" class="input-field mt-1"></div>
@@ -672,26 +778,20 @@
             document.getElementById('generic-modal').classList.remove('hidden');
         }
 
-        // FUNCIÓN CLAVE: Marcar extras de una jornada específica como pagados
         function markExtrasPaid(jornadaId) {
             const j = appData.jornadas.find(x => x.id === jornadaId);
             if (!j || j.horas_extra <= 0) return;
-            
             j.pagado_extras = true;
             j.fecha_pago_extras = new Date().toISOString().split('T')[0];
-            
             saveData();
             showToast(`✅ Extras del ${new Date(j.fecha).toLocaleDateString('es-ES')} marcados como pagados`, 'success');
         }
 
-        // Función para desmarcar (por si hubo error)
         function markExtrasUnpaid(jornadaId) {
             const j = appData.jornadas.find(x => x.id === jornadaId);
             if (!j) return;
-            
             j.pagado_extras = false;
             j.fecha_pago_extras = "";
-            
             saveData();
             showToast(`↩️ Extras del ${new Date(j.fecha).toLocaleDateString('es-ES')} marcados como pendientes`, 'info');
         }
@@ -704,33 +804,62 @@
         function renderViajes() { const l = document.getElementById('viajes-list'); l.innerHTML = ''; const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-500 py-8">Sin viajes</div>'; return; } s.forEach(v => { const p = v.pagado === 1; l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-white">${v.concepto}</p><p class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-bold mono text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-white/5 text-slate-500 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl btn-primary"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}</div>`; }); }
         function markTripPaid(id) { const t = appData.viajes.find(v => v.id === id); if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado via App"; saveData(); showToast('✅ Viaje cobrado', 'success'); } }
         
-        // RENDERIZAR PESTAÑA PAGOS COMPLETA
+        // RENDERIZAR PESTAÑA PAGOS ACTUALIZADA CON NÓMINAS AUTOGENERAADAS
         function renderPagos() {
             const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
             const rate = rs ? parseFloat(rs.valor) : 19.69;
             
-            // 1. Renderizar Historial de Nóminas Mensuales
+            // 1. Renderizar Historial de Nóminas Autogeneradas
             const payrollList = document.getElementById('payroll-history-list');
             payrollList.innerHTML = '';
-            const payrolls = (appData.pagos || []).filter(p => p.tipo === 'nomina_mensual').sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            const payrolls = [...appData.pagos].filter(p => p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual').sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
             
             if (payrolls.length === 0) {
-                payrollList.innerHTML = '<div class="data-card text-center text-slate-500 py-6 text-sm">No hay nóminas registradas aún. Pulsa "Añadir Nómina" para registrar septiembre (1463,68€) y octubre (1504,65€).</div>';
+                payrollList.innerHTML = '<div class="data-card text-center text-slate-500 py-6 text-sm">No hay nóminas generadas aún. Registra jornadas y pulsa "Recalcular".</div>';
             } else {
                 payrolls.forEach(p => {
+                    const isAuto = p.tipo === 'nomina_auto';
+                    const isConfirmed = p.confirmado === true;
+                    const badgeClass = isConfirmed ? 'badge-confirmado' : (isAuto ? 'badge-auto-gen pulse-pending' : 'badge-provisional');
+                    const badgeText = isConfirmed ? 'CONFIRMADA' : (isAuto ? 'AUTO · PENDIENTE' : 'MANUAL');
+                    
                     payrollList.innerHTML += `
-                        <div class="data-card border-l-4 border-l-accent flex items-center justify-between">
-                            <div>
-                                <p class="font-bold text-white">${p.concepto}</p>
-                                <p class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES', {month: 'long', year: 'numeric'})}</p>
+                        <div class="data-card border-l-4 ${isConfirmed ? 'border-l-success' : 'border-l-accent'}">
+                            <div class="flex items-start justify-between mb-2">
+                                <div>
+                                    <p class="font-bold text-white">${p.concepto}</p>
+                                    <p class="text-xs text-slate-400">
+                                        <i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES', {month: 'long', year: 'numeric'})}
+                                        ${isAuto && p.horas_normales_mes ? ` • ${p.horas_normales_mes}h en ${p.dias_laborables} días` : ''}
+                                        ${p.manual_edit ? ' • Editada manualmente' : ''}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xl font-bold mono text-white">${parseFloat(p.importe).toFixed(2)} €</p>
+                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeClass}">${badgeText}</span>
+                                </div>
                             </div>
-                            <p class="text-xl font-bold mono text-accent">${parseFloat(p.importe).toFixed(2)} €</p>
+                            <div class="flex gap-2 mt-2">
+                                ${isConfirmed 
+                                    ? `<button onclick="unconfirmPayroll(${p.id})" class="flex-1 py-2 rounded-lg bg-white/5 text-slate-300 font-bold text-xs hover:bg-white/10 transition"><i class="fa-solid fa-rotate-left mr-1"></i>Desconfirmar</button>`
+                                    : `<button onclick="confirmPayroll(${p.id})" class="flex-1 py-2 rounded-lg btn-confirm-nomina font-bold text-xs"><i class="fa-solid fa-check mr-1"></i>Confirmar</button>`
+                                }
+                                <button onclick="editPayrollAmount(${p.id})" class="py-2 px-3 rounded-lg bg-white/5 text-slate-300 font-bold text-xs hover:bg-white/10 transition"><i class="fa-solid fa-pen"></i></button>
+                            </div>
                         </div>
                     `;
                 });
             }
             
-            // 2. Calcular resúmenes de extras
+            // 2. Calcular resúmenes
+            let pendingPayrollTotal = 0, paidPayrollTotal = 0;
+            appData.pagos.forEach(p => {
+                if (p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual') {
+                    if (p.confirmado) paidPayrollTotal += parseFloat(p.importe || 0);
+                    else pendingPayrollTotal += parseFloat(p.importe || 0);
+                }
+            });
+            
             let pendingTotal = 0, paidTotal = 0;
             appData.jornadas.forEach(j => {
                 if (j.horas_extra > 0) {
@@ -740,8 +869,9 @@
                 }
             });
             
+            document.getElementById('summary-pending-payrolls').innerText = pendingPayrollTotal.toFixed(2) + " €";
             document.getElementById('summary-pending-extras').innerText = pendingTotal.toFixed(2) + " €";
-            document.getElementById('summary-paid-extras').innerText = paidTotal.toFixed(2) + " €";
+            document.getElementById('summary-paid-extras').innerText = (paidPayrollTotal + paidTotal).toFixed(2) + " €";
             
             // 3. Renderizar lista de extras con botones individuales
             const list = document.getElementById('extras-payment-list');
@@ -791,6 +921,8 @@
                 if (h > 8) { j.horas_extra = parseFloat((h - 8).toFixed(2)); j.horas_normales = 8.0; } else { j.horas_normales = parseFloat(h.toFixed(2)); j.horas_extra = 0.0; } 
                 showToast(`🔴 Salida: ${ts} | Total: ${h.toFixed(2)}h`, 'success'); 
                 sendNotification("Jornada completada", `Has trabajado ${h.toFixed(2)}h hoy`);
+                // Recalcular nóminas tras fichar salida
+                generateMonthlyPayrolls();
             } 
             saveData(); 
         }
@@ -918,13 +1050,14 @@
         }
 
         function exportJSON() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2)); const l = document.createElement('a'); l.href = d; l.download = "ivory37_backup_" + new Date().toISOString().slice(0,10) + ".json"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('💾 Backup descargado', 'success'); }
-        function importJSON(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(ev) { try { const imp = JSON.parse(ev.target.result); if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); applyBranding(); saveData(); showToast('✅ Datos restaurados', 'success'); setTimeout(() => location.reload(), 1000); } else showToast('❌ Formato incorrecto', 'error'); } catch { showToast('❌ Error al leer', 'error'); } }; r.readAsText(f); e.target.value = ''; }
+        function importJSON(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(ev) { try { const imp = JSON.parse(ev.target.result); if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); generateMonthlyPayrolls(); applyBranding(); saveData(); showToast('✅ Datos restaurados', 'success'); setTimeout(() => location.reload(), 1000); } else showToast('❌ Formato incorrecto', 'error'); } catch { showToast('❌ Error al leer', 'error'); } }; r.readAsText(f); e.target.value = ''; }
         function exportCSV() { const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas","creado"]; const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`,j.creado||'']); const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_ivory37_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('📊 CSV exportado', 'success'); }
         function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo?')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
         function switchTab(t) { document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); document.getElementById(`content-${t}`).classList.remove('hidden'); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function toggleTheme() { /* Solo cambia colores internos, no recarga */ }
         
         function renderConfig() { 
+            const nr = appData.ajustes.find(a => a.clave === "hora_normal_euros"); if (nr) document.getElementById('config-normal-rate').value = nr.valor;
             const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor; 
             const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor;
             const n = appData.ajustes.find(a => a.clave === "app_name"); if (n) document.getElementById('config-appname').value = n.valor;
@@ -932,10 +1065,12 @@
         }
 
         function saveConfig() { 
+            const nr = document.getElementById('config-normal-rate').value;
             const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value;
             const appName = document.getElementById('config-appname').value.trim();
             const appColor = document.getElementById('config-color').value;
             
+            let nrs = appData.ajustes.find(a => a.clave === "hora_normal_euros"); if (nrs) nrs.valor = nr; else appData.ajustes.push({ clave: "hora_normal_euros", valor: nr });
             let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); 
             let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc });
             
@@ -943,10 +1078,11 @@
             if (appColor) { let cs = appData.ajustes.find(a => a.clave === "app_color"); if (cs) cs.valor = appColor; else appData.ajustes.push({ clave: "app_color", valor: appColor }); }
             
             applyBranding();
-            saveData(); showToast('✅ Configuración y marca actualizadas', 'success'); 
+            generateMonthlyPayrolls(); // Recalcular nóminas con nuevas tarifas
+            saveData(); showToast('✅ Configuración y nóminas actualizadas', 'success'); 
         }
 
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v20-payroll-complete'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v21-premium'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
