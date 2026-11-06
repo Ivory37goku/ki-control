@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#f97316">
-    <title>工V龱尺㇌7 | Control Laboral Pro</title>
+    <title>工V龱尺ㄚ㇌7 | Control Laboral Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -56,6 +56,7 @@
         .btn-add-extra { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.3); }
         .btn-edit { background: #f1f5f9; color: #475569; }
         .dark .btn-edit { background: #334155; color: #cbd5e1; }
+        .btn-mark-paid { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.3); }
         
         .modal-content { background: white; border-radius: 20px 20px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; }
         .dark .modal-content { background: #1e293b; }
@@ -105,19 +106,6 @@
         /* Logo */
         #custom-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         #default-logo-svg { display: block; }
-
-        /* Checkbox personalizado para selección de pagos */
-        .pay-checkbox { 
-            width: 22px; height: 22px; border: 2px solid #cbd5e1; border-radius: 6px; 
-            display: flex; align-items: center; justify-content: center; cursor: pointer; 
-            transition: all 0.2s; background: white; flex-shrink: 0;
-        }
-        .dark .pay-checkbox { background: #1e293b; border-color: #475569; }
-        .pay-checkbox.checked { background: var(--app-primary); border-color: var(--app-primary); }
-        .pay-checkbox.checked::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: white; font-size: 12px; }
-        
-        .selected-row { background: rgba(249, 115, 22, 0.05); border-left: 3px solid var(--app-primary); }
-        .dark .selected-row { background: rgba(249, 115, 22, 0.1); }
     </style>
     <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316', secondary: '#0ea5e9', success: '#10b981', danger: '#ef4444', accent: '#8b5cf6' } } } }; </script>
 </head>
@@ -200,7 +188,7 @@
                 <div class="glass-panel rounded-2xl p-4 border-l-4 border-l-success">
                     <div class="flex items-center justify-between mb-1"><i class="fa-solid fa-wallet text-success"></i><span class="text-[10px] font-bold text-slate-400 uppercase">Total Cobrado</span></div>
                     <p class="text-2xl font-extrabold text-success" id="total-paid-value">0 €</p>
-                    <p class="text-[10px] text-slate-500">viajes + nóminas</p>
+                    <p class="text-[10px] text-slate-500">viajes + extras pagados</p>
                 </div>
             </div>
 
@@ -213,28 +201,28 @@
             
             <div id="content-viajes" class="tab-content hidden fade-in"><div class="flex items-center justify-between mb-3"><h2 class="font-bold text-lg text-slate-900 dark:text-white">Viajes</h2><button onclick="openTripModal()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md" style="background: var(--app-primary); color: white"><i class="fa-solid fa-plus mr-1"></i>Nuevo</button></div><div class="space-y-2" id="viajes-list"></div></div>
             
-            <!-- PESTAÑA PAGOS / NÓMINAS MEJORADA CON SELECCIÓN -->
+            <!-- PESTAÑA PAGOS SIMPLIFICADA Y FUNCIONAL -->
             <div id="content-pagos" class="tab-content hidden fade-in">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="font-bold text-lg text-slate-900 dark:text-white">Gestión de Pagos</h2>
-                    <button onclick="openPayrollModal()" id="btn-register-payroll" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-md bg-slate-300 text-slate-500 cursor-not-allowed" disabled>
-                        <i class="fa-solid fa-money-bill-transfer mr-1"></i>Registrar Nómina (<span id="selected-count">0</span>)
-                    </button>
-                </div>
+                <h2 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Gestión de Pagos</h2>
                 
-                <!-- Resumen de Pagos -->
+                <!-- Resumen rápido -->
                 <div class="glass-panel rounded-2xl p-4 mb-4">
-                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-receipt mr-2 text-accent"></i>Historial de Nóminas</h3>
-                    <div class="space-y-2" id="payroll-list"></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="text-center">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Extras Pendientes</p>
+                            <p class="text-2xl font-extrabold text-danger" id="summary-pending-extras">0 €</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Extras Pagados</p>
+                            <p class="text-2xl font-extrabold text-success" id="summary-paid-extras">0 €</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Extras Pendientes de Pago CON CHECKBOXES -->
+                <!-- Lista de extras con botón individual -->
                 <div class="glass-panel rounded-2xl p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-hourglass-half mr-2 text-danger"></i>Extras Pendientes de Cobro</h3>
-                        <button onclick="toggleSelectAll()" class="text-xs font-bold text-primary hover:underline">Seleccionar Todo</button>
-                    </div>
-                    <div class="space-y-2" id="unpaid-extras-list"></div>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3"><i class="fa-solid fa-list-check mr-2 text-accent"></i>Horas Extra por Jornada</h3>
+                    <div class="space-y-2" id="extras-payment-list"></div>
                 </div>
             </div>
             
@@ -275,7 +263,6 @@
     <script>
         let appData = null, currentModalType = null, editingId = null, chartInstance = null, executiveChartInstance = null, currentFilter = 'all';
         let offlineQueue = [];
-        let selectedForPayroll = new Set(); // IDs de jornadas seleccionadas para pagar
         
         // ============================================
         // DATOS INTEGRADOS
@@ -555,29 +542,30 @@
             let te = 0; appData.jornadas.forEach(j => te += parseFloat(j.horas_extra || 0));
             const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); const rate = rs ? parseFloat(rs.valor) : 19.69;
             
-            // Calcular totales financieros incluyendo extras pagados
+            // Calcular totales financieros
             let tripPending = 0, tripPaid = 0;
             appData.viajes.forEach(v => { const a = parseFloat(v.importe || 0); if (v.pagado === 1) tripPaid += a; else tripPending += a; });
             
-            // Calcular extras pagados desde la sección de pagos/nóminas
-            let extrasPaid = 0;
-            if (appData.pagos) {
-                appData.pagos.forEach(p => {
-                    if (p.tipo === 'nomina_extras') extrasPaid += parseFloat(p.importe || 0);
-                });
-            }
+            // Calcular extras pagados vs pendientes
+            let extrasPaidValue = 0, extrasPendingValue = 0;
+            appData.jornadas.forEach(j => {
+                if (j.horas_extra > 0) {
+                    const val = j.horas_extra * rate;
+                    if (j.pagado_extras) extrasPaidValue += val;
+                    else extrasPendingValue += val;
+                }
+            });
             
             const totalExtraValue = te * rate;
-            const pendingExtrasValue = totalExtraValue - extrasPaid;
             
             document.getElementById('total-extra-hours').innerText = te.toFixed(2); 
             document.getElementById('total-extra-value').innerText = totalExtraValue.toFixed(2) + " €";
             document.getElementById('display-rate').innerText = rate.toFixed(2); 
             
-            document.getElementById('pending-trips-value').innerText = (tripPending + Math.max(0, pendingExtrasValue)).toFixed(2) + " €";
+            document.getElementById('pending-trips-value').innerText = (tripPending + extrasPendingValue).toFixed(2) + " €";
             document.getElementById('pending-trips-count').innerText = `${appData.viajes.filter(v=>!v.pagado).length} viajes + extras`; 
             
-            document.getElementById('total-paid-value').innerText = (tripPaid + extrasPaid).toFixed(2) + " €";
+            document.getElementById('total-paid-value').innerText = (tripPaid + extrasPaidValue).toFixed(2) + " €";
         }
 
         function renderChart() {
@@ -635,7 +623,7 @@
             document.getElementById('generic-modal').classList.remove('hidden');
         }
 
-        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; selectedForPayroll.clear(); updatePayrollButton(); }
+        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; }
 
         function saveModalData() {
             if (currentModalType === 'add_extra') {
@@ -654,69 +642,34 @@
                 if (!c || !f || isNaN(i)) { showToast('⚠️ Rellena todos los campos', 'warning'); return; }
                 appData.viajes.push({ id: Date.now(), fecha: f, concepto: c, importe: i, pagado: 0, fecha_pago: "", notas: "Pendiente", creado: new Date().toISOString() });
                 showToast('✅ Viaje añadido', 'success');
-            } else if (currentModalType === 'payroll') {
-                const date = document.getElementById('m-payroll-date').value;
-                const amount = parseFloat(document.getElementById('m-payroll-amount').value);
-                const note = document.getElementById('m-payroll-note').value.trim();
-                
-                if (!date || isNaN(amount) || amount <= 0) { showToast('⚠️ Completa fecha e importe', 'warning'); return; }
-                if (selectedForPayroll.size === 0) { showToast('⚠️ Selecciona al menos una jornada', 'warning'); return; }
-                
-                // Registrar nómina vinculada a las jornadas seleccionadas
-                appData.pagos.push({
-                    id: Date.now(),
-                    fecha: date,
-                    concepto: note || "Pago de horas extra",
-                    importe: amount,
-                    tipo: "nomina_extras",
-                    jornadas_pagadas: Array.from(selectedForPayroll), // Guardamos los IDs
-                    created: new Date().toISOString()
-                });
-                
-                // Marcar las jornadas como pagadas
-                selectedForPayroll.forEach(id => {
-                    const j = appData.jornadas.find(x => x.id === id);
-                    if (j) j.pagado_extras = true;
-                });
-                
-                showToast(`✅ Nómina de ${amount.toFixed(2)}€ registrada (${selectedForPayroll.size} jornadas)`, 'success');
             }
             closeModal(); saveData();
         }
 
         function openTripModal() { currentModalType = 'viaje'; editingId = null; document.getElementById('modal-title').innerText = 'Nuevo Viaje'; document.getElementById('modal-content').innerHTML = `<input type="text" id="m-concepto" placeholder="Concepto del viaje" class="input-field"><input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-field"><input type="number" step="0.01" id="m-importe" placeholder="Importe (€)" class="input-field">`; document.getElementById('generic-modal').classList.remove('hidden'); }
         
-        // MODAL PARA REGISTRAR NÓMINA DE EXTRAS (CON VÍNCULO)
-        function openPayrollModal() {
-            if (selectedForPayroll.size === 0) {
-                showToast('⚠️ Primero selecciona las jornadas a pagar', 'warning');
-                return;
-            }
+        // FUNCIÓN CLAVE: Marcar extras de una jornada específica como pagados
+        function markExtrasPaid(jornadaId) {
+            const j = appData.jornadas.find(x => x.id === jornadaId);
+            if (!j || j.horas_extra <= 0) return;
             
-            currentModalType = 'payroll'; editingId = null;
-            document.getElementById('modal-title').innerText = 'Registrar Pago de Extras';
+            j.pagado_extras = true;
+            j.fecha_pago_extras = new Date().toISOString().split('T')[0];
             
-            // Calcular total sugerido
-            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
-            const rate = rs ? parseFloat(rs.valor) : 19.69;
-            let suggestedTotal = 0;
-            selectedForPayroll.forEach(id => {
-                const j = appData.jornadas.find(x => x.id === id);
-                if (j) suggestedTotal += j.horas_extra * rate;
-            });
+            saveData();
+            showToast(`✅ Extras del ${new Date(j.fecha).toLocaleDateString('es-ES')} marcados como pagados`, 'success');
+        }
+
+        // Función para desmarcar (por si hubo error)
+        function markExtrasUnpaid(jornadaId) {
+            const j = appData.jornadas.find(x => x.id === jornadaId);
+            if (!j) return;
             
-            document.getElementById('modal-content').innerHTML = `
-                <div class="space-y-3">
-                    <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-1">📋 Jornadas seleccionadas: ${selectedForPayroll.size}</p>
-                        <p class="text-sm text-blue-600 dark:text-blue-400">Total sugerido: <strong>${suggestedTotal.toFixed(2)} €</strong></p>
-                    </div>
-                    <div><label class="text-xs font-bold text-slate-500 uppercase">Fecha de Pago</label><input type="date" id="m-payroll-date" value="${new Date().toISOString().split('T')[0]}" class="input-field mt-1"></div>
-                    <div><label class="text-xs font-bold text-slate-500 uppercase">Importe Real Recibido (€)</label><input type="number" step="0.01" id="m-payroll-amount" value="${suggestedTotal.toFixed(2)}" class="input-field mt-1"></div>
-                    <div><label class="text-xs font-bold text-slate-500 uppercase">Notas / Concepto</label><input type="text" id="m-payroll-note" placeholder="Ej: Nómina Septiembre 2026" class="input-field mt-1"></div>
-                </div>
-            `;
-            document.getElementById('generic-modal').classList.remove('hidden');
+            j.pagado_extras = false;
+            j.fecha_pago_extras = "";
+            
+            saveData();
+            showToast(`↩️ Extras del ${new Date(j.fecha).toLocaleDateString('es-ES')} marcados como pendientes`, 'info');
         }
 
         function confirmAllProvisional() {
@@ -727,100 +680,57 @@
         function renderViajes() { const l = document.getElementById('viajes-list'); l.innerHTML = ''; const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-card text-center text-slate-400 py-8">Sin viajes</div>'; return; } s.forEach(v => { const p = v.pagado === 1; l.innerHTML += `<div class="data-card border-l-4 ${p ? 'border-l-success opacity-75' : 'border-l-danger'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-slate-900 dark:text-white">${v.concepto}</p><p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-xl font-extrabold text-slate-900 dark:text-white">${parseFloat(v.importe).toFixed(2)} €</p></div>${p ? `<button disabled class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 font-bold text-sm"><i class="fa-solid fa-check mr-1"></i>Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="w-full py-2.5 rounded-xl btn-primary"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar Cobrado</button>`}</div>`; }); }
         function markTripPaid(id) { const t = appData.viajes.find(v => v.id === id); if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado via App"; saveData(); showToast('✅ Viaje cobrado', 'success'); } }
         
-        // RENDERIZAR PESTAÑA PAGOS/NÓMINAS CON CHECKBOXES
+        // RENDERIZAR PESTAÑA PAGOS CON BOTONES INDIVIDUALES VISIBLES
         function renderPagos() {
-            // Historial de nóminas
-            const payrollList = document.getElementById('payroll-list');
-            payrollList.innerHTML = '';
-            const payrolls = (appData.pagos || []).filter(p => p.tipo === 'nomina_extras').sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-            
-            if (payrolls.length === 0) {
-                payrollList.innerHTML = '<div class="data-card text-center text-slate-400 py-6 text-sm">No hay nóminas registradas aún</div>';
-            } else {
-                payrolls.forEach(p => {
-                    const jornadasCount = p.jornadas_pagadas ? p.jornadas_pagadas.length : 0;
-                    payrollList.innerHTML += `
-                        <div class="data-card border-l-4 border-l-success">
-                            <div class="flex items-center justify-between mb-1">
-                                <p class="font-bold text-slate-900 dark:text-white">${p.concepto}</p>
-                                <p class="text-xl font-extrabold text-success">${parseFloat(p.importe).toFixed(2)} €</p>
-                            </div>
-                            <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES')} • ${jornadasCount} jornada${jornadasCount !== 1 ? 's' : ''} incluida${jornadasCount !== 1 ? 's' : ''}</p>
-                        </div>
-                    `;
-                });
-            }
-            
-            // Lista de extras pendientes CON CHECKBOXES
-            const unpaidList = document.getElementById('unpaid-extras-list');
-            unpaidList.innerHTML = '';
             const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
             const rate = rs ? parseFloat(rs.valor) : 19.69;
             
-            const extrasWithHours = appData.jornadas.filter(j => j.horas_extra > 0 && !j.pagado_extras).sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            // Calcular resúmenes
+            let pendingTotal = 0, paidTotal = 0;
+            appData.jornadas.forEach(j => {
+                if (j.horas_extra > 0) {
+                    const val = j.horas_extra * rate;
+                    if (j.pagado_extras) paidTotal += val;
+                    else pendingTotal += val;
+                }
+            });
             
-            if (extrasWithHours.length === 0) {
-                unpaidList.innerHTML = '<div class="data-card text-center text-slate-400 py-6 text-sm">¡Todas las horas extra están pagadas! 🎉</div>';
-            } else {
-                extrasWithHours.forEach(j => {
-                    const value = (j.horas_extra * rate).toFixed(2);
-                    const isChecked = selectedForPayroll.has(j.id);
-                    unpaidList.innerHTML += `
-                        <div class="data-card flex items-center gap-3 ${isChecked ? 'selected-row' : ''}" onclick="toggleJornadaSelection(${j.id})">
-                            <div class="pay-checkbox ${isChecked ? 'checked' : ''}" id="check-${j.id}"></div>
-                            <div class="flex-1">
-                                <p class="font-bold text-slate-900 dark:text-white">${new Date(j.fecha).toLocaleDateString('es-ES')} <span class="text-accent font-bold">+${j.horas_extra}h</span></p>
-                                <p class="text-xs text-slate-500">${value} € @ ${rate.toFixed(2)}€/h</p>
+            document.getElementById('summary-pending-extras').innerText = pendingTotal.toFixed(2) + " €";
+            document.getElementById('summary-paid-extras').innerText = paidTotal.toFixed(2) + " €";
+            
+            // Renderizar lista con botones individuales
+            const list = document.getElementById('extras-payment-list');
+            list.innerHTML = '';
+            
+            const extrasJornadas = appData.jornadas.filter(j => j.horas_extra > 0).sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            
+            if (extrasJornadas.length === 0) {
+                list.innerHTML = '<div class="data-card text-center text-slate-400 py-8">No hay horas extra registradas aún</div>';
+                return;
+            }
+            
+            extrasJornadas.forEach(j => {
+                const isPaid = j.pagado_extras === true;
+                const value = (j.horas_extra * rate).toFixed(2);
+                const dateStr = new Date(j.fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
+                
+                list.innerHTML += `
+                    <div class="data-card border-l-4 ${isPaid ? 'border-l-success' : 'border-l-danger'}">
+                        <div class="flex items-start justify-between mb-2">
+                            <div>
+                                <p class="font-bold text-slate-900 dark:text-white">${dateStr}</p>
+                                <p class="text-xs text-slate-500"><i class="fa-solid fa-clock mr-1"></i>+${j.horas_extra}h extra • ${value} €</p>
+                                ${isPaid && j.fecha_pago_extras ? `<p class="text-[10px] text-success mt-1"><i class="fa-solid fa-check-circle mr-1"></i>Pagado el ${new Date(j.fecha_pago_extras).toLocaleDateString('es-ES')}</p>` : ''}
                             </div>
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${isPaid ? 'badge-paid' : 'badge-provisional'}">${isPaid ? 'PAGADO' : 'PENDIENTE'}</span>
                         </div>
-                    `;
-                });
-            }
-            
-            updatePayrollButton();
-        }
-
-        // FUNCIONES DE SELECCIÓN
-        function toggleJornadaSelection(id) {
-            if (selectedForPayroll.has(id)) {
-                selectedForPayroll.delete(id);
-            } else {
-                selectedForPayroll.add(id);
-            }
-            renderPagos(); // Re-renderizar para actualizar checkboxes visualmente
-        }
-
-        function toggleSelectAll() {
-            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
-            const rate = rs ? parseFloat(rs.valor) : 19.69;
-            const extrasWithHours = appData.jornadas.filter(j => j.horas_extra > 0 && !j.pagado_extras);
-            
-            if (selectedForPayroll.size === extrasWithHours.length) {
-                // Deseleccionar todo
-                selectedForPayroll.clear();
-            } else {
-                // Seleccionar todo
-                extrasWithHours.forEach(j => selectedForPayroll.add(j.id));
-            }
-            renderPagos();
-        }
-
-        function updatePayrollButton() {
-            const btn = document.getElementById('btn-register-payroll');
-            const countSpan = document.getElementById('selected-count');
-            countSpan.innerText = selectedForPayroll.size;
-            
-            if (selectedForPayroll.size > 0) {
-                btn.disabled = false;
-                btn.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
-                btn.classList.add('bg-primary', 'text-white');
-                btn.style.background = 'var(--app-primary)';
-            } else {
-                btn.disabled = true;
-                btn.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
-                btn.classList.remove('bg-primary', 'text-white');
-                btn.style.background = '';
-            }
+                        ${isPaid 
+                            ? `<button onclick="markExtrasUnpaid(${j.id})" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-600 transition"><i class="fa-solid fa-rotate-left mr-1"></i>Desmarcar como pagado</button>`
+                            : `<button onclick="markExtrasPaid(${j.id})" class="w-full py-2.5 rounded-xl btn-mark-paid font-bold text-sm shadow-md"><i class="fa-solid fa-money-bill-wave mr-1"></i>Marcar como Pagado</button>`
+                        }
+                    </div>
+                `;
+            });
         }
 
         function updateTodayStatus() { const t = new Date().toISOString().split('T')[0]; const j = appData.jornadas.find(x => x.fecha === t); const s = document.getElementById('today-status'); if (!j) s.innerHTML = '<span class="text-slate-400"><i class="fa-regular fa-circle mr-1"></i>Sin fichar hoy</span>'; else if (!j.salida?.trim()) s.innerHTML = `<span class="text-emerald-500 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>Trabajando desde ${j.entrada}</span>`; else s.innerHTML = '<span class="text-slate-500 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Jornada completada</span>'; }
@@ -991,7 +901,7 @@
             saveData(); showToast('✅ Configuración y marca actualizadas', 'success'); 
         }
 
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v18-payroll'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v19-simple-pay'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
