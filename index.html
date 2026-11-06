@@ -201,8 +201,8 @@
         
         <main class="px-4 py-6 max-w-6xl mx-auto">
             
-            <!-- DASHBOARD EJECUTIVO PREMIUM (NUEVO) -->
-            <div class="mb-6">
+            <!-- SECCIÓN DASHBOARD (SOLO VISIBLE EN PESTAÑA DASHBOARD) -->
+            <div id="content-dashboard" class="tab-content fade-in">
                 <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-chart-line" style="color: var(--app-primary)"></i>
                     Resumen Ejecutivo
@@ -284,7 +284,7 @@
                 </div>
                 
                 <!-- Fila 3: Métricas Secundarias -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                     <div class="glass-panel p-4 text-center">
                         <i class="fa-solid fa-stopwatch text-2xl mb-2" style="color: var(--app-primary)"></i>
                         <p class="text-2xl font-extrabold text-slate-900 dark:text-white" id="total-extra-hours">0</p>
@@ -306,43 +306,43 @@
                         <p class="text-[10px] text-slate-500 uppercase font-bold">Nóminas Registradas</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- FICHAJE DEL DÍA -->
-            <div class="glass-panel rounded-2xl p-5 mb-6 border-l-4" style="border-left-color: var(--app-primary)">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h2 class="font-bold text-lg text-slate-900 dark:text-white">Fichaje del Día</h2>
-                        <p class="text-sm text-slate-500" id="today-status">Sin fichar</p>
+                <!-- Fichaje del Día (solo en dashboard) -->
+                <div class="glass-panel rounded-2xl p-5 mb-6 border-l-4" style="border-left-color: var(--app-primary)">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="font-bold text-lg text-slate-900 dark:text-white">Fichaje del Día</h2>
+                            <p class="text-sm text-slate-500" id="today-status">Sin fichar</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Ahora</p>
+                            <p class="text-2xl font-mono font-bold" style="color: var(--app-primary)" id="live-clock-big">--:--</p>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-400 uppercase font-bold">Ahora</p>
-                        <p class="text-2xl font-mono font-bold" style="color: var(--app-primary)" id="live-clock-big">--:--</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="clockAction('entrada')" class="fingerprint-btn bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+                            <i class="fa-solid fa-right-to-bracket text-lg"></i> <span>Entrada</span>
+                        </button>
+                        <button onclick="clockAction('salida')" class="fingerprint-btn bg-gradient-to-br from-red-500 to-red-600 text-white">
+                            <i class="fa-solid fa-right-from-bracket text-lg"></i> <span>Salida</span>
+                        </button>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="clockAction('entrada')" class="fingerprint-btn bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
-                        <i class="fa-solid fa-right-to-bracket text-lg"></i> <span>Entrada</span>
-                    </button>
-                    <button onclick="clockAction('salida')" class="fingerprint-btn bg-gradient-to-br from-red-500 to-red-600 text-white">
-                        <i class="fa-solid fa-right-from-bracket text-lg"></i> <span>Salida</span>
-                    </button>
+
+                <!-- Evolución Horas Extra (solo en dashboard) -->
+                <div class="glass-panel rounded-2xl p-5">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-column" style="color: var(--app-primary)"></i>
+                        Evolución Horas Extra
+                    </h3>
+                    <div class="relative h-56 w-full">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <!-- EVOLUCIÓN HORAS EXTRA -->
-            <div class="glass-panel rounded-2xl p-5 mb-6">
-                <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-column" style="color: var(--app-primary)"></i>
-                    Evolución Horas Extra
-                </h3>
-                <div class="relative h-56 w-full">
-                    <canvas id="monthlyChart"></canvas>
-                </div>
-            </div>
-
-            <!-- CONTENIDO POR PESTAÑAS -->
-            <div id="content-jornadas" class="tab-content fade-in">
+            <!-- SECCIÓN JORNADAS -->
+            <div id="content-jornadas" class="tab-content hidden fade-in">
                 <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
                     <h2 class="font-bold text-xl text-slate-900 dark:text-white">Jornadas</h2>
                     <div class="flex gap-2">
@@ -377,6 +377,7 @@
                 </div>
             </div>
             
+            <!-- SECCIÓN VIAJES -->
             <div id="content-viajes" class="tab-content hidden fade-in">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="font-bold text-xl text-slate-900 dark:text-white">Viajes</h2>
@@ -385,7 +386,7 @@
                 <div class="space-y-3" id="viajes-list"></div>
             </div>
             
-            <!-- PESTAÑA PAGOS PREMIUM -->
+            <!-- SECCIÓN PAGOS -->
             <div id="content-pagos" class="tab-content hidden fade-in">
                 <h2 class="font-bold text-xl text-slate-900 dark:text-white mb-4">Gestión Financiera</h2>
                 
@@ -413,7 +414,7 @@
                 </div>
             </div>
             
-            <!-- TAB AJUSTES -->
+            <!-- SECCIÓN AJUSTES -->
             <div id="content-ajustes" class="tab-content hidden fade-in">
                 <h2 class="font-bold text-xl text-slate-900 dark:text-white mb-4">Ajustes & Personalización</h2>
                 <div class="glass-panel rounded-2xl p-6 space-y-5 mb-5">
@@ -562,7 +563,7 @@
         {"clave": "horas_normales_dia", "valor": "8"},
         {"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
         {"clave": "dias_trabajo", "valor": "Lunes a viernes"},
-        {"clave": "app_name", "valor": "工V龱尺ㄚ㇌7"},
+        {"clave": "app_name", "valor": "工V龱尺㇌7"},
         {"clave": "app_color", "valor": "#f97316"}
         ],
          "notas": []
@@ -585,6 +586,8 @@
             
             document.getElementById('app-container').classList.remove('hidden');
             
+            // Iniciar en Dashboard por defecto
+            switchTab('dashboard');
             renderAll();
             registerSW();
         }
@@ -1258,23 +1261,43 @@
         function exportCSV() { const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas","creado"]; const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`,j.creado||'']); const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_ivory37_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('📊 CSV exportado', 'success'); }
         function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo?')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
         
-        function switchTab(t) { 
-            document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
-            if (t === 'dashboard') {
-                // El dashboard siempre está visible arriba, solo ocultamos las pestañas inferiores
-                document.getElementById('content-jornadas').classList.add('hidden');
-                document.getElementById('content-viajes').classList.add('hidden');
-                document.getElementById('content-pagos').classList.add('hidden');
-                document.getElementById('content-ajustes').classList.add('hidden');
-            } else {
-                document.getElementById(`content-${t}`).classList.remove('hidden');
+        // FUNCIÓN DE NAVEGACIÓN CORREGIDA
+        function switchTab(tabName) {
+            // Ocultar TODAS las secciones primero
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Mostrar SOLO la sección seleccionada
+            const targetSection = document.getElementById(`content-${tabName}`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
             }
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); 
-            document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active'); 
-            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            
+            // Actualizar estado activo en el menú inferior
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            // Scroll suave al inicio
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Re-renderizar gráficos si es necesario (evita problemas de tamaño al cambiar de pestaña)
+            if (tabName === 'dashboard') {
+                setTimeout(() => {
+                    renderExecutiveDashboard();
+                    renderCashFlowChart();
+                    renderChart();
+                }, 100);
+            }
         }
         
-        function toggleTheme() { document.documentElement.classList.toggle('dark'); setTimeout(() => { renderChart(); renderCashFlowChart(); renderExecutiveDashboard(); }, 100); }
+        function toggleTheme() { 
+            document.documentElement.classList.toggle('dark'); 
+            setTimeout(() => { 
+                renderChart(); 
+                renderCashFlowChart(); 
+                renderExecutiveDashboard(); 
+            }, 100); 
+        }
         
         function renderConfig() { 
             const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor; 
@@ -1298,7 +1321,7 @@
             saveData(); showToast('✅ Configuración y marca actualizadas', 'success'); 
         }
 
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v21-premium'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
+        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v22-nav-fixed'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
         function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         window.onload = initApp;
     </script>
