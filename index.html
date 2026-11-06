@@ -3,831 +3,833 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0f172a">
-    <title>工V龱尺7 | Executive Dashboard</title>
+    <title>工V龱尺㇌7 | Executive Dashboard</title>
+    <!-- Librerías -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; padding-bottom: 80px; min-height: 100vh; }
-        .light body { background: #f8fafc; color: #1e293b; }
-        
-        .terminal-card { 
-            background: rgba(30, 41, 59, 0.7); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 12px; 
-            padding: 20px; 
-            transition: all 0.2s;
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a; /* Azul noche profundo */
+            color: #e2e8f0; 
+            padding-bottom: 80px; 
+            margin: 0;
         }
-        .light .terminal-card { 
-            background: white; 
-            border-color: #e2e8f0; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-        }
-        .terminal-card:hover { border-color: rgba(249, 115, 22, 0.3); transform: translateY(-1px); }
         
+        /* Tarjetas estilo Terminal */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .goku-glow { filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4)); }
-        
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; 
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); 
-            border-top: 1px solid rgba(255, 255, 255, 0.08); 
-            padding-bottom: env(safe-area-inset-bottom); 
+
+        /* Navegación Inferior */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom)) 0;
         }
-        .light .bottom-nav { background: rgba(255, 255, 255, 0.95); border-top-color: #e2e8f0; }
-        
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 4px; color: #64748b; transition: all 0.2s; font-size: 10px; font-weight: 600; background: none; border: none; cursor: pointer; }
-        .nav-item.active { color: #f97316; }
-        .nav-item i { font-size: 18px; margin-bottom: 4px; }
-        
-        .data-row { 
-            background: rgba(30, 41, 59, 0.5); 
-            border-radius: 8px; padding: 14px; 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            transition: all 0.2s; 
+        .nav-btn {
+            display: flex; flex-direction: column; align-items: center;
+            color: #64748b; font-size: 10px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            background: none; border: none; width: 20%;
         }
-        .light .data-row { background: #f8fafc; border-color: #e2e8f0; }
-        .data-row:hover { background: rgba(30, 41, 59, 0.8); }
-        .light .data-row:hover { background: #f1f5f9; }
-        
-        .btn-terminal { 
-            width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 13px; 
-            display: flex; align-items: center; justify-content: center; gap: 8px; 
-            transition: all 0.2s; border: none; cursor: pointer; 
-            background: rgba(255, 255, 255, 0.05); color: #e2e8f0; 
+        .nav-btn.active { color: #f97316; transform: translateY(-2px); }
+        .nav-btn i { font-size: 20px; margin-bottom: 4px; }
+
+        /* Botones Genéricos */
+        .btn {
+            padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: all 0.2s; border: none;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
-        .light .btn-terminal { background: #f1f5f9; color: #475569; }
-        .btn-terminal:hover { background: rgba(249, 115, 22, 0.1); color: #f97316; }
-        .btn-terminal.primary { background: linear-gradient(135deg, #f97316, #ea580c); color: white; }
-        .btn-terminal.primary:hover { opacity: 0.9; }
-        .btn-terminal.success { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
-        .btn-terminal.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
-        
-        .modal-content { 
-            background: #1e293b; border-radius: 16px 16px 0 0; padding: 24px; 
-            max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); 
+        .btn-primary { background: #f97316; color: white; }
+        .btn-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .btn-danger { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1; }
+        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+        /* Inputs */
+        input, select, textarea {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white; padding: 10px; border-radius: 6px; width: 100%;
+            outline: none; font-family: inherit;
         }
-        .light .modal-content { background: white; border-color: #e2e8f0; }
-        @media (min-width: 640px) { .modal-content { border-radius: 16px; max-width: 480px; margin: 0 auto; } }
+        input:focus, select:focus { border-color: #f97316; }
+
+        /* Utilidades */
+        .text-orange { color: #f97316; }
+        .text-green { color: #10b981; }
+        .text-red { color: #ef4444; }
+        .text-blue { color: #3b82f6; }
+        .text-purple { color: #a855f7; }
         
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
-        
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .status-badge { 
-            display: inline-flex; align-items: center; padding: 2px 8px; 
-            border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; 
+        .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 100;
+            display: none; align-items: center; justify-content: center;
         }
-        .status-paid { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-        .status-pending { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .status-provisional { background: rgba(234, 179, 8, 0.15); color: #eab308; }
-        
-        @media (max-width: 768px) { .desktop-view { display: none; } }
-        @media (min-width: 769px) { .mobile-view { display: none; } }
-        
-        .input-terminal { 
-            width: 100%; padding: 12px 16px; background: rgba(15, 23, 42, 0.5); 
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; 
-            font-size: 14px; transition: all 0.2s; outline: none; color: #e2e8f0; 
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: #1e293b; padding: 24px; border-radius: 16px;
+            width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1);
         }
-        .light .input-terminal { background: #f8fafc; border-color: #e2e8f0; color: #1e293b; }
-        .input-terminal:focus { border-color: #f97316; box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2); }
-        
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-        .kpi-item { text-align: center; padding: 16px 8px; }
-        .kpi-value { font-size: 24px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-        .kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
-        
-        #offline-indicator { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: #ef4444; color: white; text-align: center; padding: 6px; font-size: 11px; font-weight: bold; transform: translateY(-100%); transition: transform 0.3s; }
-        #offline-indicator.visible { transform: translateY(0); }
-        
-        :root { --app-primary: #f97316; }
-        #custom-logo-img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
-        #default-logo-svg { display: block; }
     </style>
-    <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#f97316' } } } }; </script>
 </head>
-<body class="min-h-screen">
-    
-    <div id="offline-indicator"><i class="fa-solid fa-wifi-slash mr-2"></i>OFFLINE</div>
-    
-    <div id="app-container" class="fade-in hidden">
-        <header class="sticky top-0 z-30 bg-[#0f172a]/95 light:bg-white/95 backdrop-blur-xl border-b border-white/10 light:border-slate-200">
-            <div class="px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div id="app-logo" class="w-9 h-9 rounded-lg flex items-center justify-center goku-glow text-white overflow-hidden" style="background: linear-gradient(135deg, #f97316, #ea580c)">
-                        <img id="custom-logo-img" src="" alt="Logo" class="hidden">
-                        <svg id="default-logo-svg" viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2Z"/></svg>
-                    </div>
-                    <div><h1 id="app-name" class="font-bold text-base leading-none text-white light:text-slate-900">工V龱尺㇌7</h1><span class="text-[9px] font-semibold uppercase tracking-wider text-orange-500">Executive Dashboard</span></div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <div class="hidden sm:block text-right mr-2"><p id="current-date" class="text-[10px] font-medium text-slate-400"></p><p id="live-clock" class="text-xs mono font-bold text-white light:text-slate-900">--:--</p></div>
-                    <button onclick="toggleTheme()" class="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 light:bg-slate-100 text-slate-400 light:text-slate-600"><i class="fa-solid fa-moon light:hidden text-xs"></i><i class="fa-solid fa-sun hidden light:inline text-xs text-yellow-500"></i></button>
-                </div>
+<body>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 bg-[#0f172a]/90 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white font-bold shadow-lg">
+                <i class="fa-solid fa-chart-line"></i>
             </div>
-        </header>
-        
-        <main class="px-4 py-5 max-w-6xl mx-auto">
+            <div>
+                <h1 class="font-bold text-sm leading-none">工V龱尺ㄚ㇌7</h1>
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider">Executive Control</span>
+            </div>
+        </div>
+        <div class="text-right">
+            <p id="clock-display" class="mono text-xs font-bold text-white">--:--</p>
+            <p id="date-display" class="text-[10px] text-slate-400">Cargando...</p>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="p-4 max-w-4xl mx-auto pb-24">
+
+        <!-- PESTAÑA: DASHBOARD -->
+        <section id="view-dashboard" class="tab-content active">
             
-            <!-- DASHBOARD -->
-            <div id="content-dashboard" class="tab-content fade-in">
-                <div class="flex items-center justify-between mb-5">
-                    <h2 class="text-lg font-bold text-white light:text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-line text-orange-500"></i> Resumen Ejecutivo</h2>
-                    <span class="text-[10px] font-semibold px-2 py-1 rounded bg-orange-500/10 text-orange-500 border border-orange-500/20">EN VIVO</span>
+            <!-- KPIs Superiores -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="card p-3 text-center border-l-2 border-green-500">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold mb-1">Ingresos Totales</p>
+                    <p id="dash-income" class="text-xl font-bold mono text-green-400">€0</p>
                 </div>
-                
-                <div class="terminal-card mb-4">
-                    <div class="kpi-grid">
-                        <div class="kpi-item border-r border-white/10 light:border-slate-200">
-                            <p class="kpi-value text-emerald-400 mono" id="kpi-income">€0</p>
-                            <p class="kpi-label">Ingresos Totales</p>
-                        </div>
-                        <div class="kpi-item border-r border-white/10 light:border-slate-200">
-                            <p class="kpi-value text-red-400 mono" id="kpi-pending">€0</p>
-                            <p class="kpi-label">Pendiente Cobro</p>
-                        </div>
-                        <div class="kpi-item">
-                            <p class="kpi-value text-blue-400 mono" id="kpi-compliance">0%</p>
-                            <p class="kpi-label">Cumplimiento</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-t border-white/10 light:border-slate-200 flex justify-between text-xs">
-                        <span class="text-slate-400" id="kpi-hours-detail">0h / 168h objetivo</span>
-                        <span class="font-semibold" id="kpi-status">Calculando...</span>
-                    </div>
+                <div class="card p-3 text-center border-l-2 border-red-500">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold mb-1">Pendiente</p>
+                    <p id="dash-pending" class="text-xl font-bold mono text-red-400">€0</p>
                 </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-                    <div class="terminal-card lg:col-span-2">
-                        <h3 class="text-sm font-semibold text-white light:text-slate-900 mb-3 flex items-center gap-2"><i class="fa-solid fa-chart-column text-blue-400"></i> Flujo de Caja (6M)</h3>
-                        <div class="relative h-48 w-full"><canvas id="cashFlowChart"></canvas></div>
-                    </div>
-                    <div class="terminal-card flex flex-col items-center justify-center">
-                        <h3 class="text-sm font-semibold text-white light:text-slate-900 mb-3 self-start flex items-center gap-2"><i class="fa-solid fa-bullseye text-orange-500"></i> Objetivo</h3>
-                        <div class="relative h-32 w-32 mb-2">
-                            <canvas id="goalChart"></canvas>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span id="goal-pct" class="text-xl font-bold mono text-white light:text-slate-900">0%</span>
-                                <span class="text-[9px] text-slate-400 uppercase">Completado</span>
-                            </div>
-                        </div>
-                        <div class="w-full space-y-2 mt-2">
-                            <div class="flex justify-between text-xs"><span class="text-slate-400">Ritmo diario</span><span class="mono font-semibold text-white light:text-slate-900" id="kpi-pace">0h</span></div>
-                            <div class="flex justify-between text-xs"><span class="text-slate-400">Proyección</span><span class="mono font-semibold text-white light:text-slate-900" id="kpi-proj">0h</span></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-                    <div class="terminal-card !p-3 text-center">
-                        <p class="text-lg font-bold mono text-orange-400" id="metric-extras-h">0</p>
-                        <p class="text-[9px] text-slate-400 uppercase font-semibold">Extras (h)</p>
-                    </div>
-                    <div class="terminal-card !p-3 text-center">
-                        <p class="text-lg font-bold mono text-blue-400" id="metric-extras-v">€0</p>
-                        <p class="text-[9px] text-slate-400 uppercase font-semibold">Valor Extras</p>
-                    </div>
-                    <div class="terminal-card !p-3 text-center">
-                        <p class="text-lg font-bold mono text-purple-400" id="metric-trips">€0</p>
-                        <p class="text-[9px] text-slate-400 uppercase font-semibold">Viajes</p>
-                    </div>
-                    <div class="terminal-card !p-3 text-center">
-                        <p class="text-lg font-bold mono text-emerald-400" id="metric-payrolls">€0</p>
-                        <p class="text-[9px] text-slate-400 uppercase font-semibold">Nóminas</p>
-                    </div>
-                </div>
-
-                <div class="terminal-card border-l-2 border-orange-500 mb-5">
-                    <div class="flex items-center justify-between mb-3">
-                        <div><h3 class="font-semibold text-white light:text-slate-900">Fichaje Rápido</h3><p class="text-xs text-slate-400" id="today-status">Sin registrar</p></div>
-                        <p class="text-xl mono font-bold text-orange-500" id="live-clock-big">--:--</p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="clockAction('entrada')" class="btn-terminal success"><i class="fa-solid fa-right-to-bracket"></i> Entrada</button>
-                        <button onclick="clockAction('salida')" class="btn-terminal danger"><i class="fa-solid fa-right-from-bracket"></i> Salida</button>
-                    </div>
-                </div>
-
-                <div class="terminal-card">
-                    <h3 class="text-sm font-semibold text-white light:text-slate-900 mb-3 flex items-center gap-2"><i class="fa-solid fa-chart-line text-orange-500"></i> Evolución Horas Extra</h3>
-                    <div class="relative h-40 w-full"><canvas id="trendChart"></canvas></div>
+                <div class="card p-3 text-center border-l-2 border-blue-500">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold mb-1">Cumplimiento</p>
+                    <p id="dash-compliance" class="text-xl font-bold mono text-blue-400">0%</p>
                 </div>
             </div>
 
-            <!-- JORNADAS -->
-            <div id="content-jornadas" class="tab-content hidden fade-in">
-                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-                    <h2 class="font-bold text-lg text-white light:text-slate-900">Registro de Jornadas</h2>
-                    <div class="flex gap-2">
-                        <button onclick="generatePDF()" class="btn-terminal !w-auto !px-3 !py-1.5 text-xs"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                        <button onclick="exportCSV()" class="btn-terminal !w-auto !px-3 !py-1.5 text-xs"><i class="fa-solid fa-file-csv"></i> CSV</button>
-                        <button onclick="confirmAllProvisional()" class="btn-terminal primary !w-auto !px-3 !py-1.5 text-xs"><i class="fa-solid fa-check-double"></i> Confirmar</button>
+            <!-- Gráficos Principales -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="card p-4">
+                    <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-money-bill-wave text-purple-400"></i> Flujo de Caja (Últimos 6 Meses)
+                    </h3>
+                    <div class="h-48 relative"><canvas id="chart-cashflow"></canvas></div>
+                </div>
+                <div class="card p-4 flex flex-col items-center justify-center">
+                    <h3 class="text-sm font-bold text-white mb-2 self-start flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-orange-500"></i> Objetivo Mensual
+                    </h3>
+                    <div class="relative w-32 h-32 mb-2">
+                        <canvas id="chart-goal"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span id="goal-percent" class="text-2xl font-bold mono text-white">0%</span>
+                            <span class="text-[9px] text-slate-400 uppercase">Completado</span>
+                        </div>
+                    </div>
+                    <div class="w-full text-xs space-y-1 mt-2">
+                        <div class="flex justify-between"><span class="text-slate-400">Ritmo Diario:</span><span id="goal-pace" class="mono text-white font-bold">0h</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Proyección:</span><span id="goal-proj" class="mono text-white font-bold">0h</span></div>
                     </div>
                 </div>
-                <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
-                    <button onclick="setFilter('all')" class="btn-terminal !w-auto !px-3 !py-1 text-xs active-filter" data-filter="all">Todos</button>
-                    <button onclick="setFilter('confirmado')" class="btn-terminal !w-auto !px-3 !py-1 text-xs" data-filter="confirmado">Confirmados</button>
-                    <button onclick="setFilter('provisional')" class="btn-terminal !w-auto !px-3 !py-1 text-xs" data-filter="provisional">Provisionales</button>
-                    <button onclick="setFilter('extra')" class="btn-terminal !w-auto !px-3 !py-1 text-xs" data-filter="extra">Con Extras</button>
+            </div>
+
+            <!-- Métricas Secundarias -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div class="card p-3 text-center">
+                    <i class="fa-solid fa-clock text-orange-400 mb-1"></i>
+                    <p id="metric-extras-h" class="text-lg font-bold mono text-white">0</p>
+                    <p class="text-[9px] text-slate-400 uppercase">Extras (h)</p>
                 </div>
-                <div class="mobile-view space-y-2" id="jornadas-cards"></div>
-                <div class="desktop-view terminal-card !p-0 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead class="bg-white/5 light:bg-slate-50"><tr><th class="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Fecha</th><th class="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Horario</th><th class="px-4 py-3 text-center text-xs font-semibold text-slate-400 uppercase">Norm.</th><th class="px-4 py-3 text-center text-xs font-semibold text-orange-500 uppercase">Extra</th><th class="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Estado</th><th class="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Acciones</th></tr></thead>
-                            <tbody id="jornadas-body" class="divide-y divide-white/5 light:divide-slate-200"></tbody>
-                        </table>
-                    </div>
+                <div class="card p-3 text-center">
+                    <i class="fa-solid fa-euro-sign text-blue-400 mb-1"></i>
+                    <p id="metric-extras-v" class="text-lg font-bold mono text-white">€0</p>
+                    <p class="text-[9px] text-slate-400 uppercase">Valor Extras</p>
+                </div>
+                <div class="card p-3 text-center">
+                    <i class="fa-solid fa-car text-purple-400 mb-1"></i>
+                    <p id="metric-trips" class="text-lg font-bold mono text-white">€0</p>
+                    <p class="text-[9px] text-slate-400 uppercase">Viajes</p>
+                </div>
+                <div class="card p-3 text-center">
+                    <i class="fa-solid fa-file-invoice text-green-400 mb-1"></i>
+                    <p id="metric-payrolls" class="text-lg font-bold mono text-white">€0</p>
+                    <p class="text-[9px] text-slate-400 uppercase">Nóminas</p>
                 </div>
             </div>
-            
-            <!-- VIAJES -->
-            <div id="content-viajes" class="tab-content hidden fade-in">
-                <div class="flex items-center justify-between mb-4"><h2 class="font-bold text-lg text-white light:text-slate-900">Gestión de Viajes</h2><button onclick="openTripModal()" class="btn-terminal primary !w-auto !px-4 !py-2 text-sm"><i class="fa-solid fa-plus"></i> Nuevo</button></div>
-                <div class="space-y-2" id="viajes-list"></div>
-            </div>
-            
-            <!-- PAGOS -->
-            <div id="content-pagos" class="tab-content hidden fade-in">
-                <h2 class="font-bold text-lg text-white light:text-slate-900 mb-4">Control Financiero</h2>
-                <div class="terminal-card mb-4">
-                    <div class="flex items-center justify-between mb-3"><h3 class="font-semibold text-white light:text-slate-900 flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Nóminas Mensuales</h3><button onclick="openPayrollModal()" class="btn-terminal primary !w-auto !px-3 !py-1.5 text-xs"><i class="fa-solid fa-plus"></i> Registrar</button></div>
-                    <div class="space-y-2" id="payroll-list"></div>
-                </div>
-                <div class="terminal-card">
-                    <h3 class="font-semibold text-white light:text-slate-900 mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check text-red-400"></i> Liquidación de Extras</h3>
-                    <div class="space-y-2" id="extras-list"></div>
-                </div>
-            </div>
-            
-            <!-- AJUSTES -->
-            <div id="content-ajustes" class="tab-content hidden fade-in">
-                <h2 class="font-bold text-lg text-white light:text-slate-900 mb-4">Configuración</h2>
-                <div class="terminal-card space-y-4 mb-4">
-                    <div><label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Nombre App</label><input type="text" id="config-appname" class="input-terminal" placeholder="工V龱尺㇌7"></div>
-                    <div><label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Color Primario</label><input type="color" id="config-color" class="input-terminal h-10 p-1 w-full" value="#f97316"></div>
+
+            <!-- Fichaje Rápido -->
+            <div class="card p-4 border-l-4 border-orange-500 mb-6">
+                <div class="flex justify-between items-center mb-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Logo</label>
-                        <div class="flex items-center gap-4 p-4 bg-white/5 light:bg-slate-50 rounded-lg border border-dashed border-white/10 light:border-slate-300 cursor-pointer" onclick="document.getElementById('config-logo').click()">
-                            <div class="w-16 h-16 rounded-lg overflow-hidden bg-slate-800 light:bg-slate-200 flex items-center justify-center">
-                                <img id="logo-preview" src="" class="w-full h-full object-cover hidden">
-                                <i id="logo-placeholder" class="fa-solid fa-image text-2xl text-slate-500"></i>
-                            </div>
-                            <div><p class="text-sm font-medium text-white light:text-slate-900">Subir logo</p><p class="text-xs text-slate-400">PNG, JPG, SVG</p></div>
-                            <input type="file" id="config-logo" class="hidden" accept="image/*" onchange="handleLogoUpload(event)">
-                        </div>
-                        <button onclick="removeCustomLogo()" class="w-full mt-2 py-2 text-xs font-semibold text-red-400 bg-red-500/10 rounded-lg border border-red-500/20">Restaurar default</button>
+                        <h3 class="font-bold text-white">Fichaje Hoy</h3>
+                        <p id="today-status-text" class="text-xs text-slate-400">Sin registrar</p>
                     </div>
-                    <div><label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Tarifa Extra (€/h)</label><input type="number" step="0.01" id="config-rate" class="input-terminal mono font-bold"></div>
-                    <div><label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Horario</label><input type="text" id="config-schedule" class="input-terminal"></div>
-                    <div class="flex gap-2 pt-2"><button onclick="requestNotificationPermission()" class="btn-terminal flex-1 text-sm"><i class="fa-solid fa-bell"></i> Notificaciones</button><button onclick="saveConfig()" class="btn-terminal primary flex-1 text-sm"><i class="fa-solid fa-floppy-disk"></i> Guardar</button></div>
+                    <p id="big-clock" class="text-2xl mono font-bold text-orange-500">--:--</p>
                 </div>
-                <div class="terminal-card">
-                    <h3 class="font-semibold text-white light:text-slate-900 mb-3 flex items-center gap-2"><i class="fa-solid fa-database text-blue-400"></i> Datos</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="exportJSON()" class="btn-terminal flex flex-col items-center py-4"><i class="fa-solid fa-download text-xl mb-2"></i><span class="text-xs">Exportar</span></button>
-                        <label class="btn-terminal flex flex-col items-center py-4 cursor-pointer"><i class="fa-solid fa-upload text-xl mb-2"></i><span class="text-xs">Importar</span><input type="file" id="import-file" class="hidden" accept=".json" onchange="importJSON(event)"></label>
-                    </div>
-                    <button onclick="resetToFactory()" class="w-full mt-3 py-3 text-xs font-semibold text-red-400 bg-red-500/10 rounded-lg border border-red-500/20">Restablecer fábrica</button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="app.clock('in')" class="btn btn-success w-full py-3"><i class="fa-solid fa-right-to-bracket"></i> Entrada</button>
+                    <button onclick="app.clock('out')" class="btn btn-danger w-full py-3"><i class="fa-solid fa-right-from-bracket"></i> Salida</button>
                 </div>
             </div>
-        </main>
-        
-        <nav class="bottom-nav flex">
-            <button onclick="switchTab('dashboard')" class="nav-item active" data-tab="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
-            <button onclick="switchTab('jornadas')" class="nav-item" data-tab="jornadas"><i class="fa-solid fa-calendar-check"></i> Jornadas</button>
-            <button onclick="switchTab('viajes')" class="nav-item" data-tab="viajes"><i class="fa-solid fa-car"></i> Viajes</button>
-            <button onclick="switchTab('pagos')" class="nav-item" data-tab="pagos"><i class="fa-solid fa-money-bill"></i> Pagos</button>
-            <button onclick="switchTab('ajustes')" class="nav-item" data-tab="ajustes"><i class="fa-solid fa-gear"></i> Ajustes</button>
-        </nav>
-        
-        <div id="generic-modal" class="fixed inset-0 z-50 hidden"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div><div class="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:-translate-y-1/2"><div class="modal-content"><div class="flex items-center justify-between mb-4"><h3 class="text-lg font-bold text-white light:text-slate-900" id="modal-title">Título</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 light:bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button></div><div class="space-y-3" id="modal-content"></div><button onclick="saveModalData()" class="btn-terminal primary w-full mt-5">Guardar</button></div></div></div>
-        <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden"><div class="bg-slate-800 light:bg-white text-white light:text-slate-900 px-4 py-3 rounded-lg shadow-2xl flex items-center gap-2 text-sm font-bold border border-white/10 light:border-slate-200"><i class="fa-solid fa-check-circle text-green-500" id="toast-icon"></i><span id="toast-message">Mensaje</span></div></div>
+
+             <!-- Tendencia Extras -->
+             <div class="card p-4">
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-orange-500"></i> Evolución Horas Extra
+                </h3>
+                <div class="h-40 relative"><canvas id="chart-trend"></canvas></div>
+            </div>
+        </section>
+
+        <!-- PESTAÑA: JORNADAS -->
+        <section id="view-jornadas" class="tab-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-white">Jornadas</h2>
+                <div class="flex gap-2">
+                    <select id="filter-jornadas" onchange="app.renderJornadas()" class="text-xs py-1 px-2 bg-transparent border border-white/20 rounded">
+                        <option value="all">Todos</option>
+                        <option value="extra">Con Extras</option>
+                        <option value="prov">Provisionales</option>
+                    </select>
+                </div>
+            </div>
+            <div id="list-jornadas" class="space-y-2"></div>
+        </section>
+
+        <!-- PESTAÑA: VIAJES -->
+        <section id="view-viajes" class="tab-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-white">Viajes</h2>
+                <button onclick="app.openModal('viaje')" class="btn btn-primary text-xs"><i class="fa-solid fa-plus"></i> Nuevo</button>
+            </div>
+            <div id="list-viajes" class="space-y-2"></div>
+        </section>
+
+        <!-- PESTAÑA: PAGOS -->
+        <section id="view-pagos" class="tab-content">
+            <h2 class="text-lg font-bold text-white mb-4">Control Financiero</h2>
+            
+            <!-- Nóminas -->
+            <div class="card p-4 mb-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-white text-sm"><i class="fa-solid fa-file-invoice-dollar text-purple-400 mr-2"></i>Nóminas Registradas</h3>
+                    <button onclick="app.openModal('nomina')" class="btn btn-primary text-xs py-1 px-2"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <div id="list-nominas" class="space-y-2"></div>
+            </div>
+
+            <!-- Extras Pendientes/Pagadas -->
+            <div class="card p-4">
+                <h3 class="font-bold text-white text-sm mb-3"><i class="fa-solid fa-list-check text-red-400 mr-2"></i>Liquidación de Extras</h3>
+                <div id="list-extras" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- PESTAÑA: AJUSTES -->
+        <section id="view-ajustes" class="tab-content">
+            <h2 class="text-lg font-bold text-white mb-4">Configuración</h2>
+            <div class="card p-4 space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Tarifa Hora Extra (€)</label>
+                    <input type="number" id="cfg-rate" step="0.01" class="mono">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Horario Habitual</label>
+                    <input type="text" id="cfg-schedule">
+                </div>
+                <button onclick="app.saveSettings()" class="btn btn-primary w-full">Guardar Cambios</button>
+                
+                <hr class="border-white/10 my-4">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="app.exportData()" class="btn btn-outline text-xs"><i class="fa-solid fa-download"></i> Exportar JSON</button>
+                    <label class="btn btn-outline text-xs cursor-pointer text-center">
+                        <i class="fa-solid fa-upload"></i> Importar
+                        <input type="file" accept=".json" onchange="app.importData(this)" class="hidden">
+                    </label>
+                </div>
+                <button onclick="app.resetApp()" class="btn btn-danger w-full text-xs mt-2">Restablecer Fábrica</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- NAVIGACIÓN INFERIOR -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-target="dashboard"><i class="fa-solid fa-gauge-high"></i>Dashboard</button>
+        <button class="nav-btn" data-target="jornadas"><i class="fa-solid fa-calendar-days"></i>Jornadas</button>
+        <button class="nav-btn" data-target="viajes"><i class="fa-solid fa-car"></i>Viajes</button>
+        <button class="nav-btn" data-target="pagos"><i class="fa-solid fa-money-bill-transfer"></i>Pagos</button>
+        <button class="nav-btn" data-target="ajustes"><i class="fa-solid fa-gear"></i>Ajustes</button>
+    </nav>
+
+    <!-- MODAL GENÉRICO -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-title" class="text-lg font-bold text-white mb-4">Título</h3>
+            <div id="modal-body" class="space-y-3 mb-4"></div>
+            <div class="flex gap-2 justify-end">
+                <button onclick="app.closeModal()" class="btn btn-outline text-sm">Cancelar</button>
+                <button id="modal-save-btn" class="btn btn-primary text-sm">Guardar</button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
-        let appData = null, currentModalType = null, editingId = null, charts = {}, currentFilter = 'all';
-        
-        // TUS DATOS REALES COMPLETOS RESTAURADOS
-        const RAW_DATA = {
-         "jornadas": [
-        {"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.166926"},
-        {"id": 6, "fecha": "2026-09-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:34:44.773560"},
-        {"id": 7, "fecha": "2026-09-03", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:01.775604"},
-        {"id": 8, "fecha": "2026-09-04", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:15.754161"},
-        {"id": 9, "fecha": "2026-09-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:35:31.909232"},
-        {"id": 10, "fecha": "2026-09-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:10.125659"},
-        {"id": 11, "fecha": "2026-09-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:22.817899"},
-        {"id": 12, "fecha": "2026-09-10", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:27.457300"},
-        {"id": 13, "fecha": "2026-09-11", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:40.012600"},
-        {"id": 14, "fecha": "2026-09-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:54.275565"},
-        {"id": 15, "fecha": "2026-09-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:36:59.266085"},
-        {"id": 16, "fecha": "2026-09-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:03.692794"},
-        {"id": 17, "fecha": "2026-09-17", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:08.136252"},
-        {"id": 18, "fecha": "2026-09-18", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:15.829232"},
-        {"id": 19, "fecha": "2026-09-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:20.329576"},
-        {"id": 20, "fecha": "2026-09-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:24.685848"},
-        {"id": 21, "fecha": "2026-09-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:29.086383"},
-        {"id": 22, "fecha": "2026-09-24", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:33.449767"},
-        {"id": 23, "fecha": "2026-09-25", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:38.061306"},
-        {"id": 24, "fecha": "2026-09-28", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:42.407174"},
-        {"id": 25, "fecha": "2026-09-29", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:37:47.106188"},
-        {"id": 26, "fecha": "2026-09-30", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Reparto provisional del total de 18,50 h extra de septiembre. Fechas y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:09.463321"},
-        {"id": 2, "fecha": "2026-10-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T16:52:46.167100"},
-        {"id": 5, "fecha": "2026-10-26", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.75, "notas": "Incluye 0,50 h ya fichadas y 1,25 h del reparto provisional de 21,00 h extra de octubre. Total del día: 1,75 h; distribución orientativa, confirmar con los fichajes reales.", "creado": "2026-10-26T19:25:34.494620"},
-        {"id": 28, "fecha": "2026-10-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:45.643686"},
-        {"id": 29, "fecha": "2026-10-05", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:52.730691"},
-        {"id": 30, "fecha": "2026-10-06", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:38:57.080659"},
-        {"id": 31, "fecha": "2026-10-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:01.456407"},
-        {"id": 32, "fecha": "2026-10-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:05.848906"},
-        {"id": 33, "fecha": "2026-10-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:39:13.421841"},
-        {"id": 34, "fecha": "2026-10-12", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:20.274440"},
-        {"id": 35, "fecha": "2026-10-13", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:31.033270"},
-        {"id": 36, "fecha": "2026-10-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:40.943971"},
-        {"id": 37, "fecha": "2026-10-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:45.649066"},
-        {"id": 38, "fecha": "2026-10-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:50.066439"},
-        {"id": 39, "fecha": "2026-10-19", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:45:57.151093"},
-        {"id": 40, "fecha": "2026-10-20", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:01.622995"},
-        {"id": 41, "fecha": "2026-10-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:09.226835"},
-        {"id": 42, "fecha": "2026-10-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:20.008499"},
-        {"id": 43, "fecha": "2026-10-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Reparto provisional del total de 21,00 h extra de octubre. Fecha y distribución orientativas; confirmar con los fichajes reales.", "creado": "2026-10-26T20:46:24.365664"},
-        {"id": 44, "fecha": "2026-10-27", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-27T07:47:29.370023"},
-        {"id": 45, "fecha": "2026-10-28", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.5, "notas": "[REVISADO]", "creado": "2026-10-28T07:59:55.308797"},
-        {"id": 46, "fecha": "2026-10-29", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO] Fichaje automático según el horario habitual; no verificado manualmente. Corrige este registro si el horario real fue distinto.", "creado": "2026-10-29T16:00:12.526141+00:00"},
-        {"id": 47, "fecha": "2026-10-30", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "creado": "2026-10-30T15:52:43.083260"}
-        ],
-         "viajes": [
-        {"id": 1, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 1", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167140"},
-        {"id": 2, "fecha": "2026-10-31", "concepto": "Viaje de trabajo de octubre 2", "importe": 200.0, "pagado": 0, "fecha_pago": "", "notas": "Fecha aproximada de registro; cambiar a la fecha real si se conoce.", "creado": "2026-10-26T16:52:46.167180"},
-        {"id": 3, "fecha": "2026-09-26", "concepto": "Viaje de trabajo", "importe": 400.0, "pagado": 1, "fecha_pago": "2026-10-26", "notas": "", "creado": "2026-10-26T18:58:40.962023"}
-        ],
-         "pagos": [],
-         "ajustes": [
-        {"clave": "seeded_demo", "valor": "yes"},
-        {"clave": "hora_extra_euros", "valor": "19.69"},
-        {"clave": "horas_normales_dia", "valor": "8"},
-        {"clave": "horario_habitual", "valor": "08:00-16:00, sin pausa"},
-        {"clave": "dias_trabajo", "valor": "Lunes a viernes"},
-        {"clave": "app_name", "valor": "工V龱尺7"},
-        {"clave": "app_color", "valor": "#f97316"}
-        ],
-         "notas": []
+        // --- DATOS ORIGINALES (TU INFORMACIÓN REAL) ---
+        const INITIAL_DATA = {
+            jornadas: [
+                {"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 6, "fecha": "2026-09-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 7, "fecha": "2026-09-03", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 8, "fecha": "2026-09-04", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 9, "fecha": "2026-09-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 10, "fecha": "2026-09-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 11, "fecha": "2026-09-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 12, "fecha": "2026-09-10", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 13, "fecha": "2026-09-11", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 14, "fecha": "2026-09-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 15, "fecha": "2026-09-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 16, "fecha": "2026-09-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 17, "fecha": "2026-09-17", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 18, "fecha": "2026-09-18", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 19, "fecha": "2026-09-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 20, "fecha": "2026-09-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 21, "fecha": "2026-09-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 22, "fecha": "2026-09-24", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 23, "fecha": "2026-09-25", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 24, "fecha": "2026-09-28", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 25, "fecha": "2026-09-29", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 26, "fecha": "2026-09-30", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 0.75, "notas": "Septiembre prov.", "estado": "provisional"},
+                {"id": 2, "fecha": "2026-10-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 5, "fecha": "2026-10-26", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.75, "notas": "Mixto", "estado": "provisional"},
+                {"id": 28, "fecha": "2026-10-02", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 29, "fecha": "2026-10-05", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 30, "fecha": "2026-10-06", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 31, "fecha": "2026-10-07", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 32, "fecha": "2026-10-08", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 33, "fecha": "2026-10-09", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 34, "fecha": "2026-10-12", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 35, "fecha": "2026-10-13", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 36, "fecha": "2026-10-14", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 37, "fecha": "2026-10-15", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.25, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 38, "fecha": "2026-10-16", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 39, "fecha": "2026-10-19", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 40, "fecha": "2026-10-20", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 41, "fecha": "2026-10-21", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 42, "fecha": "2026-10-22", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 43, "fecha": "2026-10-23", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Octubre prov.", "estado": "provisional"},
+                {"id": 44, "fecha": "2026-10-27", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "estado": "confirmado"},
+                {"id": 45, "fecha": "2026-10-28", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.5, "notas": "[REVISADO]", "estado": "confirmado"},
+                {"id": 46, "fecha": "2026-10-29", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "estado": "confirmado"},
+                {"id": 47, "fecha": "2026-10-30", "entrada": "08:00", "salida": "16:00", "horas_normales": 8.0, "horas_extra": 0.0, "notas": "[REVISADO]", "estado": "confirmado"}
+            ],
+            viajes: [
+                {"id": 1, "fecha": "2026-10-31", "concepto": "Viaje octubre 1", "importe": 200.0, "pagado": false},
+                {"id": 2, "fecha": "2026-10-31", "concepto": "Viaje octubre 2", "importe": 200.0, "pagado": false},
+                {"id": 3, "fecha": "2026-09-26", "concepto": "Viaje septiembre", "importe": 400.0, "pagado": true}
+            ],
+            pagos: [], // Aquí se guardan las nóminas registradas manualmente
+            ajustes: {
+                rate: 19.69,
+                schedule: "08:00-16:00"
+            }
         };
 
-        async function initApp() {
-            // Cargar datos guardados o usar los originales
-            const saved = localStorage.getItem('ivory37_data_v1');
-            if (saved) { 
-                try { appData = JSON.parse(saved); } 
-                catch { appData = buildInitialData(); } 
-            } else { 
-                appData = buildInitialData(); 
-            }
+        // --- LÓGICA DE LA APP ---
+        const app = {
+            data: null,
+            charts: {},
             
-            applyBranding(); 
-            sanitizeConfirmedRecords(); 
-            ensureFullYearData(); 
-            updateDateAndClock(); 
-            setInterval(updateDateAndClock, 1000);
-            setupOfflineDetection(); 
-            scheduleNotifications();
-            
-            // Detectar tema del sistema
-            if (!window.matchMedia || !window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.classList.add('light');
-            }
-            
-            document.getElementById('app-container').classList.remove('hidden');
-            switchTab('dashboard');
-            registerSW();
-        }
+            init() {
+                // Cargar datos o usar iniciales
+                const saved = localStorage.getItem('ivory_exec_v1');
+                this.data = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(INITIAL_DATA));
+                
+                // Asegurar estructura si viene antigua
+                if(!this.data.pagos) this.data.pagos = [];
+                if(!this.data.ajustes) this.data.ajustes = { rate: 19.69, schedule: "08:00-16:00" };
 
-        function buildInitialData() {
-            const clean = JSON.parse(JSON.stringify(RAW_DATA, (k, v) => typeof k === 'string' ? k.trim() : k, 2));
-            return { 
-                jornadas: [...clean.jornadas, ...generateMissingJornadas(clean.jornadas)], 
-                viajes: clean.viajes, 
-                pagos: clean.pagos || [], 
-                ajustes: clean.ajustes, 
-                notas: clean.notas || [] 
-            };
-        }
+                this.setupNav();
+                this.startClock();
+                this.renderAll();
+            },
 
-        function applyBranding() {
-            const nameSetting = appData.ajustes.find(a => a.clave === "app_name");
-            const colorSetting = appData.ajustes.find(a => a.clave === "app_color");
-            const logoSetting = appData.ajustes.find(a => a.clave === "app_logo");
-            const appName = nameSetting ? nameSetting.valor : "工V龱尺㇌7";
-            const appColor = colorSetting ? colorSetting.valor : "#f97316";
-            document.documentElement.style.setProperty('--app-primary', appColor);
-            document.getElementById('app-name').innerText = appName;
-            document.title = `${appName} | Executive Dashboard`;
-            const imgEl = document.getElementById('custom-logo-img'), svgEl = document.getElementById('default-logo-svg'), previewEl = document.getElementById('logo-preview'), placeholderEl = document.getElementById('logo-placeholder');
-            if (logoSetting && logoSetting.valor) { 
-                imgEl.src = logoSetting.valor; imgEl.classList.remove('hidden'); svgEl.style.display = 'none'; 
-                if(previewEl) { previewEl.src = logoSetting.valor; previewEl.classList.remove('hidden'); } 
-                if(placeholderEl) placeholderEl.style.display = 'none'; 
-            } else { 
-                imgEl.classList.add('hidden'); svgEl.style.display = 'block'; 
-                if(previewEl) previewEl.classList.add('hidden'); 
-                if(placeholderEl) placeholderEl.style.display = 'block'; 
-            }
-        }
+            save() {
+                localStorage.setItem('ivory_exec_v1', JSON.stringify(this.data));
+                this.renderAll();
+            },
 
-        function handleLogoUpload(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Logo = e.target.result;
-                let logoSetting = appData.ajustes.find(a => a.clave === "app_logo");
-                if (logoSetting) logoSetting.valor = base64Logo; else appData.ajustes.push({ clave: "app_logo", valor: base64Logo });
-                applyBranding(); showToast('✅ Logo actualizado', 'success');
-            };
-            reader.readAsDataURL(file);
-        }
+            setupNav() {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Actualizar UI
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        // Mostrar sección
+                        document.querySelectorAll('.tab-content').forEach(sec => sec.classList.remove('active'));
+                        document.getElementById(`view-${btn.dataset.target}`).classList.add('active');
+                        
+                        // Re-renderizar gráficos si es dashboard para asegurar tamaño
+                        if(btn.dataset.target === 'dashboard') setTimeout(() => this.renderCharts(), 100);
+                    });
+                });
+            },
 
-        function removeCustomLogo() {
-            const logoSetting = appData.ajustes.find(a => a.clave === "app_logo");
-            if (logoSetting) logoSetting.valor = "";
-            applyBranding(); saveData(); showToast('🔄 Logo restaurado', 'info');
-        }
+            startClock() {
+                const update = () => {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+                    const dateStr = now.toLocaleDateString('es-ES', {weekday:'short', day:'numeric', month:'short'});
+                    
+                    document.getElementById('clock-display').innerText = timeStr;
+                    document.getElementById('big-clock').innerText = timeStr;
+                    document.getElementById('date-display').innerText = dateStr;
+                };
+                setInterval(update, 1000);
+                update();
+            },
 
-        function sanitizeConfirmedRecords() {
-            let updated = false;
-            appData.jornadas.forEach(j => {
-                if (getJornadaEstado(j) === 'confirmado' && (!j.entrada?.trim() || !j.salida?.trim())) {
-                    j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0;
-                    if (!(j.notas || '').toLowerCase().includes('horario asignado')) j.notas = (j.notas || '') + ' ⚠️ Horario asignado automáticamente.';
-                    updated = true;
-                }
-            });
-            if (updated) saveDataSilent();
-        }
+            renderAll() {
+                this.calcStats();
+                this.renderCharts();
+                this.renderJornadas();
+                this.renderViajes();
+                this.renderPagos();
+                this.updateTodayStatus();
+                this.loadSettingsUI();
+            },
 
-        function ensureFullYearData() {
-            const dates = new Set(appData.jornadas.map(j => j.fecha));
-            let needsUpdate = false, id = Math.max(...appData.jornadas.map(j => j.id), 999) + 1;
-            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
-                if (d.getDay() === 0 || d.getDay() === 6) continue;
-                const ds = d.toISOString().split('T')[0];
-                if (!dates.has(ds)) { 
-                    appData.jornadas.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() }); 
-                    needsUpdate = true; 
-                }
-            }
-            if (needsUpdate) saveDataSilent();
-        }
-
-        function generateMissingJornadas(existing) {
-            const dates = new Set(existing.map(j => j.fecha)); const newJ = []; let id = 1000;
-            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
-                if (d.getDay() === 0 || d.getDay() === 6) continue;
-                const ds = d.toISOString().split('T')[0];
-                if (!dates.has(ds)) newJ.push({ id: id++, fecha: ds, entrada: "08:00", salida: "16:00", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() });
-            }
-            return newJ;
-        }
-
-        function saveData() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); renderCurrentView(); }
-        function saveDataSilent() { localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); }
-        
-        function renderCurrentView() {
-            const activeTab = document.querySelector('.nav-item.active')?.dataset.tab || 'dashboard';
-            if (activeTab === 'dashboard') renderDashboard();
-            else if (activeTab === 'jornadas') renderJornadas();
-            else if (activeTab === 'viajes') renderViajes();
-            else if (activeTab === 'pagos') renderPagos();
-            else if (activeTab === 'ajustes') renderConfig();
-            updateTodayStatus();
-        }
-        
-        function updateDateAndClock() { 
-            const n = new Date(); 
-            document.getElementById('current-date').innerText = n.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }); 
-            const t = n.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); 
-            document.getElementById('live-clock').innerText = t; 
-            document.getElementById('live-clock-big').innerText = t; 
-        }
-        
-        function renderDashboard() {
-            const now = new Date(), cm = now.getMonth(), cy = now.getFullYear();
-            const lastDayOfMonth = new Date(cy, cm + 1, 0).getDate();
-            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros");
-            const rate = rs ? parseFloat(rs.valor) : 19.69;
-            
-            let totalWorkingDays = 0, workingDaysPassed = 0;
-            for (let d = 1; d <= lastDayOfMonth; d++) {
-                const dt = new Date(cy, cm, d);
-                if (dt.getDay() !== 0 && dt.getDay() !== 6) { totalWorkingDays++; if (d <= now.getDate()) workingDaysPassed++; }
-            }
-            
-            const targetHours = totalWorkingDays * 8;
-            let workedHours = 0, totalExtras = 0;
-            appData.jornadas.forEach(j => { 
-                const jd = new Date(j.fecha); 
-                if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada?.trim() && j.salida?.trim()) {
-                    workedHours += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000; 
-                }
-                totalExtras += parseFloat(j.horas_extra || 0);
-            });
-            
-            let tripPaid = 0, tripPending = 0;
-            appData.viajes.forEach(v => { const a = parseFloat(v.importe || 0); if (v.pagado === 1) tripPaid += a; else tripPending += a; });
-            
-            let extrasPaidValue = 0, extrasPendingValue = 0;
-            appData.jornadas.forEach(j => {
-                if (j.horas_extra > 0) {
-                    const val = j.horas_extra * rate;
-                    if (j.pagado_extras) extrasPaidValue += val; else extrasPendingValue += val;
-                }
-            });
-            
-            let payrollsTotal = 0;
-            if (appData.pagos) appData.pagos.forEach(p => { if (p.tipo === 'nomina_mensual') payrollsTotal += parseFloat(p.importe || 0); });
-            
-            const totalIncome = tripPaid + extrasPaidValue + payrollsTotal;
-            const totalPending = tripPending + extrasPendingValue;
-            const completionPct = Math.min((workedHours / targetHours) * 100, 100);
-            
-            document.getElementById('kpi-income').innerText = `€${totalIncome.toFixed(0)}`;
-            document.getElementById('kpi-pending').innerText = `€${totalPending.toFixed(0)}`;
-            document.getElementById('kpi-compliance').innerText = `${Math.round(completionPct)}%`;
-            document.getElementById('kpi-hours-detail').innerText = `${workedHours.toFixed(1)}h / ${targetHours}h`;
-            document.getElementById('metric-extras-h').innerText = totalExtras.toFixed(1);
-            document.getElementById('metric-extras-v').innerText = `€${(totalExtras * rate).toFixed(0)}`;
-            document.getElementById('metric-trips').innerText = `€${(tripPaid + tripPending).toFixed(0)}`;
-            document.getElementById('metric-payrolls').innerText = `€${payrollsTotal.toFixed(0)}`;
-            
-            const remainingHours = Math.max(0, targetHours - workedHours);
-            const remainingDays = Math.max(1, totalWorkingDays - workingDaysPassed);
-            const dailyPace = remainingHours / remainingDays;
-            const projection = workedHours + (dailyPace * (totalWorkingDays - workingDaysPassed));
-            
-            document.getElementById('kpi-pace').innerText = `${dailyPace.toFixed(1)}h`;
-            document.getElementById('kpi-proj').innerText = `${projection.toFixed(1)}h`;
-            
-            const statusEl = document.getElementById('kpi-status');
-            if (workedHours >= targetHours) { statusEl.innerText = "✅ OBJETIVO CUMPLIDO"; statusEl.className = "font-semibold text-emerald-400"; }
-            else if (dailyPace > 8.5) { statusEl.innerText = `⚠️ RITMO ALTO (${dailyPace.toFixed(1)}h/día)`; statusEl.className = "font-semibold text-amber-400"; }
-            else { statusEl.innerText = `🟢 EN CURSO (${dailyPace.toFixed(1)}h/día)`; statusEl.className = "font-semibold text-emerald-400"; }
-            
-            renderGoalChart(workedHours, remainingHours, completionPct);
-            renderCashFlowChart(rate);
-            renderTrendChart();
-        }
-
-        function renderGoalChart(worked, remaining, pct) {
-            const ctx = document.getElementById('goalChart');
-            if (!ctx) return;
-            if (charts.goal) charts.goal.destroy();
-            const isLight = document.body.classList.contains('light');
-            charts.goal = new Chart(ctx, {
-                type: 'doughnut',
-                 { labels: ['Trabajadas', 'Pendientes'], datasets: [{ data: [worked, remaining], backgroundColor: ['#f97316', isLight ? '#e2e8f0' : '#334155'], borderWidth: 0, cutout: '75%' }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { animateScale: true, animateRotate: true } }
-            });
-            document.getElementById('goal-pct').innerText = `${Math.round(pct)}%`;
-        }
-
-        function renderCashFlowChart(rate) {
-            const ctx = document.getElementById('cashFlowChart');
-            if (!ctx) return;
-            if (charts.cashflow) charts.cashflow.destroy();
-            
-            const monthlyData = {};
-            const now = new Date();
-            for (let i = 5; i >= 0; i--) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                monthlyData[key] = { income: 0, pending: 0 };
-            }
-            
-            appData.viajes.forEach(v => {
-                const d = new Date(v.fecha);
-                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                if (monthlyData[key]) {
-                    const amount = parseFloat(v.importe || 0);
-                    if (v.pagado === 1) monthlyData[key].income += amount;
-                    else monthlyData[key].pending += amount;
-                }
-            });
-            
-            appData.jornadas.forEach(j => {
-                if (j.horas_extra > 0) {
-                    const d = new Date(j.fecha);
-                    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                    if (monthlyData[key]) {
-                        const val = j.horas_extra * rate;
-                        if (j.pagado_extras) monthlyData[key].income += val;
-                        else monthlyData[key].pending += val;
+            // --- CÁLCULOS FINANCIEROS ---
+            calcStats() {
+                const now = new Date();
+                const cm = now.getMonth(), cy = now.getFullYear();
+                const rate = parseFloat(this.data.ajustes.rate) || 19.69;
+                
+                // 1. Horas Trabajadas Este Mes (para cumplimiento)
+                let workedHours = 0;
+                let totalWorkingDays = 0;
+                const daysInMonth = new Date(cy, cm + 1, 0).getDate();
+                
+                for(let d=1; d<=daysInMonth; d++) {
+                    const dt = new Date(cy, cm, d);
+                    if(dt.getDay() !== 0 && dt.getDay() !== 6) {
+                        totalWorkingDays++;
+                        if(d <= now.getDate()) {
+                            const j = this.data.jornadas.find(x => x.fecha === dt.toISOString().split('T')[0]);
+                            if(j && j.entrada && j.salida) {
+                                const diff = (new Date(`${j.fecha}T${j.salida}`) - new Date(`${j.fecha}T${j.entrada}`)) / 3600000;
+                                workedHours += diff;
+                            } else if (j && !j.entrada) {
+                                // Si está confirmado pero sin ficha, asumimos horario estándar para cálculo conservador o ignoramos? 
+                                // Mejor ignorar si no hay ficha real para no inflar %.
+                            }
+                        }
                     }
                 }
-            });
-            
-            if (appData.pagos) {
-                appData.pagos.forEach(p => {
-                    if (p.tipo === 'nomina_mensual') {
-                        const d = new Date(p.fecha);
-                        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                        if (monthlyData[key]) monthlyData[key].income += parseFloat(p.importe || 0);
+                const targetHours = totalWorkingDays * 8;
+                const compliance = targetHours > 0 ? Math.min((workedHours / targetHours) * 100, 100) : 0;
+
+                // 2. Dinero
+                let tripPaid = 0, tripPending = 0;
+                this.data.viajes.forEach(v => {
+                    if(v.pagado) tripPaid += v.importe; else tripPending += v.importe;
+                });
+
+                let extrasPaidVal = 0, extrasPendingVal = 0, totalExtrasH = 0;
+                this.data.jornadas.forEach(j => {
+                    if(j.horas_extra > 0) {
+                        totalExtrasH += j.horas_extra;
+                        const val = j.horas_extra * rate;
+                        if(j.pagado_extras) extrasPaidVal += val; else extrasPendingVal += val;
                     }
                 });
+
+                let payrollTotal = 0;
+                this.data.pagos.forEach(p => {
+                    if(p.tipo === 'nomina_mensual') payrollTotal += p.importe;
+                });
+
+                const totalIncome = tripPaid + extrasPaidVal + payrollTotal;
+                const totalPending = tripPending + extrasPendingVal;
+
+                // Update DOM
+                document.getElementById('dash-income').innerText = `€${totalIncome.toFixed(0)}`;
+                document.getElementById('dash-pending').innerText = `€${totalPending.toFixed(0)}`;
+                document.getElementById('dash-compliance').innerText = `${Math.round(compliance)}%`;
+                
+                document.getElementById('metric-extras-h').innerText = totalExtrasH.toFixed(1);
+                document.getElementById('metric-extras-v').innerText = `€${(totalExtrasH * rate).toFixed(0)}`;
+                document.getElementById('metric-trips').innerText = `€${(tripPaid + tripPending).toFixed(0)}`;
+                document.getElementById('metric-payrolls').innerText = `€${payrollTotal.toFixed(0)}`;
+
+                // Store for charts
+                this.stats = { workedHours, targetHours, compliance, totalIncome, totalPending, rate };
+            },
+
+            renderCharts() {
+                // Destruir anteriores
+                Object.values(this.charts).forEach(c => c.destroy());
+                this.charts = {};
+
+                const commonOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+
+                // 1. Goal Donut
+                const ctxGoal = document.getElementById('chart-goal').getContext('2d');
+                this.charts.goal = new Chart(ctxGoal, {
+                    type: 'doughnut',
+                     {
+                        labels: ['Trab.', 'Pend.'],
+                        datasets: [{
+                            data: [this.stats.workedHours, Math.max(0, this.stats.targetHours - this.stats.workedHours)],
+                            backgroundColor: ['#f97316', '#334155'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { ...commonOpts, cutout: '75%' }
+                });
+                document.getElementById('goal-percent').innerText = `${Math.round(this.stats.compliance)}%`;
+                
+                // Ritmo diario
+                const remainingDays = Math.max(1, (new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate()) - new Date().getDate());
+                const pace = (this.stats.targetHours - this.stats.workedHours) / remainingDays;
+                document.getElementById('goal-pace').innerText = `${pace.toFixed(1)}h`;
+                document.getElementById('goal-proj').innerText = `${(this.stats.workedHours + pace * remainingDays).toFixed(1)}h`;
+
+                // 2. Cash Flow Bar (Últimos 6 meses simulados/resumidos)
+                // Para simplificar, mostramos Ingreso vs Pendiente global en barras apiladas horizontales o verticales simples
+                const ctxCash = document.getElementById('chart-cashflow').getContext('2d');
+                this.charts.cashflow = new Chart(ctxCash, {
+                    type: 'bar',
+                     {
+                        labels: ['Ingresos', 'Pendiente'],
+                        datasets: [{
+                            label: '€',
+                             [this.stats.totalIncome, this.stats.totalPending],
+                            backgroundColor: ['#10b981', '#ef4444'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: { ...commonOpts, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } , ticks:{color:'#94a3b8'} }, x: { grid: { display: false }, ticks:{color:'#94a3b8'} } } }
+                });
+
+                // 3. Trend Line (Horas extra por mes)
+                const monthlyExtras = {};
+                this.data.jornadas.forEach(j => {
+                    const k = j.fecha.substring(0,7);
+                    monthlyExtras[k] = (monthlyExtras[k]||0) + j.horas_extra;
+                });
+                const sortedKeys = Object.keys(monthlyExtras).sort().slice(-6); // Últimos 6
+                
+                const ctxTrend = document.getElementById('chart-trend').getContext('2d');
+                this.charts.trend = new Chart(ctxTrend, {
+                    type: 'line',
+                     {
+                        labels: sortedKeys.map(k => new Date(k+'-01').toLocaleDateString('es-ES',{month:'short'})),
+                        datasets: [{
+                            label: 'Horas Extra',
+                            data: sortedKeys.map(k => monthlyExtras[k]),
+                            borderColor: '#f97316',
+                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#fff'
+                        }]
+                    },
+                    options: { ...commonOpts, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks:{color:'#94a3b8'} }, x: { grid: { display: false }, ticks:{color:'#94a3b8'} } } }
+                });
+            },
+
+            // --- RENDERIZADO DE LISTAS ---
+            renderJornadas() {
+                const container = document.getElementById('list-jornadas');
+                const filter = document.getElementById('filter-jornadas').value;
+                container.innerHTML = '';
+
+                let list = [...this.data.jornadas].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+                
+                if(filter === 'extra') list = list.filter(j => j.horas_extra > 0);
+                if(filter === 'prov') list = list.filter(j => j.estado === 'provisional');
+
+                list.slice(0, 30).forEach(j => {
+                    const isProv = j.estado === 'provisional';
+                    const badge = isProv ? '<span class="bg-yellow-500/20 text-yellow-400 text-[10px] px-1 rounded">PROV</span>' : '<span class="bg-green-500/20 text-green-400 text-[10px] px-1 rounded">OK</span>';
+                    const extraTxt = j.horas_extra > 0 ? `<span class="text-orange-400 font-bold ml-2">+${j.horas_extra}h</span>` : '';
+                    
+                    container.innerHTML += `
+                        <div class="card p-3 flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-white text-sm">${new Date(j.fecha).toLocaleDateString('es-ES')}</p>
+                                <p class="text-xs text-slate-400">${j.entrada || '--'} - ${j.salida || '--'} ${badge}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="mono text-sm text-white">${j.horas_normales}h${extraTxt}</p>
+                                <button onclick="app.editJornada(${j.id})" class="text-xs text-blue-400 hover:text-white mt-1"><i class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            renderViajes() {
+                const container = document.getElementById('list-viajes');
+                container.innerHTML = '';
+                [...this.data.viajes].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).forEach(v => {
+                    const paidClass = v.pagado ? 'text-green-400 border-green-500/30' : 'text-red-400 border-red-500/30';
+                    const btnText = v.pagado ? 'Cobrado' : 'Marcar Cobrado';
+                    const btnAction = v.pagado ? '' : `onclick="app.markTripPaid(${v.id})"`;
+                    
+                    container.innerHTML += `
+                        <div class="card p-3 flex justify-between items-center border-l-4 ${v.pagado?'border-green-500':'border-red-500'}">
+                            <div>
+                                <p class="font-bold text-white text-sm">${v.concepto}</p>
+                                <p class="text-xs text-slate-400">${new Date(v.fecha).toLocaleDateString()}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="mono font-bold text-lg text-white">€${v.importe}</p>
+                                <button ${btnAction} class="btn ${v.pagado?'btn-outline':'btn-success'} text-xs py-1 px-2 mt-1">${btnText}</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            renderPagos() {
+                // Nóminas
+                const nomContainer = document.getElementById('list-nominas');
+                nomContainer.innerHTML = '';
+                if(this.data.pagos.length === 0) {
+                    nomContainer.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-2">No hay nóminas registradas.</p>';
+                } else {
+                    this.data.pagos.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).forEach(p => {
+                        nomContainer.innerHTML += `
+                            <div class="flex justify-between items-center p-2 bg-white/5 rounded border border-white/10">
+                                <div>
+                                    <p class="text-sm font-bold text-purple-300">${p.concepto}</p>
+                                    <p class="text-xs text-slate-400">${new Date(p.fecha).toLocaleDateString()}</p>
+                                </div>
+                                <p class="mono font-bold text-white">€${p.importe.toFixed(2)}</p>
+                            </div>
+                        `;
+                    });
+                }
+
+                // Extras List
+                const extContainer = document.getElementById('list-extras');
+                extContainer.innerHTML = '';
+                const rate = parseFloat(this.data.ajustes.rate);
+                const extrasList = this.data.jornadas.filter(j => j.horas_extra > 0).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+                
+                if(extrasList.length === 0) {
+                    extContainer.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-2">Sin horas extra pendientes.</p>';
+                } else {
+                    extrasList.forEach(j => {
+                        const isPaid = !!j.pagado_extras;
+                        const val = (j.horas_extra * rate).toFixed(2);
+                        extContainer.innerHTML += `
+                            <div class="flex justify-between items-center p-2 bg-white/5 rounded border-l-2 ${isPaid?'border-green-500':'border-red-500'}">
+                                <div>
+                                    <p class="text-sm font-bold text-white">${new Date(j.fecha).toLocaleDateString()} <span class="text-orange-400 text-xs">+${j.horas_extra}h</span></p>
+                                    <p class="text-xs text-slate-400 mono">Valor: €${val}</p>
+                                </div>
+                                <button onclick="app.toggleExtraPaid(${j.id})" class="btn ${isPaid?'btn-outline':'btn-success'} text-xs py-1 px-2">
+                                    ${isPaid ? 'Desmarcar' : 'Liquidar'}
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+            },
+
+            // --- ACCIONES ---
+            clock(type) {
+                const now = new Date();
+                const ds = now.toISOString().split('T')[0];
+                const ts = now.toTimeString().substring(0,5);
+                
+                let j = this.data.jornadas.find(x => x.fecha === ds);
+                if(!j) {
+                    j = { id: Date.now(), fecha: ds, entrada: "", salida: "", horas_normales: 8, horas_extra: 0, estado: "confirmado", notas: "" };
+                    this.data.jornadas.push(j);
+                }
+
+                if(type === 'in') {
+                    j.entrada = ts;
+                    alert(`Entrada registrada: ${ts}`);
+                } else {
+                    if(!j.entrada) return alert("Primero registra entrada");
+                    j.salida = ts;
+                    const hours = (new Date(`${ds}T${ts}`) - new Date(`${ds}T${j.entrada}`)) / 3600000;
+                    if(hours > 8) {
+                        j.horas_extra = parseFloat((hours - 8).toFixed(2));
+                        j.horas_normales = 8;
+                    } else {
+                        j.horas_normales = parseFloat(hours.toFixed(2));
+                        j.horas_extra = 0;
+                    }
+                    alert(`Salida registrada: ${ts}. Total: ${hours.toFixed(2)}h`);
+                }
+                this.save();
+            },
+
+            markTripPaid(id) {
+                const t = this.data.viajes.find(v => v.id === id);
+                if(t) { t.pagado = true; this.save(); }
+            },
+
+            toggleExtraPaid(id) {
+                const j = this.data.jornadas.find(x => x.id === id);
+                if(j) {
+                    j.pagado_extras = !j.pagado_extras;
+                    this.save();
+                }
+            },
+
+            editJornada(id) {
+                const j = this.data.jornadas.find(x => x.id === id);
+                if(!j) return;
+                // Simplificado: Solo permitir cambiar horas extra manualmente vía prompt para demo rápida
+                const newExtra = prompt(`Editar Horas Extra (${j.horas_extra}):`, j.horas_extra);
+                if(newExtra !== null && !isNaN(parseFloat(newExtra))) {
+                    j.horas_extra = parseFloat(newExtra);
+                    j.estado = "confirmado"; // Al editar manual, confirmar
+                    this.save();
+                }
+            },
+
+            openModal(type) {
+                const modal = document.getElementById('modal');
+                const title = document.getElementById('modal-title');
+                const body = document.getElementById('modal-body');
+                const saveBtn = document.getElementById('modal-save-btn');
+                
+                modal.classList.add('show');
+                body.innerHTML = '';
+                
+                if(type === 'viaje') {
+                    title.innerText = "Nuevo Viaje";
+                    body.innerHTML = `
+                        <input type="text" id="m-conc" placeholder="Concepto" class="mb-2">
+                        <input type="date" id="m-fech" value="${new Date().toISOString().split('T')[0]}" class="mb-2">
+                        <input type="number" id="m-imp" placeholder="Importe €" step="0.01" class="mb-2">
+                    `;
+                    saveBtn.onclick = () => {
+                        const conc = document.getElementById('m-conc').value;
+                        const fech = document.getElementById('m-fech').value;
+                        const imp = parseFloat(document.getElementById('m-imp').value);
+                        if(conc && fech && imp > 0) {
+                            this.data.viajes.push({ id: Date.now(), fecha: fech, concepto: conc, importe: imp, pagado: false });
+                            this.save();
+                            this.closeModal();
+                        }
+                    };
+                } else if (type === 'nomina') {
+                    title.innerText = "Registrar Nómina";
+                    body.innerHTML = `
+                        <input type="date" id="n-fech" value="${new Date().toISOString().split('T')[0]}" class="mb-2">
+                        <input type="number" id="n-imp" placeholder="Importe Neto €" step="0.01" class="mb-2">
+                        <input type="text" id="n-desc" placeholder="Descripción (ej: Sep 2026)" class="mb-2">
+                    `;
+                    saveBtn.onclick = () => {
+                        const fech = document.getElementById('n-fech').value;
+                        const imp = parseFloat(document.getElementById('n-imp').value);
+                        const desc = document.getElementById('n-desc').value || "Nómina";
+                        if(fech && imp > 0) {
+                            this.data.pagos.push({ id: Date.now(), fecha: fech, importe: imp, concepto: desc, tipo: 'nomina_mensual' });
+                            this.save();
+                            this.closeModal();
+                        }
+                    };
+                }
+            },
+
+            closeModal() {
+                document.getElementById('modal').classList.remove('show');
+            },
+
+            updateTodayStatus() {
+                const today = new Date().toISOString().split('T')[0];
+                const j = this.data.jornadas.find(x => x.fecha === today);
+                const el = document.getElementById('today-status-text');
+                if(!j) el.innerText = "Sin fichar hoy";
+                else if(!j.salida) el.innerText = `Trabajando desde ${j.entrada}`;
+                else el.innerText = `Jornada cerrada (${j.horas_normales + j.horas_extra}h)`;
+            },
+
+            loadSettingsUI() {
+                document.getElementById('cfg-rate').value = this.data.ajustes.rate;
+                document.getElementById('cfg-schedule').value = this.data.ajustes.schedule;
+            },
+
+            saveSettings() {
+                this.data.ajustes.rate = parseFloat(document.getElementById('cfg-rate').value) || 19.69;
+                this.data.ajustes.schedule = document.getElementById('cfg-schedule').value;
+                this.save();
+                alert("Configuración guardada");
+            },
+
+            exportData() {
+                const blob = new Blob([JSON.stringify(this.data, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+            },
+
+            importData(input) {
+                const file = input.files[0];
+                if(!file) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    try {
+                        this.data = JSON.parse(e.target.result);
+                        this.save();
+                        alert("Datos importados correctamente");
+                    } catch(err) {
+                        alert("Error leyendo archivo JSON");
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            resetApp() {
+                if(confirm("¿Borrar todo y volver a los datos originales?")) {
+                    localStorage.removeItem('ivory_exec_v1');
+                    location.reload();
+                }
             }
-            
-            const labels = Object.keys(monthlyData).map(k => {
-                const [y, m] = k.split('-');
-                return new Date(y, m - 1).toLocaleDateString('es-ES', { month: 'short' });
-            });
-            const incomeData = Object.values(monthlyData).map(d => d.income);
-            const pendingData = Object.values(monthlyData).map(d => d.pending);
-            const isLight = document.body.classList.contains('light');
-            
-            charts.cashflow = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [
-                        { label: 'Ingresos', data: incomeData, backgroundColor: '#10b981', borderRadius: 4, barThickness: 12 },
-                        { label: 'Pendiente', data: pendingData, backgroundColor: '#ef4444', borderRadius: 4, barThickness: 12 }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                    scales: {
-                        x: { stacked: true, grid: { display: false }, ticks: { color: isLight ? '#64748b' : '#94a3b8', font: { size: 9 } } },
-                        y: { stacked: true, beginAtZero: true, grid: { color: isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }, ticks: { color: isLight ? '#64748b' : '#94a3b8', font: { size: 9 }, callback: v => '€' + v } }
-                    }
-                }
-            });
-        }
+        };
 
-        function renderTrendChart() {
-            const ctx = document.getElementById('trendChart');
-            if (!ctx) return;
-            if (charts.trend) charts.trend.destroy();
-            
-            const md = {};
-            appData.jornadas.forEach(j => { const k = j.fecha.substring(0, 7); md[k] = (md[k] || 0) + j.horas_extra; });
-            const labels = Object.keys(md).sort().map(m => new Date(m + '-01').toLocaleDateString('es-ES', { month: 'short' }));
-            const vals = Object.keys(md).sort().map(m => md[m]);
-            const isLight = document.body.classList.contains('light');
-            
-            charts.trend = new Chart(ctx, {
-                type: 'line',
-                 {
-                    labels,
-                    datasets: [{ label: 'Horas Extra', data: vals, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#f97316' }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: isLight ? '#64748b' : '#94a3b8', font: { size: 9 } } },
-                        y: { beginAtZero: true, grid: { color: isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }, ticks: { color: isLight ? '#64748b' : '#94a3b8', font: { size: 9 } } }
-                    }
-                }
-            });
-        }
-
-        function getJornadaEstado(j) { if (j.estado === 'confirmado') return 'confirmado'; if (j.estado === 'provisional') return 'provisional'; const n = (j.notas || '').toLowerCase(); if (n.includes('[confirmado]') || n.includes('[revisado]')) return 'confirmado'; if (n.includes('provisional') || n.includes('orientativa')) return 'provisional'; return 'confirmado'; }
-        function setFilter(f) { currentFilter = f; document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('primary', b.dataset.filter === f)); renderJornadas(); }
-
-        function renderJornadas() {
-            let sorted = [...appData.jornadas].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-            if (currentFilter === 'confirmado') sorted = sorted.filter(j => getJornadaEstado(j) === 'confirmado');
-            else if (currentFilter === 'provisional') sorted = sorted.filter(j => getJornadaEstado(j) === 'provisional');
-            else if (currentFilter === 'extra') sorted = sorted.filter(j => j.horas_extra > 0);
-            
-            const cc = document.getElementById('jornadas-cards'); cc.innerHTML = '';
-            sorted.slice(0, 50).forEach(j => {
-                const est = getJornadaEstado(j); const badgeClass = est === 'provisional' ? 'status-provisional' : 'status-paid'; const badgeText = est === 'provisional' ? 'PROV' : 'OK';
-                const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()}-${j.salida.trim()}` : "--:--";
-                cc.innerHTML += `<div class="data-row"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-white light:text-slate-900">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short'})}</p><p class="text-xs text-slate-400 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'long'})}</p></div><span class="status-badge ${badgeClass}">${badgeText}</span></div><div class="flex items-center justify-between text-sm"><span class="text-slate-400 mono">${hr}</span><span class="font-bold ${j.horas_extra > 0 ? 'text-orange-400' : 'text-slate-500'} mono">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span></div><div class="grid grid-cols-2 gap-2 mt-2"><button onclick="openExtraModal(${j.id})" class="btn-terminal text-xs"><i class="fa-solid fa-plus"></i> Extra</button><button onclick="openEditModal(${j.id})" class="btn-terminal text-xs"><i class="fa-solid fa-pen"></i> Editar</button></div></div>`;
-            });
-
-            const tb = document.getElementById('jornadas-body'); tb.innerHTML = '';
-            sorted.forEach(j => {
-                const est = getJornadaEstado(j); const badgeClass = est === 'provisional' ? 'status-provisional' : 'status-paid'; const badgeText = est === 'provisional' ? 'PROV' : 'OK';
-                const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()}-${j.salida.trim()}` : "--:--";
-                tb.innerHTML += `<tr class="hover:bg-white/5 light:hover:bg-slate-50"><td class="px-4 py-3 text-sm font-bold text-white light:text-slate-900">${new Date(j.fecha).toLocaleDateString('es-ES')}<div class="text-xs text-slate-400 capitalize font-normal">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div></td><td class="px-4 py-3 text-sm text-slate-400 mono">${hr}</td><td class="px-4 py-3 text-sm text-center text-slate-400 mono">${j.horas_normales}</td><td class="px-4 py-3 text-sm text-center font-bold text-orange-400 mono">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td><td class="px-4 py-3"><span class="status-badge ${badgeClass}">${badgeText}</span></td><td class="px-4 py-3 text-right whitespace-nowrap"><button onclick="openExtraModal(${j.id})" class="text-xs font-bold text-orange-400 hover:text-orange-300 mr-2"><i class="fa-solid fa-plus"></i></button><button onclick="openEditModal(${j.id})" class="text-xs font-bold text-slate-400 hover:text-white light:hover:text-slate-900"><i class="fa-solid fa-pen"></i></button></td></tr>`;
-            });
-        }
-
-        function openExtraModal(id) { editingId = id; currentModalType = 'add_extra'; const j = appData.jornadas.find(x => x.id === id); document.getElementById('modal-title').innerText = `Añadir Extra - ${new Date(j.fecha).toLocaleDateString('es-ES')}`; document.getElementById('modal-content').innerHTML = `<p class="text-sm text-slate-400 mb-2">Actual: <strong class="text-white light:text-slate-900">${j.horas_extra}h</strong></p><input type="number" step="0.25" id="m-extra-hours" placeholder="Horas a añadir" class="input-terminal mono"><textarea id="m-extra-note" placeholder="Nota..." class="input-terminal mt-2" rows="2"></textarea>`; document.getElementById('generic-modal').classList.remove('hidden'); }
-        function openEditModal(id) { editingId = id; currentModalType = 'edit_jornada'; const j = appData.jornadas.find(x => x.id === id); document.getElementById('modal-title').innerText = `Editar - ${new Date(j.fecha).toLocaleDateString('es-ES')}`; document.getElementById('modal-content').innerHTML = `<div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-semibold text-slate-400 uppercase">Entrada</label><input type="time" id="m-entrada" value="${j.entrada || ''}" class="input-terminal mt-1 mono"></div><div><label class="text-xs font-semibold text-slate-400 uppercase">Salida</label><input type="time" id="m-salida" value="${j.salida || ''}" class="input-terminal mt-1 mono"></div></div><div class="grid grid-cols-2 gap-3 mt-3"><div><label class="text-xs font-semibold text-slate-400 uppercase">H. Normales</label><input type="number" step="0.5" id="m-normales" value="${j.horas_normales}" class="input-terminal mt-1 mono"></div><div><label class="text-xs font-semibold text-slate-400 uppercase">H. Extra</label><input type="number" step="0.25" id="m-extra" value="${j.horas_extra}" class="input-terminal mt-1 mono"></div></div><label class="text-xs font-semibold text-slate-400 uppercase mt-3 block">Notas</label><textarea id="m-notas" class="input-terminal mt-1" rows="2">${j.notas || ''}</textarea>`; document.getElementById('generic-modal').classList.remove('hidden'); }
-        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; }
-
-        function saveModalData() {
-            if (currentModalType === 'add_extra') { const hrs = parseFloat(document.getElementById('m-extra-hours').value); const note = document.getElementById('m-extra-note').value.trim(); if (isNaN(hrs) || hrs <= 0) { showToast('⚠️ Horas inválidas', 'warning'); return; } const j = appData.jornadas.find(x => x.id === editingId); j.horas_extra = parseFloat((j.horas_extra + hrs).toFixed(2)); if (note) j.notas = (j.notas ? j.notas + ' | ' : '') + `+${hrs}h: ${note}`; showToast(`✅ +${hrs}h extra`, 'success'); }
-            else if (currentModalType === 'edit_jornada') { const j = appData.jornadas.find(x => x.id === editingId); j.entrada = document.getElementById('m-entrada').value; j.salida = document.getElementById('m-salida').value; j.horas_normales = parseFloat(document.getElementById('m-normales').value) || 0; j.horas_extra = parseFloat(document.getElementById('m-extra').value) || 0; j.notas = document.getElementById('m-notas').value; showToast('✅ Actualizado', 'success'); }
-            else if (currentModalType === 'viaje') { const c = document.getElementById('m-concepto').value.trim(), f = document.getElementById('m-fecha').value, i = parseFloat(document.getElementById('m-importe').value); if (!c || !f || isNaN(i)) { showToast('⚠️ Campos incompletos', 'warning'); return; } appData.viajes.push({ id: Date.now(), fecha: f, concepto: c, importe: i, pagado: 0, fecha_pago: "", notas: "Pendiente", creado: new Date().toISOString() }); showToast('✅ Viaje añadido', 'success'); }
-            else if (currentModalType === 'payroll') { const date = document.getElementById('m-payroll-date').value, amount = parseFloat(document.getElementById('m-payroll-amount').value), note = document.getElementById('m-payroll-note').value.trim(); if (!date || isNaN(amount) || amount <= 0) { showToast('⚠️ Datos inválidos', 'warning'); return; } appData.pagos.push({ id: Date.now(), fecha: date, concepto: note || "Nómina mensual", importe: amount, tipo: "nomina_mensual", created: new Date().toISOString() }); showToast(`✅ Nómina €${amount.toFixed(2)}`, 'success'); }
-            closeModal(); saveData();
-        }
-
-        function openTripModal() { currentModalType = 'viaje'; editingId = null; document.getElementById('modal-title').innerText = 'Nuevo Viaje'; document.getElementById('modal-content').innerHTML = `<input type="text" id="m-concepto" placeholder="Concepto" class="input-terminal"><input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-terminal"><input type="number" step="0.01" id="m-importe" placeholder="Importe €" class="input-terminal mono">`; document.getElementById('generic-modal').classList.remove('hidden'); }
-        function openPayrollModal() { currentModalType = 'payroll'; editingId = null; document.getElementById('modal-title').innerText = 'Registrar Nómina'; document.getElementById('modal-content').innerHTML = `<div class="space-y-3"><div><label class="text-xs font-semibold text-slate-400 uppercase">Fecha</label><input type="date" id="m-payroll-date" value="${new Date().toISOString().split('T')[0]}" class="input-terminal mt-1"></div><div><label class="text-xs font-semibold text-slate-400 uppercase">Importe Neto €</label><input type="number" step="0.01" id="m-payroll-amount" placeholder="1463.68" class="input-terminal mt-1 mono"></div><div><label class="text-xs font-semibold text-slate-400 uppercase">Concepto</label><input type="text" id="m-payroll-note" placeholder="Nómina Septiembre 2026" class="input-terminal mt-1"></div></div>`; document.getElementById('generic-modal').classList.remove('hidden'); }
-
-        function markExtrasPaid(id) { const j = appData.jornadas.find(x => x.id === id); if (!j || j.horas_extra <= 0) return; j.pagado_extras = true; j.fecha_pago_extras = new Date().toISOString().split('T')[0]; saveData(); showToast(`✅ Extras liquidadas`, 'success'); }
-        function markExtrasUnpaid(id) { const j = appData.jornadas.find(x => x.id === id); if (!j) return; j.pagado_extras = false; j.fecha_pago_extras = ""; saveData(); showToast(`↩️ Marcado pendiente`, 'info'); }
-        function confirmAllProvisional() { let count = 0; appData.jornadas.forEach(j => { if (getJornadaEstado(j) === 'provisional') { j.estado = 'confirmado'; if (!j.entrada?.trim()) { j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0; } if (!(j.notas || '').toLowerCase().includes('[confirmado]')) j.notas = '[CONFIRMADO] ' + (j.notas || ''); count++; } }); if (count > 0) { saveData(); showToast(`✅ ${count} confirmadas`, 'success'); } else showToast('ℹ️ Sin provisionales', 'info'); }
-        
-        function renderViajes() { const l = document.getElementById('viajes-list'); l.innerHTML = ''; const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); if (!s.length) { l.innerHTML = '<div class="data-row text-center text-slate-400 py-8">Sin viajes registrados</div>'; return; } s.forEach(v => { const p = v.pagado === 1; l.innerHTML += `<div class="data-row border-l-2 ${p ? 'border-emerald-500' : 'border-red-500'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-white light:text-slate-900">${v.concepto}</p><p class="text-xs text-slate-400">${new Date(v.fecha).toLocaleDateString('es-ES')}</p></div><p class="text-lg font-bold mono text-white light:text-slate-900">€${parseFloat(v.importe).toFixed(2)}</p></div>${p ? `<button disabled class="btn-terminal !bg-emerald-500/10 !text-emerald-400 !border-emerald-500/20 text-sm">Cobrado</button>` : `<button onclick="markTripPaid(${v.id})" class="btn-terminal success text-sm">Marcar Cobrado</button>`}</div>`; }); }
-        function markTripPaid(id) { const t = appData.viajes.find(v => v.id === id); if (t) { t.pagado = 1; t.fecha_pago = new Date().toISOString().split('T')[0]; t.notas = "Cobrado"; saveData(); showToast('✅ Viaje liquidado', 'success'); } }
-        
-        function renderPagos() {
-            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); const rate = rs ? parseFloat(rs.valor) : 19.69;
-            const payrollList = document.getElementById('payroll-list'); payrollList.innerHTML = '';
-            const payrolls = (appData.pagos || []).filter(p => p.tipo === 'nomina_mensual').sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-            if (payrolls.length === 0) payrollList.innerHTML = '<div class="data-row text-center text-slate-400 py-6 text-sm">Sin nóminas. Registra septiembre (€1463,68) y octubre (€1504,65).</div>';
-            else payrolls.forEach(p => { payrollList.innerHTML += `<div class="data-row border-l-2 border-purple-500 flex items-center justify-between"><div><p class="font-bold text-white light:text-slate-900">${p.concepto}</p><p class="text-xs text-slate-400">${new Date(p.fecha).toLocaleDateString('es-ES', {month:'short', year:'numeric'})}</p></div><p class="text-lg font-bold mono text-purple-400">€${parseFloat(p.importe).toFixed(2)}</p></div>`; });
-            
-            const list = document.getElementById('extras-list'); list.innerHTML = '';
-            const extrasJornadas = appData.jornadas.filter(j => j.horas_extra > 0).sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-            if (extrasJornadas.length === 0) { list.innerHTML = '<div class="data-row text-center text-slate-400 py-8">Sin horas extra registradas</div>'; return; }
-            extrasJornadas.forEach(j => {
-                const isPaid = j.pagado_extras === true; const value = (j.horas_extra * rate).toFixed(2); const dateStr = new Date(j.fecha).toLocaleDateString('es-ES', {day:'2-digit', month:'short'});
-                list.innerHTML += `<div class="data-row border-l-2 ${isPaid ? 'border-emerald-500' : 'border-red-500'}"><div class="flex items-start justify-between mb-2"><div><p class="font-bold text-white light:text-slate-900">${dateStr} <span class="text-orange-400 mono">+${j.horas_extra}h</span></p><p class="text-xs text-slate-400 mono">€${value}</p></div><span class="status-badge ${isPaid ? 'status-paid' : 'status-pending'}">${isPaid ? 'PAGADO' : 'PENDIENTE'}</span></div>${isPaid ? `<button onclick="markExtrasUnpaid(${j.id})" class="btn-terminal text-sm">Desmarcar</button>` : `<button onclick="markExtrasPaid(${j.id})" class="btn-terminal success text-sm">Liquidar</button>`}</div>`;
-            });
-        }
-
-        function updateTodayStatus() { const t = new Date().toISOString().split('T')[0]; const j = appData.jornadas.find(x => x.fecha === t); const s = document.getElementById('today-status'); if (!j) s.innerHTML = '<span class="text-slate-400">Sin registrar hoy</span>'; else if (!j.salida?.trim()) s.innerHTML = `<span class="text-emerald-400 font-semibold">Activo desde ${j.entrada}</span>`; else s.innerHTML = '<span class="text-slate-400 font-semibold">Jornada cerrada</span>'; }
-        
-        function clockAction(type) { 
-            const now = new Date(); const ts = now.toTimeString().substring(0, 5); const ds = now.toISOString().split('T')[0]; 
-            let j = appData.jornadas.find(x => x.fecha === ds); 
-            if (!j) { j = { id: Date.now(), fecha: ds, entrada: "", salida: "", horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", notas: "[FICHADO]", creado: now.toISOString() }; appData.jornadas.push(j); } 
-            if (type === 'entrada') { j.entrada = ts; j.estado = "confirmado"; showToast(`✅ Entrada ${ts}`, 'success'); } 
-            else { if (!j.entrada?.trim()) { showToast('⚠️ Registra entrada primero', 'warning'); return; } j.salida = ts; const h = (new Date(`${ds}T${ts}`) - new Date(`${ds}T${j.entrada}`)) / 3600000; if (h > 8) { j.horas_extra = parseFloat((h - 8).toFixed(2)); j.horas_normales = 8.0; } else { j.horas_normales = parseFloat(h.toFixed(2)); j.horas_extra = 0.0; } showToast(`🔴 Salida ${ts} | ${h.toFixed(2)}h`, 'success'); } 
-            saveData(); 
-        }
-
-        async function generatePDF() {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF(); const now = new Date(); const monthName = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); const appName = document.getElementById('app-name').innerText;
-            doc.setFillColor(15, 23, 42); doc.rect(0, 0, 210, 40, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.text(appName, 20, 25); doc.setFontSize(10); doc.text(`Executive Report - ${monthName}`, 20, 35);
-            doc.setTextColor(0, 0, 0); doc.setFontSize(12); doc.text("Resumen Financiero", 20, 55); doc.setFontSize(9);
-            const cm = now.getMonth(), cy = now.getFullYear(); let worked = 0, extras = 0;
-            appData.jornadas.forEach(j => { const jd = new Date(j.fecha); if (jd.getMonth() === cm && jd.getFullYear() === cy && j.entrada?.trim() && j.salida?.trim()) { worked += (new Date(`${j.fecha}T${j.salida.trim()}`) - new Date(`${j.fecha}T${j.entrada.trim()}`)) / 3600000; extras += j.horas_extra || 0; } });
-            const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); const rate = rs ? parseFloat(rs.valor) : 19.69;
-            let tripPaid = 0, extrasPaid = 0, payrolls = 0;
-            appData.viajes.forEach(v => { if (v.pagado === 1) tripPaid += parseFloat(v.importe || 0); });
-            appData.jornadas.forEach(j => { if (j.pagado_extras && j.horas_extra > 0) extrasPaid += j.horas_extra * rate; });
-            if (appData.pagos) appData.pagos.forEach(p => { if (p.tipo === 'nomina_mensual') payrolls += parseFloat(p.importe || 0); });
-            doc.text(`Ingresos: €${(tripPaid + extrasPaid + payrolls).toFixed(2)} | Horas: ${worked.toFixed(1)}h | Extras: ${extras.toFixed(2)}h (€${(extras*rate).toFixed(2)})`, 20, 65);
-            doc.setFontSize(11); doc.text("Detalle Jornadas", 20, 80); doc.setFontSize(7);
-            let y = 90; doc.setFillColor(240, 240, 240); doc.rect(20, y-3, 170, 6, 'F'); doc.text("Fecha", 22, y); doc.text("Horario", 60, y); doc.text("Extra", 130, y); doc.text("Estado", 160, y); y += 7;
-            const monthJornadas = appData.jornadas.filter(j => { const d = new Date(j.fecha); return d.getMonth() === cm && d.getFullYear() === cy; }).sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
-            monthJornadas.forEach(j => { if (y > 270) { doc.addPage(); y = 20; } const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()}-${j.salida.trim()}` : "N/A"; doc.text(new Date(j.fecha).toLocaleDateString('es-ES'), 22, y); doc.text(hr, 60, y); doc.text(j.horas_extra > 0 ? `+${j.horas_extra}` : "—", 130, y); doc.text(getJornadaEstado(j) === 'confirmado' ? 'OK' : 'PROV', 160, y); y += 5; });
-            doc.setFontSize(6); doc.setTextColor(150, 150, 150); doc.text(`Generado ${now.toLocaleString('es-ES')} - ${appName} Executive Dashboard`, 20, 285);
-            doc.save(`report_${appName}_${monthName.replace(' ', '_')}.pdf`); showToast('📄 PDF generado', 'success');
-        }
-
-        function requestNotificationPermission() { if (!("Notification" in window)) { showToast('❌ No soportado', 'error'); return; } Notification.requestPermission().then(permission => { if (permission === "granted") { showToast('✅ Notificaciones activas', 'success'); scheduleNotifications(); } else showToast('⚠️ Permiso denegado', 'warning'); }); }
-        function sendNotification(title, body) { if ("Notification" in window && Notification.permission === "granted") new Notification(title, { body }); }
-        function scheduleNotifications() { if (!("Notification" in window) || Notification.permission !== "granted") return; setTimeout(() => { const now = new Date(); if (now.getHours() === 8 && now.getMinutes() === 0) { const todayJob = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]); if (!todayJob || !todayJob.entrada?.trim()) sendNotification("⏰ Fichaje", "¿Registraste entrada?"); } }, 60000); setTimeout(() => { const now = new Date(); if (now.getHours() === 16 && now.getMinutes() === 0) { const todayJob = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]); if (todayJob && todayJob.entrada?.trim() && !todayJob.salida?.trim()) sendNotification("⏰ Salida", "Recuerda registrar salida."); } }, 60000); }
-        function setupOfflineDetection() { const indicator = document.getElementById('offline-indicator'); window.addEventListener('online', () => { indicator.classList.remove('visible'); showToast('🟢 Online', 'success'); }); window.addEventListener('offline', () => { indicator.classList.add('visible'); showToast('🔴 Offline', 'warning'); }); if (!navigator.onLine) indicator.classList.add('visible'); }
-        function exportJSON() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2)); const l = document.createElement('a'); l.href = d; l.download = "backup_" + new Date().toISOString().slice(0,10) + ".json"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('💾 Backup', 'success'); }
-        function importJSON(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = function(ev) { try { const imp = JSON.parse(ev.target.result); if (imp.jornadas && imp.viajes && imp.ajustes) { appData = imp; sanitizeConfirmedRecords(); ensureFullYearData(); applyBranding(); saveData(); showToast('✅ Restaurado', 'success'); setTimeout(() => location.reload(), 1000); } else showToast('❌ Formato inválido', 'error'); } catch { showToast('❌ Error', 'error'); } }; r.readAsText(f); e.target.value = ''; }
-        function exportCSV() { const h = ["id","fecha","entrada","salida","horas_normales","horas_extra","estado","notas"]; const r = appData.jornadas.map(j => [j.id,j.fecha,j.entrada||'',j.salida||'',j.horas_normales,j.horas_extra,getJornadaEstado(j),`"${(j.notas||'').replace(/"/g,'""')}"`]); const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = "jornadas_" + new Date().toISOString().slice(0,10) + ".csv"; document.body.appendChild(l); l.click(); document.body.removeChild(l); showToast('📊 CSV', 'success'); }
-        function resetToFactory() { if (confirm('⚠️ ¿Restablecer todo? Se perderán tus datos actuales.')) { localStorage.removeItem('ivory37_data_v1'); location.reload(); } }
-        
-        // NAVEGACIÓN CORREGIDA Y FUNCIONAL
-        function switchTab(tabName) {
-            // Ocultar todas las secciones
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            
-            // Mostrar solo la seleccionada
-            const target = document.getElementById(`content-${tabName}`);
-            if (target) target.classList.remove('hidden');
-            
-            // Actualizar menú activo
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.querySelector(`.nav-item[data-tab="${tabName}"]`);
-            if (activeBtn) activeBtn.classList.add('active');
-            
-            // Scroll al inicio
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Renderizar vista actual
-            renderCurrentView();
-        }
-        
-        function toggleTheme() { document.body.classList.toggle('light'); setTimeout(renderCurrentView, 50); }
-        function renderConfig() { const r = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (r) document.getElementById('config-rate').value = r.valor; const s = appData.ajustes.find(a => a.clave === "horario_habitual"); if (s) document.getElementById('config-schedule').value = s.valor; const n = appData.ajustes.find(a => a.clave === "app_name"); if (n) document.getElementById('config-appname').value = n.valor; const c = appData.ajustes.find(a => a.clave === "app_color"); if (c) document.getElementById('config-color').value = c.valor; }
-        function saveConfig() { const r = document.getElementById('config-rate').value, sc = document.getElementById('config-schedule').value, appName = document.getElementById('config-appname').value.trim(), appColor = document.getElementById('config-color').value; let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc }); if (appName) { let ns = appData.ajustes.find(a => a.clave === "app_name"); if (ns) ns.valor = appName; else appData.ajustes.push({ clave: "app_name", valor: appName }); } if (appColor) { let cs = appData.ajustes.find(a => a.clave === "app_color"); if (cs) cs.valor = appColor; else appData.ajustes.push({ clave: "app_color", valor: appColor }); } applyBranding(); saveData(); showToast('✅ Guardado', 'success'); }
-        function registerSW() { if ('serviceWorker' in navigator) { const c = `const C='ivory37-v25-final'; self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())}); self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())}); self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`; navigator.serviceWorker.register(URL.createObjectURL(new Blob([c],{type:'application/javascript'}))).catch(()=>{}); } }
-        function showToast(m, t = 'success') { const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); msg.innerText = m; icon.className = t === 'success' ? 'fa-solid fa-check-circle text-green-500' : t === 'warning' ? 'fa-solid fa-exclamation-triangle text-yellow-500' : t === 'error' ? 'fa-solid fa-times-circle text-red-500' : 'fa-solid fa-info-circle text-blue-500'; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
-        window.onload = initApp;
+        // Iniciar
+        window.onload = () => app.init();
     </script>
 </body>
 </html>
