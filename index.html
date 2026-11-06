@@ -2,34 +2,38 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工V龱尺㇌7 | Executive Dashboard</title>
-    <!-- Librerías -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工V龱尺㇌7 | Control Laboral Pro</title>
+    
+    <!-- Librerías CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <style>
+        /* ESTILO BASE FORZADO PARA EVITAR PANTALLA NEGRA */
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #0f172a; /* Azul noche profundo */
+            background-color: #0f172a; 
             color: #e2e8f0; 
+            margin: 0; 
             padding-bottom: 80px; 
-            margin: 0;
+            min-height: 100vh;
         }
         
-        /* Tarjetas estilo Terminal */
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Tarjetas Premium Dark Mode */
         .card {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* Navegación Inferior */
+        /* Navegación Inferior Fija */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
             background: rgba(15, 23, 42, 0.95);
@@ -46,7 +50,7 @@
         .nav-btn.active { color: #f97316; transform: translateY(-2px); }
         .nav-btn i { font-size: 20px; margin-bottom: 4px; }
 
-        /* Botones Genéricos */
+        /* Botones */
         .btn {
             padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px;
             cursor: pointer; transition: all 0.2s; border: none;
@@ -56,7 +60,7 @@
         .btn-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .btn-danger { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
         .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1; }
-        .btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn:hover { opacity: 0.9; }
 
         /* Inputs */
         input, select, textarea {
@@ -65,15 +69,9 @@
             color: white; padding: 10px; border-radius: 6px; width: 100%;
             outline: none; font-family: inherit;
         }
-        input:focus, select:focus { border-color: #f97316; }
+        input:focus { border-color: #f97316; }
 
-        /* Utilidades */
-        .text-orange { color: #f97316; }
-        .text-green { color: #10b981; }
-        .text-red { color: #ef4444; }
-        .text-blue { color: #3b82f6; }
-        .text-purple { color: #a855f7; }
-        
+        /* Utilidades Visibles */
         .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -89,9 +87,19 @@
             background: #1e293b; padding: 24px; border-radius: 16px;
             width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1);
         }
+        
+        /* Texto Ayuda Debug */
+        #debug-msg {
+            position: fixed; top: 10px; right: 10px; background: red; color: white;
+            padding: 5px 10px; border-radius: 4px; font-size: 10px; z-index: 999;
+            display: none;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Mensaje de error si algo falla (se oculta automáticamente) -->
+    <div id="debug-msg">Error cargando datos</div>
 
     <!-- HEADER -->
     <header class="sticky top-0 z-40 bg-[#0f172a]/90 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
@@ -100,7 +108,7 @@
                 <i class="fa-solid fa-chart-line"></i>
             </div>
             <div>
-                <h1 class="font-bold text-sm leading-none">工V龱尺ㄚ㇌7</h1>
+                <h1 class="font-bold text-sm leading-none text-white">工V龱尺ㄚ㇌7</h1>
                 <span class="text-[10px] text-slate-400 uppercase tracking-wider">Executive Control</span>
             </div>
         </div>
@@ -110,7 +118,7 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
+    <!-- CONTENEDOR PRINCIPAL -->
     <main class="p-4 max-w-4xl mx-auto pb-24">
 
         <!-- PESTAÑA: DASHBOARD -->
@@ -136,13 +144,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="card p-4">
                     <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-money-bill-wave text-purple-400"></i> Flujo de Caja (Últimos 6 Meses)
+                        <i class="fa-solid fa-money-bill-wave text-purple-400"></i> Flujo de Caja Global
                     </h3>
                     <div class="h-48 relative"><canvas id="chart-cashflow"></canvas></div>
                 </div>
                 <div class="card p-4 flex flex-col items-center justify-center">
                     <h3 class="text-sm font-bold text-white mb-2 self-start flex items-center gap-2">
-                        <i class="fa-solid fa-bullseye text-orange-500"></i> Objetivo Mensual
+                        <i class="fa-solid fa-bullseye text-orange-500"></i> Objetivo Mes Actual
                     </h3>
                     <div class="relative w-32 h-32 mb-2">
                         <canvas id="chart-goal"></canvas>
@@ -210,13 +218,11 @@
         <section id="view-jornadas" class="tab-content">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-bold text-white">Jornadas</h2>
-                <div class="flex gap-2">
-                    <select id="filter-jornadas" onchange="app.renderJornadas()" class="text-xs py-1 px-2 bg-transparent border border-white/20 rounded">
-                        <option value="all">Todos</option>
-                        <option value="extra">Con Extras</option>
-                        <option value="prov">Provisionales</option>
-                    </select>
-                </div>
+                <select id="filter-jornadas" onchange="app.renderJornadas()" class="text-xs py-1 px-2 bg-transparent border border-white/20 rounded text-white">
+                    <option value="all">Todos</option>
+                    <option value="extra">Con Extras</option>
+                    <option value="prov">Provisionales</option>
+                </select>
             </div>
             <div id="list-jornadas" class="space-y-2"></div>
         </section>
@@ -256,11 +262,11 @@
             <div class="card p-4 space-y-4">
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Tarifa Hora Extra (€)</label>
-                    <input type="number" id="cfg-rate" step="0.01" class="mono">
+                    <input type="number" id="cfg-rate" step="0.01" class="mono text-white">
                 </div>
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Horario Habitual</label>
-                    <input type="text" id="cfg-schedule">
+                    <input type="text" id="cfg-schedule" class="text-white">
                 </div>
                 <button onclick="app.saveSettings()" class="btn btn-primary w-full">Guardar Cambios</button>
                 
@@ -301,7 +307,7 @@
     </div>
 
     <script>
-        // --- DATOS ORIGINALES (TU INFORMACIÓN REAL) ---
+        // --- DATOS ORIGINALES INCOTADOS (TU INFORMACIÓN REAL) ---
         const INITIAL_DATA = {
             jornadas: [
                 {"id": 1, "fecha": "2026-09-01", "entrada": "", "salida": "", "horas_normales": 8.0, "horas_extra": 1.0, "notas": "Septiembre prov.", "estado": "provisional"},
@@ -354,49 +360,59 @@
                 {"id": 2, "fecha": "2026-10-31", "concepto": "Viaje octubre 2", "importe": 200.0, "pagado": false},
                 {"id": 3, "fecha": "2026-09-26", "concepto": "Viaje septiembre", "importe": 400.0, "pagado": true}
             ],
-            pagos: [], // Aquí se guardan las nóminas registradas manualmente
-            ajustes: {
-                rate: 19.69,
-                schedule: "08:00-16:00"
-            }
+            pagos: [], 
+            ajustes: { rate: 19.69, schedule: "08:00-16:00" }
         };
 
-        // --- LÓGICA DE LA APP ---
         const app = {
             data: null,
             charts: {},
             
             init() {
-                // Cargar datos o usar iniciales
-                const saved = localStorage.getItem('ivory_exec_v1');
-                this.data = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(INITIAL_DATA));
-                
-                // Asegurar estructura si viene antigua
-                if(!this.data.pagos) this.data.pagos = [];
-                if(!this.data.ajustes) this.data.ajustes = { rate: 19.69, schedule: "08:00-16:00" };
+                try {
+                    // Intentar cargar de localStorage
+                    const saved = localStorage.getItem('ivory_exec_v2');
+                    if (saved) {
+                        this.data = JSON.parse(saved);
+                        // Validar estructura mínima
+                        if (!this.data.jornadas || !Array.isArray(this.data.jornadas)) throw new Error("Datos corruptos");
+                    } else {
+                        // Usar datos iniciales incrustados
+                        this.data = JSON.parse(JSON.stringify(INITIAL_DATA));
+                    }
+                    
+                    // Asegurar campos opcionales existen
+                    if(!this.data.pagos) this.data.pagos = [];
+                    if(!this.data.ajustes) this.data.ajustes = { rate: 19.69, schedule: "08:00-16:00" };
 
-                this.setupNav();
-                this.startClock();
-                this.renderAll();
+                    this.setupNav();
+                    this.startClock();
+                    this.renderAll();
+                    
+                } catch (err) {
+                    console.error("Error inicialización:", err);
+                    document.getElementById('debug-msg').style.display = 'block';
+                    document.getElementById('debug-msg').innerText = "Usando datos de respaldo...";
+                    // Forzar carga de datos iniciales si falla todo
+                    this.data = JSON.parse(JSON.stringify(INITIAL_DATA));
+                    this.renderAll();
+                }
             },
 
             save() {
-                localStorage.setItem('ivory_exec_v1', JSON.stringify(this.data));
+                localStorage.setItem('ivory_exec_v2', JSON.stringify(this.data));
                 this.renderAll();
             },
 
             setupNav() {
                 document.querySelectorAll('.nav-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        // Actualizar UI
                         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         
-                        // Mostrar sección
                         document.querySelectorAll('.tab-content').forEach(sec => sec.classList.remove('active'));
                         document.getElementById(`view-${btn.dataset.target}`).classList.add('active');
                         
-                        // Re-renderizar gráficos si es dashboard para asegurar tamaño
                         if(btn.dataset.target === 'dashboard') setTimeout(() => this.renderCharts(), 100);
                     });
                 });
@@ -426,13 +442,11 @@
                 this.loadSettingsUI();
             },
 
-            // --- CÁLCULOS FINANCIEROS ---
             calcStats() {
                 const now = new Date();
                 const cm = now.getMonth(), cy = now.getFullYear();
                 const rate = parseFloat(this.data.ajustes.rate) || 19.69;
                 
-                // 1. Horas Trabajadas Este Mes (para cumplimiento)
                 let workedHours = 0;
                 let totalWorkingDays = 0;
                 const daysInMonth = new Date(cy, cm + 1, 0).getDate();
@@ -446,9 +460,6 @@
                             if(j && j.entrada && j.salida) {
                                 const diff = (new Date(`${j.fecha}T${j.salida}`) - new Date(`${j.fecha}T${j.entrada}`)) / 3600000;
                                 workedHours += diff;
-                            } else if (j && !j.entrada) {
-                                // Si está confirmado pero sin ficha, asumimos horario estándar para cálculo conservador o ignoramos? 
-                                // Mejor ignorar si no hay ficha real para no inflar %.
                             }
                         }
                     }
@@ -456,7 +467,6 @@
                 const targetHours = totalWorkingDays * 8;
                 const compliance = targetHours > 0 ? Math.min((workedHours / targetHours) * 100, 100) : 0;
 
-                // 2. Dinero
                 let tripPaid = 0, tripPending = 0;
                 this.data.viajes.forEach(v => {
                     if(v.pagado) tripPaid += v.importe; else tripPending += v.importe;
@@ -479,7 +489,6 @@
                 const totalIncome = tripPaid + extrasPaidVal + payrollTotal;
                 const totalPending = tripPending + extrasPendingVal;
 
-                // Update DOM
                 document.getElementById('dash-income').innerText = `€${totalIncome.toFixed(0)}`;
                 document.getElementById('dash-pending').innerText = `€${totalPending.toFixed(0)}`;
                 document.getElementById('dash-compliance').innerText = `${Math.round(compliance)}%`;
@@ -489,25 +498,23 @@
                 document.getElementById('metric-trips').innerText = `€${(tripPaid + tripPending).toFixed(0)}`;
                 document.getElementById('metric-payrolls').innerText = `€${payrollTotal.toFixed(0)}`;
 
-                // Store for charts
                 this.stats = { workedHours, targetHours, compliance, totalIncome, totalPending, rate };
             },
 
             renderCharts() {
-                // Destruir anteriores
                 Object.values(this.charts).forEach(c => c.destroy());
                 this.charts = {};
 
                 const commonOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
 
-                // 1. Goal Donut
+                // Goal Donut
                 const ctxGoal = document.getElementById('chart-goal').getContext('2d');
                 this.charts.goal = new Chart(ctxGoal, {
                     type: 'doughnut',
                      {
                         labels: ['Trab.', 'Pend.'],
                         datasets: [{
-                            data: [this.stats.workedHours, Math.max(0, this.stats.targetHours - this.stats.workedHours)],
+                             [this.stats.workedHours, Math.max(0, this.stats.targetHours - this.stats.workedHours)],
                             backgroundColor: ['#f97316', '#334155'],
                             borderWidth: 0
                         }]
@@ -516,14 +523,12 @@
                 });
                 document.getElementById('goal-percent').innerText = `${Math.round(this.stats.compliance)}%`;
                 
-                // Ritmo diario
                 const remainingDays = Math.max(1, (new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate()) - new Date().getDate());
                 const pace = (this.stats.targetHours - this.stats.workedHours) / remainingDays;
                 document.getElementById('goal-pace').innerText = `${pace.toFixed(1)}h`;
                 document.getElementById('goal-proj').innerText = `${(this.stats.workedHours + pace * remainingDays).toFixed(1)}h`;
 
-                // 2. Cash Flow Bar (Últimos 6 meses simulados/resumidos)
-                // Para simplificar, mostramos Ingreso vs Pendiente global en barras apiladas horizontales o verticales simples
+                // Cash Flow Bar
                 const ctxCash = document.getElementById('chart-cashflow').getContext('2d');
                 this.charts.cashflow = new Chart(ctxCash, {
                     type: 'bar',
@@ -531,7 +536,7 @@
                         labels: ['Ingresos', 'Pendiente'],
                         datasets: [{
                             label: '€',
-                             [this.stats.totalIncome, this.stats.totalPending],
+                            data: [this.stats.totalIncome, this.stats.totalPending],
                             backgroundColor: ['#10b981', '#ef4444'],
                             borderRadius: 4
                         }]
@@ -539,13 +544,13 @@
                     options: { ...commonOpts, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } , ticks:{color:'#94a3b8'} }, x: { grid: { display: false }, ticks:{color:'#94a3b8'} } } }
                 });
 
-                // 3. Trend Line (Horas extra por mes)
+                // Trend Line
                 const monthlyExtras = {};
                 this.data.jornadas.forEach(j => {
                     const k = j.fecha.substring(0,7);
                     monthlyExtras[k] = (monthlyExtras[k]||0) + j.horas_extra;
                 });
-                const sortedKeys = Object.keys(monthlyExtras).sort().slice(-6); // Últimos 6
+                const sortedKeys = Object.keys(monthlyExtras).sort().slice(-6);
                 
                 const ctxTrend = document.getElementById('chart-trend').getContext('2d');
                 this.charts.trend = new Chart(ctxTrend, {
@@ -567,7 +572,6 @@
                 });
             },
 
-            // --- RENDERIZADO DE LISTAS ---
             renderJornadas() {
                 const container = document.getElementById('list-jornadas');
                 const filter = document.getElementById('filter-jornadas').value;
@@ -622,7 +626,6 @@
             },
 
             renderPagos() {
-                // Nóminas
                 const nomContainer = document.getElementById('list-nominas');
                 nomContainer.innerHTML = '';
                 if(this.data.pagos.length === 0) {
@@ -641,7 +644,6 @@
                     });
                 }
 
-                // Extras List
                 const extContainer = document.getElementById('list-extras');
                 extContainer.innerHTML = '';
                 const rate = parseFloat(this.data.ajustes.rate);
@@ -668,7 +670,6 @@
                 }
             },
 
-            // --- ACCIONES ---
             clock(type) {
                 const now = new Date();
                 const ds = now.toISOString().split('T')[0];
@@ -715,11 +716,10 @@
             editJornada(id) {
                 const j = this.data.jornadas.find(x => x.id === id);
                 if(!j) return;
-                // Simplificado: Solo permitir cambiar horas extra manualmente vía prompt para demo rápida
                 const newExtra = prompt(`Editar Horas Extra (${j.horas_extra}):`, j.horas_extra);
                 if(newExtra !== null && !isNaN(parseFloat(newExtra))) {
                     j.horas_extra = parseFloat(newExtra);
-                    j.estado = "confirmado"; // Al editar manual, confirmar
+                    j.estado = "confirmado";
                     this.save();
                 }
             },
@@ -736,9 +736,9 @@
                 if(type === 'viaje') {
                     title.innerText = "Nuevo Viaje";
                     body.innerHTML = `
-                        <input type="text" id="m-conc" placeholder="Concepto" class="mb-2">
-                        <input type="date" id="m-fech" value="${new Date().toISOString().split('T')[0]}" class="mb-2">
-                        <input type="number" id="m-imp" placeholder="Importe €" step="0.01" class="mb-2">
+                        <input type="text" id="m-conc" placeholder="Concepto" class="mb-2 text-white">
+                        <input type="date" id="m-fech" value="${new Date().toISOString().split('T')[0]}" class="mb-2 text-white">
+                        <input type="number" id="m-imp" placeholder="Importe €" step="0.01" class="mb-2 text-white">
                     `;
                     saveBtn.onclick = () => {
                         const conc = document.getElementById('m-conc').value;
@@ -753,9 +753,9 @@
                 } else if (type === 'nomina') {
                     title.innerText = "Registrar Nómina";
                     body.innerHTML = `
-                        <input type="date" id="n-fech" value="${new Date().toISOString().split('T')[0]}" class="mb-2">
-                        <input type="number" id="n-imp" placeholder="Importe Neto €" step="0.01" class="mb-2">
-                        <input type="text" id="n-desc" placeholder="Descripción (ej: Sep 2026)" class="mb-2">
+                        <input type="date" id="n-fech" value="${new Date().toISOString().split('T')[0]}" class="mb-2 text-white">
+                        <input type="number" id="n-imp" placeholder="Importe Neto €" step="0.01" class="mb-2 text-white">
+                        <input type="text" id="n-desc" placeholder="Descripción (ej: Sep 2026)" class="mb-2 text-white">
                     `;
                     saveBtn.onclick = () => {
                         const fech = document.getElementById('n-fech').value;
@@ -822,13 +822,12 @@
 
             resetApp() {
                 if(confirm("¿Borrar todo y volver a los datos originales?")) {
-                    localStorage.removeItem('ivory_exec_v1');
+                    localStorage.removeItem('ivory_exec_v2');
                     location.reload();
                 }
             }
         };
 
-        // Iniciar
         window.onload = () => app.init();
     </script>
 </body>
