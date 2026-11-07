@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
-    <title>工V龱尺㇌7 | Control Laboral Pro</title>
+    <link rel="manifest" href="./manifest.json">
+    <title>工V龱尺7 | Control Laboral Pro</title>
     
     <!-- Librerías CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,12 +18,11 @@
     <!-- Configuración Tailwind Custom -->
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // Habilitar modo oscuro por clase
             theme: {
                 extend: {
                     colors: {
-                        primary: '#f97316', // Naranja Goku
-                        secondary: '#0ea5e9',
+                        primary: '#f97316',
                         success: '#10b981',
                         danger: '#ef4444',
                         accent: '#8b5cf6',
@@ -32,10 +32,6 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace']
-                    },
-                    boxShadow: {
-                        'premium': '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
-                        'glow': '0 0 15px rgba(249, 115, 22, 0.3)'
                     }
                 }
             }
@@ -47,114 +43,89 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #0f172a; 
-            color: #e2e8f0; 
+            transition: background-color 0.3s ease, color 0.3s ease;
             padding-bottom: 90px; 
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Glassmorphism Avanzado */
-        .glass-panel {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            border-radius: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* --- MODO OSCURO (Por Defecto) --- */
+        body.dark-mode { background-color: #0f172a; color: #e2e8f0; }
+        body.dark-mode .glass-panel { 
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); 
         }
-        .glass-panel:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        body.dark-mode .kpi-card { 
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
         }
+        body.dark-mode .input-modern { 
+            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: #e2e8f0; 
+        }
+        body.dark-mode .bottom-nav { 
+            background: rgba(15, 23, 42, 0.98); 
+            border-top: 1px solid rgba(255, 255, 255, 0.08); 
+        }
+        body.dark-mode header { 
+            background: rgba(15, 23, 42, 0.9); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        body.dark-mode footer { 
+            background: #0f172a; 
+            border-top: 1px solid rgba(255, 255, 255, 0.05); 
+            color: #94a3b8; 
+        }
+        body.dark-mode .bg-black\/20 { background: rgba(0,0,0,0.2) !important; }
+        body.dark-mode .hover\:bg-white\/\[0\.03\]:hover { background: rgba(255,255,255,0.03) !important; }
 
-        /* KPI Cards Premium */
-        .kpi-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 1rem;
-            padding: 1.25rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        /* --- MODO CLARO (Premium Light) --- */
+        body.light-mode { background-color: #f8fafc; color: #1e293b; }
+        body.light-mode .glass-panel { 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
         }
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: var(--card-accent, #f97316);
-            opacity: 0.8;
+        body.light-mode .kpi-card { 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
         }
-        .kpi-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.75rem;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
+        body.light-mode .input-modern { 
+            background: #f1f5f9; 
+            border: 1px solid #cbd5e1; 
+            color: #1e293b; 
         }
+        body.light-mode .bottom-nav { 
+            background: white; 
+            border-top: 1px solid #e2e8f0; 
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05); 
+        }
+        body.light-mode header { 
+            background: rgba(255, 255, 255, 0.9); 
+            border-bottom: 1px solid #e2e8f0; 
+        }
+        body.light-mode footer { 
+            background: #ffffff; 
+            border-top: 1px solid #e2e8f0; 
+            color: #64748b; 
+        }
+        body.light-mode .text-white { color: #1e293b !important; }
+        body.light-mode .text-slate-400 { color: #64748b !important; }
+        body.light-mode .bg-black\/20 { background: rgba(0,0,0,0.05) !important; }
+        body.light-mode .hover\:bg-white\/\[0\.03\]:hover { background: rgba(0,0,0,0.02) !important; }
 
-        /* Botones Interactivos */
-        .btn-action {
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
+        /* Componentes Comunes */
+        .btn-action { transition: all 0.2s ease; position: relative; overflow: hidden; }
         .btn-action:active { transform: scale(0.96); }
-        .btn-primary {
-            background: linear-gradient(135deg, #f97316, #ea580c);
-            color: white;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
-        }
-        .btn-primary:hover { box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4); filter: brightness(1.1); }
-        
+        .btn-primary { background: linear-gradient(135deg, #f97316, #ea580c); color: white; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
         .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
         .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
         .btn-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
         .btn-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
-
-        /* Inputs Modernos */
-        .input-modern {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: #e2e8f0;
-            transition: all 0.2s;
-        }
-        .input-modern:focus {
-            outline: none;
-            border-color: #f97316;
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-            background: rgba(15, 23, 42, 0.8);
-        }
-
-        /* Tab Navigation */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
-            background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            padding-bottom: env(safe-area-inset-bottom);
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-        }
-        .nav-item {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 0.75rem 0.5rem; color: #64748b; font-size: 0.65rem; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            background: none; border: none; cursor: pointer; position: relative;
-            transition: color 0.2s;
-        }
-        .nav-item i { font-size: 1.25rem; margin-bottom: 0.25rem; transition: transform 0.2s; }
-        .nav-item.active { color: #f97316; }
-        .nav-item.active i { transform: scale(1.1); }
-        .nav-item.active::after {
-            content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 3px;
-            background: #f97316; border-radius: 0 0 4px 4px; box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
-        }
-
-        /* Badges de Estado */
+        
         .status-badge {
             padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700;
             text-transform: uppercase; letter-spacing: 0.05em;
@@ -165,81 +136,79 @@
         .badge-paid { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
         .badge-auto { background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3); }
 
-        /* Animaciones */
         .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Scrollbar Custom */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
-        /* Responsive Table/Card Switch */
+        
         @media (max-width: 768px) { .desktop-only { display: none !important; } }
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
     </style>
 </head>
-<body class="text-slate-200 antialiased selection:bg-orange-500 selection:text-white">
+<body class="dark-mode antialiased selection:bg-orange-500 selection:text-white">
 
     <!-- Indicador Offline -->
     <div id="offline-indicator" class="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white text-center py-2 px-4 text-sm font-bold shadow-lg transform -translate-y-full transition-transform duration-300">
-        <i class="fa-solid fa-wifi-slash mr-2"></i>Sin conexión - Trabajando en modo local
+        <i class="fa-solid fa-wifi-slash mr-2"></i>Sin conexión - Cambios guardados localmente
     </div>
 
     <!-- App Container -->
-    <div id="app-container" class="opacity-0 transition-opacity duration-500">
+    <div id="app-container" class="opacity-0 transition-opacity duration-500 min-h-screen flex flex-col">
         
         <!-- Header Sticky -->
-        <header class="sticky top-0 z-30 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/5">
+        <header class="sticky top-0 z-30 backdrop-blur-xl">
             <div class="px-4 py-3 max-w-6xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-glow ring-2 ring-orange-500/20">
-                        <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
+                    <div id="app-logo" class="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-orange-500 to-orange-700 text-white ring-2 ring-orange-500/20 overflow-hidden">
+                        <img id="custom-logo-img" src="" alt="Logo" class="hidden w-full h-full object-cover">
+                        <svg id="default-logo-svg" viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
                     </div>
                     <div>
-                        <h1 id="app-name" class="font-bold text-lg leading-none text-white tracking-tight">工V龱尺ㄚ㇌7</h1>
+                        <h1 id="app-name" class="font-bold text-lg leading-none tracking-tight">工V龱尺㇌7</h1>
                         <span class="text-[10px] font-bold uppercase tracking-widest text-orange-400">Control Laboral Pro</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="hidden sm:flex flex-col items-end mr-2">
-                        <p id="current-date" class="text-xs font-medium text-slate-400">--</p>
-                        <p id="live-clock" class="text-sm font-mono font-bold text-white tabular-nums">--:--</p>
+                        <p id="current-date" class="text-xs font-medium opacity-70">--</p>
+                        <p id="live-clock" class="text-sm font-mono font-bold tabular-nums">--:--</p>
                     </div>
-                    <button onclick="toggleTheme()" class="w-9 h-9 rounded-full flex items-center justify-center bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition border border-white/10">
-                        <i class="fa-solid fa-moon text-sm"></i>
+                    <!-- BOTÓN TOGGLE TEMA -->
+                    <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-9 h-9 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 transition border border-white/10" aria-label="Cambiar tema">
+                        <i class="fa-solid fa-moon text-sm" id="theme-icon"></i>
                     </button>
                 </div>
             </div>
         </header>
 
         <!-- Main Content Area -->
-        <main class="px-4 py-6 max-w-6xl mx-auto space-y-6">
+        <main class="px-4 py-6 max-w-6xl mx-auto space-y-6 flex-grow w-full">
 
             <!-- ================= DASHBOARD SECTION ================= -->
             <section id="content-dashboard" class="tab-content active fade-in-up space-y-6">
                 
                 <!-- Quick Clock Action Card -->
-                <div class="glass-panel p-5 border-l-4 border-orange-500 shadow-premium">
+                <div class="glass-panel p-5 border-l-4 border-orange-500">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                         <div>
-                            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <h2 class="text-xl font-bold flex items-center gap-2">
                                 <i class="fa-solid fa-stopwatch text-orange-400"></i> Fichaje Rápido
                             </h2>
-                            <p class="text-sm text-slate-400 mt-1" id="today-status">Esperando acción...</p>
+                            <p class="text-sm mt-1 opacity-70" id="today-status">Esperando acción...</p>
                         </div>
-                        <div class="text-right bg-black/20 px-4 py-2 rounded-lg border border-white/5">
-                            <p class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Hora Actual</p>
+                        <div class="text-right bg-black/20 px-4 py-2 rounded-lg border border-white/5 light-mode-bg-adjust">
+                            <p class="text-[10px] uppercase font-bold opacity-50 tracking-wider">Hora Actual</p>
                             <p class="text-2xl font-mono font-bold text-orange-400 tabular-nums" id="live-clock-big">--:--</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <button onclick="clockAction('entrada')" class="btn-action btn-success w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md">
-                            <i class="fa-solid fa-right-to-bracket"></i> Registrar Entrada
+                            <i class="fa-solid fa-right-to-bracket"></i> Entrada
                         </button>
                         <button onclick="clockAction('salida')" class="btn-action btn-danger w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md">
-                            <i class="fa-solid fa-right-from-bracket"></i> Registrar Salida
+                            <i class="fa-solid fa-right-from-bracket"></i> Salida
                         </button>
                     </div>
                 </div>
@@ -248,35 +217,35 @@
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="kpi-card" style="--card-accent: #10b981;">
                         <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Cobrado</p>
+                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Total Cobrado</p>
                             <i class="fa-solid fa-wallet text-emerald-500/50"></i>
                         </div>
-                        <p class="kpi-value text-emerald-400" id="dash-total-paid">0 €</p>
-                        <p class="text-[10px] text-slate-500 mt-1">Nóminas + Extras + Viajes</p>
+                        <p class="text-2xl font-mono font-bold text-emerald-400" id="dash-total-paid">0,00 €</p>
+                        <p class="text-[10px] opacity-50 mt-1">Nóminas + Viajes + Extras</p>
                     </div>
                     <div class="kpi-card" style="--card-accent: #ef4444;">
                         <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Pendiente</p>
+                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Pendiente</p>
                             <i class="fa-solid fa-hourglass-half text-red-500/50"></i>
                         </div>
-                        <p class="kpi-value text-red-400" id="dash-total-pending">0 €</p>
-                        <p class="text-[10px] text-slate-500 mt-1">A cobrar este mes</p>
+                        <p class="text-2xl font-mono font-bold text-red-400" id="dash-total-pending">0,00 €</p>
+                        <p class="text-[10px] opacity-50 mt-1">A cobrar este mes</p>
                     </div>
                     <div class="kpi-card" style="--card-accent: #f97316;">
                         <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Horas Extra</p>
+                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Horas Extra</p>
                             <i class="fa-solid fa-fire text-orange-500/50"></i>
                         </div>
-                        <p class="kpi-value text-orange-400" id="dash-extras-hours">0 h</p>
-                        <p class="text-[10px] text-slate-500 mt-1">Acumuladas año actual</p>
+                        <p class="text-2xl font-mono font-bold text-orange-400" id="dash-extras-hours">0,00 h</p>
+                        <p class="text-[10px] opacity-50 mt-1">Acumuladas año actual</p>
                     </div>
                     <div class="kpi-card" style="--card-accent: #8b5cf6;">
                         <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Valor Extras</p>
+                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Valor Extras</p>
                             <i class="fa-solid fa-coins text-violet-500/50"></i>
                         </div>
-                        <p class="kpi-value text-violet-400" id="dash-extras-value">0 €</p>
-                        <p class="text-[10px] text-slate-500 mt-1">@ <span id="dash-rate-display">19.69</span> €/h</p>
+                        <p class="text-2xl font-mono font-bold text-violet-400" id="dash-extras-value">0,00 €</p>
+                        <p class="text-[10px] opacity-50 mt-1">@ <span id="dash-rate-display">19,69</span> €/h</p>
                     </div>
                 </div>
 
@@ -284,24 +253,24 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Monthly Goal Donut -->
                     <div class="glass-panel p-5 lg:col-span-1">
-                        <h3 class="font-bold text-sm text-white mb-4 flex items-center gap-2">
+                        <h3 class="font-bold text-sm mb-4 flex items-center gap-2">
                             <i class="fa-solid fa-bullseye text-orange-400"></i> Objetivo Mensual
                         </h3>
                         <div class="relative h-48 w-full flex items-center justify-center">
                             <canvas id="executiveDonutChart"></canvas>
                             <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span id="donut-percentage" class="text-3xl font-mono font-bold text-white">0%</span>
-                                <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mt-1">Completado</span>
+                                <span id="donut-percentage" class="text-3xl font-mono font-bold">0%</span>
+                                <span class="text-[10px] uppercase font-bold tracking-wider mt-1 opacity-70">Completado</span>
                             </div>
                         </div>
                         <div class="mt-4 space-y-2">
                             <div class="flex justify-between text-xs">
-                                <span class="text-slate-400">Ritmo Necesario:</span>
-                                <span class="font-mono font-bold text-white" id="kpi-daily-pace">0 h/día</span>
+                                <span class="opacity-70">Ritmo Necesario:</span>
+                                <span class="font-mono font-bold" id="kpi-daily-pace">0,0 h/día</span>
                             </div>
                             <div class="flex justify-between text-xs">
-                                <span class="text-slate-400">Proyección:</span>
-                                <span class="font-mono font-bold text-white" id="kpi-projection">0 h</span>
+                                <span class="opacity-70">Proyección:</span>
+                                <span class="font-mono font-bold" id="kpi-projection">0,0 h</span>
                             </div>
                         </div>
                     </div>
@@ -309,11 +278,10 @@
                     <!-- Evolution Bar Chart -->
                     <div class="glass-panel p-5 lg:col-span-2">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-sm text-white flex items-center gap-2">
-                                <i class="fa-solid fa-chart-line text-blue-400"></i> Evolución Finanzas (Pagado vs Pendiente)
+                            <h3 class="font-bold text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-blue-400"></i> Pendiente por Cobrar
                             </h3>
                             <div class="flex gap-3 text-[10px] font-bold uppercase">
-                                <span class="flex items-center gap-1 text-emerald-400"><div class="w-2 h-2 rounded-full bg-emerald-500"></div>Pagado</span>
                                 <span class="flex items-center gap-1 text-red-400"><div class="w-2 h-2 rounded-full bg-red-500"></div>Pendiente</span>
                             </div>
                         </div>
@@ -325,19 +293,17 @@
 
                 <!-- Recent Payrolls Summary -->
                 <div class="glass-panel p-5">
-                    <h3 class="font-bold text-sm text-white mb-4 flex items-center gap-2">
+                    <h3 class="font-bold text-sm mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Últimas Nóminas Generadas
                     </h3>
-                    <div class="space-y-3" id="dashboard-payrolls-summary">
-                        <!-- JS Injected -->
-                    </div>
+                    <div class="space-y-3" id="dashboard-payrolls-summary"></div>
                 </div>
             </section>
 
             <!-- ================= JORNADAS SECTION ================= -->
             <section id="content-jornadas" class="tab-content hidden fade-in-up">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold text-white">Registro de Jornadas</h2>
+                    <h2 class="text-2xl font-bold">Registro de Jornadas</h2>
                     <div class="flex gap-2 w-full sm:w-auto">
                         <button onclick="generatePDF()" class="btn-action btn-blue flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md">
                             <i class="fa-solid fa-file-pdf mr-1"></i> PDF
@@ -360,9 +326,7 @@
                 </div>
 
                 <!-- Mobile Cards View -->
-                <div class="mobile-only space-y-4" id="jornadas-cards">
-                    <!-- JS Injected -->
-                </div>
+                <div class="mobile-only space-y-4" id="jornadas-cards"></div>
 
                 <!-- Desktop Table View -->
                 <div class="desktop-only glass-panel overflow-hidden">
@@ -370,17 +334,15 @@
                         <table class="min-w-full divide-y divide-white/5">
                             <thead class="bg-white/5">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Fecha</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Horario</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Norm.</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-orange-400 uppercase tracking-wider">Extra</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Estado</th>
-                                    <th class="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Acciones</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider opacity-70">Fecha</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider opacity-70">Horario</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider opacity-70">Norm.</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-orange-400">Extra</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider opacity-70">Estado</th>
+                                    <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider opacity-70">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="jornadas-body" class="divide-y divide-white/5">
-                                <!-- JS Injected -->
-                            </tbody>
+                            <tbody id="jornadas-body" class="divide-y divide-white/5"></tbody>
                         </table>
                     </div>
                 </div>
@@ -389,75 +351,84 @@
             <!-- ================= VIAJES SECTION ================= -->
             <section id="content-viajes" class="tab-content hidden fade-in-up">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-white">Viajes & Dietas</h2>
+                    <h2 class="text-2xl font-bold">Viajes & Dietas</h2>
                     <button onclick="openTripModal()" class="btn-action btn-primary px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i> Nuevo Viaje
                     </button>
                 </div>
-                <div class="space-y-4" id="viajes-list">
-                    <!-- JS Injected -->
-                </div>
+                <div class="space-y-4" id="viajes-list"></div>
             </section>
 
             <!-- ================= PAGOS SECTION ================= -->
             <section id="content-pagos" class="tab-content hidden fade-in-up space-y-6">
-                <h2 class="text-2xl font-bold text-white mb-2">Gestión Financiera</h2>
+                <h2 class="text-2xl font-bold mb-2">Gestión Financiera</h2>
                 
                 <!-- Auto Generated Payrolls -->
                 <div class="glass-panel p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                        <h3 class="font-bold text-lg flex items-center gap-2">
                             <i class="fa-solid fa-calculator text-purple-400"></i> Nóminas Automáticas
                         </h3>
                         <button onclick="regeneratePayrolls()" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition">
                             <i class="fa-solid fa-arrows-rotate mr-1"></i> Recalcular
                         </button>
                     </div>
-                    <p class="text-xs text-slate-400 mb-4">Basadas en horas normales × tarifa configurada. Requieren confirmación manual.</p>
-                    <div class="space-y-3" id="payroll-history-list">
-                        <!-- JS Injected -->
-                    </div>
+                    <p class="text-xs opacity-70 mb-4">Basadas en horas normales × tarifa configurada. Las manuales se conservan.</p>
+                    <div class="space-y-3" id="payroll-history-list"></div>
                 </div>
 
                 <!-- Financial Summary Stats -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="glass-panel p-4 text-center border-t-4 border-red-500">
-                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Nóminas Pendientes</p>
-                        <p class="text-2xl font-mono font-bold text-red-400" id="summary-pending-payrolls">0 €</p>
+                        <p class="text-xs font-bold uppercase mb-1 opacity-70">Nóminas Pendientes</p>
+                        <p class="text-2xl font-mono font-bold text-red-400" id="summary-pending-payrolls">0,00 €</p>
                     </div>
                     <div class="glass-panel p-4 text-center border-t-4 border-yellow-500">
-                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Extras Pendientes</p>
-                        <p class="text-2xl font-mono font-bold text-yellow-400" id="summary-pending-extras">0 €</p>
+                        <p class="text-xs font-bold uppercase mb-1 opacity-70">Extras Pendientes</p>
+                        <p class="text-2xl font-mono font-bold text-yellow-400" id="summary-pending-extras">0,00 €</p>
                     </div>
                     <div class="glass-panel p-4 text-center border-t-4 border-green-500">
-                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Total Liquidado</p>
-                        <p class="text-2xl font-mono font-bold text-green-400" id="summary-paid-extras">0 €</p>
+                        <p class="text-xs font-bold uppercase mb-1 opacity-70">Total Liquidado</p>
+                        <p class="text-2xl font-mono font-bold text-green-400" id="summary-paid-extras">0,00 €</p>
                     </div>
                 </div>
 
                 <!-- Individual Extras Payment List -->
                 <div class="glass-panel p-6">
-                    <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-blue-400"></i> Detalle Horas Extra
                     </h3>
-                    <div class="space-y-3" id="extras-payment-list">
-                        <!-- JS Injected -->
-                    </div>
+                    <div class="space-y-3" id="extras-payment-list"></div>
                 </div>
             </section>
 
             <!-- ================= AJUSTES SECTION ================= -->
             <section id="content-ajustes" class="tab-content hidden fade-in-up space-y-6">
-                <h2 class="text-2xl font-bold text-white mb-2">Configuración del Sistema</h2>
+                <h2 class="text-2xl font-bold mb-2">Configuración del Sistema</h2>
                 
                 <div class="glass-panel p-6 space-y-6">
+                    <!-- Logo Upload -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Logo Personalizado</label>
+                        <div id="logo-upload-zone" class="border-2 border-dashed border-white/20 rounded-xl p-6 text-center cursor-pointer hover:border-orange-500 transition">
+                            <img id="logo-preview" src="" alt="Preview" class="w-20 h-20 object-contain mx-auto mb-3 hidden">
+                            <i id="logo-placeholder-icon" class="fa-solid fa-image text-3xl opacity-50 mb-2 block"></i>
+                            <p class="text-sm opacity-70">📁 Toca o arrastra tu logo aquí</p>
+                            <p class="text-[10px] opacity-50 mt-1">Formatos: JPG, PNG o SVG • Máx 2MB</p>
+                            <input type="file" id="logo-input" accept="image/*" class="hidden">
+                        </div>
+                        <button onclick="resetLogo()" class="mt-2 text-xs font-bold underline opacity-70 hover:opacity-100">
+                            Restaurar logo por defecto (Goku)
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Nombre de la Aplicación</label>
+                            <label class="block text-xs font-bold uppercase mb-2 opacity-70">Nombre de la Aplicación</label>
                             <input type="text" id="config-appname" class="input-modern w-full font-bold" placeholder="Mi Empresa SL">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Color Principal (Brand)</label>
+                            <label class="block text-xs font-bold uppercase mb-2 opacity-70">Color Principal (Brand)</label>
                             <div class="flex items-center gap-3">
                                 <input type="color" id="config-color" class="w-12 h-10 rounded cursor-pointer border-0 bg-transparent p-0">
                                 <input type="text" readonly class="input-modern flex-1 font-mono text-sm" value="#f97316" id="color-hex-display">
@@ -466,23 +437,23 @@
                     </div>
 
                     <div class="border-t border-white/5 pt-6">
-                        <h4 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-euro-sign text-green-400"></i> Tarifas Salariales</h4>
+                        <h4 class="text-sm font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-euro-sign text-green-400"></i> Tarifas Salariales</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Tarifa Hora Normal (€/h)</label>
-                                <input type="number" step="0.01" id="config-normal-rate" class="input-modern w-full font-mono text-lg">
+                                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Tarifa Hora Normal (€/h)</label>
+                                <input type="number" step="0.01" id="config-normal-rate" class="input-modern w-full font-mono text-lg" min="5">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Tarifa Hora Extra (€)</label>
-                                <input type="number" step="0.01" id="config-rate" class="input-modern w-full font-mono text-lg">
+                                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Tarifa Hora Extra (€)</label>
+                                <input type="number" step="0.01" id="config-rate" class="input-modern w-full font-mono text-lg" min="5">
                             </div>
                         </div>
                     </div>
 
                     <div class="border-t border-white/5 pt-6">
-                        <h4 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-clock text-blue-400"></i> Horarios & Notificaciones</h4>
+                        <h4 class="text-sm font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-clock text-blue-400"></i> Horarios & Notificaciones</h4>
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Horario Habitual (Texto libre)</label>
+                            <label class="block text-xs font-bold uppercase mb-2 opacity-70">Horario Habitual (Texto libre)</label>
                             <input type="text" id="config-schedule" class="input-modern w-full" placeholder="Ej: 08:00 - 16:00">
                         </div>
                         <button onclick="requestNotificationPermission()" class="btn-secondary w-full py-3 rounded-xl text-sm font-bold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition flex items-center justify-center gap-2">
@@ -499,7 +470,7 @@
 
                 <!-- Data Management -->
                 <div class="glass-panel p-6">
-                    <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-database text-cyan-400"></i> Gestión de Datos
                     </h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -521,14 +492,25 @@
                             <span class="text-xs font-bold uppercase">Reset Factory</span>
                         </button>
                     </div>
-                    <p class="text-[10px] text-slate-500 text-center italic">Los datos se guardan localmente en tu navegador (LocalStorage). Realiza backups periódicos.</p>
+                    <p class="text-[10px] text-center italic opacity-50">Los datos se guardan localmente en tu navegador (LocalStorage). Realiza backups periódicos.</p>
                 </div>
             </section>
 
         </main>
 
+        <!-- FOOTER LEGAL -->
+        <footer class="py-6 mt-8 text-center text-xs opacity-60">
+            <p>&copy; 2026 Ivory37goku. Todos los derechos reservados.</p>
+            <p class="mt-1">Versión 1.0.0 · Última actualización: 07-Nov-2026</p>
+            <div class="flex justify-center gap-4 mt-2">
+                <a href="#" class="underline hover:text-orange-400 transition">Demo</a>
+                <a href="#" class="underline hover:text-orange-400 transition">Términos</a>
+                <a href="#" class="underline hover:text-orange-400 transition">Privacidad</a>
+            </div>
+        </footer>
+
         <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
+        <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-40">
             <button onclick="switchTab('dashboard')" class="nav-item active" data-tab="dashboard">
                 <i class="fa-solid fa-gauge-high"></i> Dashboard
             </button>
@@ -550,26 +532,29 @@
         <div id="generic-modal" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
             <div class="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:max-w-md sm:w-full">
-                <div class="modal-content bg-[#1e293b] rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t border-white/10 animate-slide-up">
+                <div class="modal-content bg-[#1e293b] light-mode-modal rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t border-white/10 animate-slide-up">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-bold text-white" id="modal-title">Título</h3>
+                        <h3 class="text-xl font-bold" id="modal-title">Título</h3>
                         <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-white/20 hover:text-white transition">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
-                    <div class="space-y-4" id="modal-content">
-                        <!-- Dynamic Form Fields -->
+                    <div class="space-y-4" id="modal-content"></div>
+                    <div class="flex gap-3 mt-8">
+                        <button id="modal-delete-btn" onclick="deleteCurrentRecord()" class="hidden btn-danger flex-1 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-trash-can"></i> Eliminar
+                        </button>
+                        <button onclick="saveModalData()" class="btn-primary flex-1 py-3.5 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-check"></i> Guardar
+                        </button>
                     </div>
-                    <button onclick="saveModalData()" class="btn-primary w-full mt-8 py-3.5 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-check"></i> Confirmar Acción
-                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Toast Notification System -->
         <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 z-[60] hidden">
-            <div class="bg-[#1e293b] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold border border-white/10 backdrop-blur-md">
+            <div class="bg-[#1e293b] light-mode-toast text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold border border-white/10 backdrop-blur-md">
                 <i class="fa-solid fa-circle-check text-green-500 text-lg" id="toast-icon"></i>
                 <span id="toast-message">Mensaje</span>
             </div>
@@ -578,9 +563,6 @@
 
     <!-- Application Logic Script -->
     <script>
-        // ==========================================
-        // STATE MANAGEMENT & DATA STRUCTURE
-        // ==========================================
         let appData = null;
         let currentModalType = null;
         let editingId = null;
@@ -588,13 +570,17 @@
         let executiveChartInstance = null;
         let currentFilter = 'all';
         let offlineQueue = [];
+        let isDarkMode = true; // Estado inicial
 
-        // Initial Seed Data (Demo Mode)
-        const RAW_DATA = {"jornadas":[{"id":1,"fecha":"2026-09-01","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T16:52:46.166926"},{"id":6,"fecha":"2026-09-02","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:34:44.773560"},{"id":7,"fecha":"2026-09-03","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:35:01.775604"},{"id":8,"fecha":"2026-09-04","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:35:15.754161"},{"id":9,"fecha":"2026-09-07","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:35:31.909232"},{"id":10,"fecha":"2026-09-08","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:10.125659"},{"id":11,"fecha":"2026-09-09","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:22.817899"},{"id":12,"fecha":"2026-09-10","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:27.457300"},{"id":13,"fecha":"2026-09-11","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:40.012600"},{"id":14,"fecha":"2026-09-14","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:54.275565"},{"id":15,"fecha":"2026-09-15","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:59.266085"},{"id":16,"fecha":"2026-09-16","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:03.692794"},{"id":17,"fecha":"2026-09-17","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:08.136252"},{"id":18,"fecha":"2026-09-18","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:15.829232"},{"id":19,"fecha":"2026-09-21","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:20.329576"},{"id":20,"fecha":"2026-09-22","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:24.685848"},{"id":21,"fecha":"2026-09-23","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:29.086383"},{"id":22,"fecha":"2026-09-24","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:33.449767"},{"id":23,"fecha":"2026-09-25","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:38.061306"},{"id":24,"fecha":"2026-09-28","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:42.407174"},{"id":25,"fecha":"2026-09-29","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:47.106188"},{"id":26,"fecha":"2026-09-30","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:38:09.463321"},{"id":2,"fecha":"2026-10-01","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T16:52:46.167100"},{"id":5,"fecha":"2026-10-26","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.75,"notas":"Incluye 0,50 h ya fichadas y 1,25 h del reparto provisional de 21,00 h extra de octubre.","creado":"2026-10-26T19:25:34.494620"},{"id":28,"fecha":"2026-10-02","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:38:45.643686"},{"id":29,"fecha":"2026-10-05","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:38:52.730691"},{"id":30,"fecha":"2026-10-06","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:38:57.080659"},{"id":31,"fecha":"2026-10-07","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:39:01.456407"},{"id":32,"fecha":"2026-10-08","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:39:05.848906"},{"id":33,"fecha":"2026-10-09","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:39:13.421841"},{"id":34,"fecha":"2026-10-12","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:20.274440"},{"id":35,"fecha":"2026-10-13","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:31.033270"},{"id":36,"fecha":"2026-10-14","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:40.943971"},{"id":37,"fecha":"2026-10-15","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:45.649066"},{"id":38,"fecha":"2026-10-16","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:50.066439"},{"id":39,"fecha":"2026-10-19","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:57.151093"},{"id":40,"fecha":"2026-10-20","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:01.622995"},{"id":41,"fecha":"2026-10-21","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:09.226835"},{"id":42,"fecha":"2026-10-22","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:20.008499"},{"id":43,"fecha":"2026-10-23","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:24.365664"},{"id":44,"fecha":"2026-10-27","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.0,"notas":"[REVISADO]","creado":"2026-10-27T07:47:29.370023"},{"id":45,"fecha":"2026-10-28","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.5,"notas":"[REVISADO]","creado":"2026-10-28T07:59:55.308797"},{"id":46,"fecha":"2026-10-29","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.0,"notas":"[REVISADO] Fichaje automático según el horario habitual.","creado":"2026-10-29T16:00:12.526141+00:00"},{"id":47,"fecha":"2026-10-30","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.0,"notas":"[REVISADO]","creado":"2026-10-30T15:52:43.083260"}],"viajes":[{"id":1,"fecha":"2026-10-31","concepto":"Viaje de trabajo de octubre 1","importe":200.0,"pagado":0,"fecha_pago":"","notas":"","creado":"2026-10-26T16:52:46.167140"},{"id":2,"fecha":"2026-10-31","concepto":"Viaje de trabajo de octubre 2","importe":200.0,"pagado":0,"fecha_pago":"","notas":"","creado":"2026-10-26T16:52:46.167180"},{"id":3,"fecha":"2026-09-26","concepto":"Viaje de trabajo","importe":400.0,"pagado":1,"fecha_pago":"2026-10-26","notas":"","creado":"2026-10-26T18:58:40.962023"}],"pagos":[],"ajustes":[{"clave":"seeded_demo","valor":"yes"},{"clave":"hora_extra_euros","valor":"19.69"},{"clave":"hora_normal_euros","valor":"12.50"},{"clave":"horas_normales_dia","valor":"8"},{"clave":"horario_habitual","valor":"08:00-16:00, sin pausa"},{"clave":"dias_trabajo","valor":"Lunes a viernes"},{"clave":"app_name","valor":"工V龱尺㇌7"},{"clave":"app_color","valor":"#f97316"}],"notas":[]};
+        function formatMoney(value) {
+            return new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + ' €';
+        }
+        function formatHours(value) {
+            return new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + ' h';
+        }
 
-        // ==========================================
-        // INITIALIZATION & CORE FUNCTIONS
-        // ==========================================
+        const RAW_DATA = {"jornadas":[{"id":1,"fecha":"2026-09-01","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T16:52:46.166926"},{"id":6,"fecha":"2026-09-02","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:34:44.773560"},{"id":7,"fecha":"2026-09-03","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:35:01.775604"},{"id":8,"fecha":"2026-09-04","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:35:15.754161"},{"id":9,"fecha":"2026-09-07","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:35:31.909232"},{"id":10,"fecha":"2026-09-08","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:10.125659"},{"id":11,"fecha":"2026-09-09","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:22.817899"},{"id":12,"fecha":"2026-09-10","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:27.457300"},{"id":13,"fecha":"2026-09-11","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:40.012600"},{"id":14,"fecha":"2026-09-14","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:54.275565"},{"id":15,"fecha":"2026-09-15","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:36:59.266085"},{"id":16,"fecha":"2026-09-16","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:03.692794"},{"id":17,"fecha":"2026-09-17","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:08.136252"},{"id":18,"fecha":"2026-09-18","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:15.829232"},{"id":19,"fecha":"2026-09-21","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:20.329576"},{"id":20,"fecha":"2026-09-22","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:24.685848"},{"id":21,"fecha":"2026-09-23","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:29.086383"},{"id":22,"fecha":"2026-09-24","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:33.449767"},{"id":23,"fecha":"2026-09-25","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:38.061306"},{"id":24,"fecha":"2026-09-28","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:42.407174"},{"id":25,"fecha":"2026-09-29","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:37:47.106188"},{"id":26,"fecha":"2026-09-30","entrada":"","salida":"","horas_normales":8.0,"horas_extra":0.75,"notas":"Reparto provisional del total de 18,50 h extra de septiembre.","creado":"2026-10-26T20:38:09.463321"},{"id":2,"fecha":"2026-10-01","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T16:52:46.167100"},{"id":5,"fecha":"2026-10-26","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.75,"notas":"Incluye 0,50 h ya fichadas y 1,25 h del reparto provisional de 21,00 h extra de octubre.","creado":"2026-10-26T19:25:34.494620"},{"id":28,"fecha":"2026-10-02","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:38:45.643686"},{"id":29,"fecha":"2026-10-05","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:38:52.730691"},{"id":30,"fecha":"2026-10-06","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:38:57.080659"},{"id":31,"fecha":"2026-10-07","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:39:01.456407"},{"id":32,"fecha":"2026-10-08","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:39:05.848906"},{"id":33,"fecha":"2026-10-09","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:39:13.421841"},{"id":34,"fecha":"2026-10-12","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:20.274440"},{"id":35,"fecha":"2026-10-13","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:31.033270"},{"id":36,"fecha":"2026-10-14","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:40.943971"},{"id":37,"fecha":"2026-10-15","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.25,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:45.649066"},{"id":38,"fecha":"2026-10-16","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:50.066439"},{"id":39,"fecha":"2026-10-19","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:45:57.151093"},{"id":40,"fecha":"2026-10-20","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:01.622995"},{"id":41,"fecha":"2026-10-21","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:09.226835"},{"id":42,"fecha":"2026-10-22","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:20.008499"},{"id":43,"fecha":"2026-10-23","entrada":"","salida":"","horas_normales":8.0,"horas_extra":1.0,"notas":"Reparto provisional del total de 21,00 h extra de octubre.","creado":"2026-10-26T20:46:24.365664"},{"id":44,"fecha":"2026-10-27","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.0,"notas":"[REVISADO]","creado":"2026-10-27T07:47:29.370023"},{"id":45,"fecha":"2026-10-28","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.5,"notas":"[REVISADO]","creado":"2026-10-28T07:59:55.308797"},{"id":46,"fecha":"2026-10-29","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.0,"notas":"[REVISADO] Fichaje automático según el horario habitual.","creado":"2026-10-29T16:00:12.526141+00:00"},{"id":47,"fecha":"2026-10-30","entrada":"08:00","salida":"16:00","horas_normales":8.0,"horas_extra":0.0,"notas":"[REVISADO]","creado":"2026-10-30T15:52:43.083260"}],"viajes":[{"id":1,"fecha":"2026-10-31","concepto":"Viaje de trabajo de octubre 1","importe":200.0,"pagado":0,"fecha_pago":"","notas":"","creado":"2026-10-26T16:52:46.167140"},{"id":2,"fecha":"2026-10-31","concepto":"Viaje de trabajo de octubre 2","importe":200.0,"pagado":0,"fecha_pago":"","notas":"","creado":"2026-10-26T16:52:46.167180"},{"id":3,"fecha":"2026-09-26","concepto":"Viaje de trabajo","importe":400.0,"pagado":1,"fecha_pago":"2026-10-26","notas":"","creado":"2026-10-26T18:58:40.962023"}],"pagos":[],"ajustes":[{"clave":"seeded_demo","valor":"yes"},{"clave":"hora_extra_euros","valor":"19.69"},{"clave":"hora_normal_euros","valor":"12.50"},{"clave":"horas_normales_dia","valor":"8"},{"clave":"horario_habitual","valor":"08:00-16:00, sin pausa"},{"clave":"dias_trabajo","valor":"Lunes a viernes"},{"clave":"app_name","valor":"工V龱尺7"},{"clave":"app_color","valor":"#f97316"},{"clave":"custom_logo","valor":""},{"clave":"theme_mode","valor":"dark"}],"notas":[]};
+
         async function initApp() {
             const saved = localStorage.getItem('ivory37_data_v1');
             if (saved) { 
@@ -604,6 +590,15 @@
                 appData = buildInitialData(); 
             }
             
+            // Cargar preferencia de tema
+            const themePref = appData.ajustes.find(a => a.clave === "theme_mode");
+            if (themePref && themePref.valor === 'light') {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                isDarkMode = false;
+                updateThemeIcon();
+            }
+
             applyBranding();
             sanitizeConfirmedRecords(); 
             ensureFullYearData(); 
@@ -614,6 +609,7 @@
             
             setupOfflineDetection(); 
             scheduleNotifications();
+            setupLogoUpload();
             
             document.getElementById('app-container').classList.remove('opacity-0');
             renderAll();
@@ -634,7 +630,8 @@
         function applyBranding() {
             const ns = appData.ajustes.find(a => a.clave === "app_name");
             const cs = appData.ajustes.find(a => a.clave === "app_color");
-            const an = ns ? ns.valor : "工V龱尺ㄚ㇌7";
+            const ls = appData.ajustes.find(a => a.clave === "custom_logo");
+            const an = ns ? ns.valor : "工V龱尺ㄚ7";
             const ac = cs ? cs.valor : "#f97316";
             
             document.documentElement.style.setProperty('--app-primary', ac);
@@ -644,9 +641,106 @@
             document.getElementById('app-name').innerText = an;
             document.title = `${an} | Control Laboral Pro`;
             
-            // Update color hex display in settings
+            const customImg = document.getElementById('custom-logo-img');
+            const defaultSvg = document.getElementById('default-logo-svg');
+            const previewImg = document.getElementById('logo-preview');
+            const placeholderIcon = document.getElementById('logo-placeholder-icon');
+            
+            if (ls && ls.valor) {
+                customImg.src = ls.valor;
+                customImg.classList.remove('hidden');
+                defaultSvg.classList.add('hidden');
+                if(previewImg) { previewImg.src = ls.valor; previewImg.classList.remove('hidden'); }
+                if(placeholderIcon) placeholderIcon.classList.add('hidden');
+            } else {
+                customImg.classList.add('hidden');
+                defaultSvg.classList.remove('hidden');
+                if(previewImg) previewImg.classList.add('hidden');
+                if(placeholderIcon) placeholderIcon.classList.remove('hidden');
+            }
+            
             const hexDisplay = document.getElementById('color-hex-display');
             if(hexDisplay) hexDisplay.value = ac;
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+            }
+            
+            // Guardar preferencia
+            let tm = appData.ajustes.find(a => a.clave === "theme_mode");
+            if (tm) tm.valor = isDarkMode ? 'dark' : 'light';
+            else appData.ajustes.push({ clave: "theme_mode", valor: isDarkMode ? 'dark' : 'light' });
+            
+            saveDataSilent();
+            updateThemeIcon();
+            showToast(isDarkMode ? "🌙 Modo Oscuro Activado" : "☀️ Modo Claro Activado", "info");
+        }
+
+        function updateThemeIcon() {
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = isDarkMode ? 'fa-solid fa-moon text-sm' : 'fa-solid fa-sun text-sm';
+            }
+        }
+
+        function setupLogoUpload() {
+            const zone = document.getElementById('logo-upload-zone');
+            const input = document.getElementById('logo-input');
+            const preview = document.getElementById('logo-preview');
+            const placeholder = document.getElementById('logo-placeholder-icon');
+            
+            if (!zone || !input) return;
+            
+            zone.addEventListener('click', () => input.click());
+            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('border-orange-500'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('border-orange-500'));
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('border-orange-500');
+                handleLogoFile(e.dataTransfer.files[0]);
+            });
+            input.addEventListener('change', e => handleLogoFile(e.target.files[0]));
+        }
+
+        function handleLogoFile(file) {
+            if (!file || !file.type.startsWith('image/')) { showToast('❌ Solo imágenes válidas', 'error'); return; }
+            if (file.size > 2 * 1024 * 1024) { showToast('⚠️ Máximo 2MB', 'warning'); return; }
+            
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const base64 = ev.target.result;
+                let ls = appData.ajustes.find(a => a.clave === "custom_logo");
+                if (ls) ls.valor = base64; else appData.ajustes.push({ clave: "custom_logo", valor: base64 });
+                
+                const preview = document.getElementById('logo-preview');
+                const placeholder = document.getElementById('logo-placeholder-icon');
+                if(preview) { preview.src = base64; preview.classList.remove('hidden'); }
+                if(placeholder) placeholder.classList.add('hidden');
+                
+                applyBranding();
+                saveData();
+                showToast('✅ Logo actualizado', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetLogo() {
+            let ls = appData.ajustes.find(a => a.clave === "custom_logo");
+            if (ls) ls.valor = "";
+            const preview = document.getElementById('logo-preview');
+            const placeholder = document.getElementById('logo-placeholder-icon');
+            if(preview) preview.classList.add('hidden');
+            if(placeholder) placeholder.classList.remove('hidden');
+            applyBranding();
+            saveData();
+            showToast('↩️ Logo restaurado', 'info');
         }
 
         function sanitizeConfirmedRecords() {
@@ -703,7 +797,7 @@
             const mg = {};
             
             appData.jornadas.forEach(j => {
-                const key = j.fecha.substring(0, 7); // YYYY-MM
+                const key = j.fecha.substring(0, 7);
                 if (!mg[key]) mg[key] = { totalNormalHours: 0, totalExtraHours: 0, daysCount: 0 };
                 mg[key].totalNormalHours += parseFloat(j.horas_normales || 0);
                 mg[key].totalExtraHours += parseFloat(j.horas_extra || 0);
@@ -740,9 +834,32 @@
             saveDataSilent();
         }
 
-        // ==========================================
-        // RENDERING ENGINE
-        // ==========================================
+        function regeneratePayrolls() { 
+            appData.pagos = appData.pagos.filter(p => !(p.tipo === 'nomina_auto' && !p.confirmado)); 
+            generateMonthlyPayrolls(); 
+            saveData(); 
+            showToast('✅ Nóminas recalculadas (manuales conservadas)', 'success'); 
+        }
+
+        function deleteCurrentRecord() {
+            if (!editingId) return;
+            if (!confirm('⚠️ ¿Eliminar definitivamente este registro?')) return;
+            
+            if (currentModalType === 'edit_jornada') {
+                appData.jornadas = appData.jornadas.filter(j => j.id !== editingId);
+                showToast('🗑️ Jornada eliminada', 'success');
+            } else if (currentModalType === 'payroll_delete') {
+                appData.pagos = appData.pagos.filter(p => p.id !== editingId);
+                showToast('🗑️ Nómina eliminada', 'success');
+            } else if (currentModalType === 'trip_delete') {
+                appData.viajes = appData.viajes.filter(v => v.id !== editingId);
+                showToast('🗑️ Viaje eliminado', 'success');
+            }
+            
+            closeModal();
+            saveData();
+        }
+
         function saveData() { 
             localStorage.setItem('ivory37_data_v1', JSON.stringify(appData)); 
             renderAll(); 
@@ -801,7 +918,6 @@
             document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active'); 
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
             
-            // Re-render charts when switching to dashboard to fix canvas sizing issues
             if (t === 'dashboard') setTimeout(() => { 
                 renderDashboardNew(); 
                 renderExecutiveDashboard(); 
@@ -809,16 +925,8 @@
             }, 100); 
         }
 
-        function toggleTheme() { 
-            // Placeholder for future light mode implementation
-            showToast("Modo Oscuro Permanente (Premium Feature)", "info");
-        }
-
-        function closeModal() { 
-            document.getElementById('generic-modal').classList.add('hidden'); 
-            editingId = null; 
-        }
-
+        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; }
+        
         function showToast(m, t = 'success') { 
             const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); 
             msg.innerText = m; 
@@ -829,8 +937,6 @@
             toast.classList.remove('hidden'); 
             setTimeout(() => toast.classList.add('hidden'), 3000); 
         }
-
-        // --- Specific Renderers ---
 
         function renderDashboardNew() {
             const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); 
@@ -853,19 +959,18 @@
                 if ((p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual') && p.confirmado) cp += parseFloat(p.importe || 0); 
             });
             
-            document.getElementById('dash-total-paid').innerText = (tp + epv + cp).toFixed(2) + " €";
-            document.getElementById('dash-total-pending').innerText = (tpd + epdv).toFixed(2) + " €";
-            document.getElementById('dash-extras-hours').innerText = teh.toFixed(2) + " h";
-            document.getElementById('dash-extras-value').innerText = (teh * rate).toFixed(2) + " €";
-            document.getElementById('dash-rate-display').innerText = rate.toFixed(2);
+            document.getElementById('dash-total-paid').innerText = formatMoney(tp + epv + cp);
+            document.getElementById('dash-total-pending').innerText = formatMoney(tpd + epdv);
+            document.getElementById('dash-extras-hours').innerText = formatHours(teh);
+            document.getElementById('dash-extras-value').innerText = formatMoney(teh * rate);
+            document.getElementById('dash-rate-display').innerText = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(rate);
             
-            // Recent Payrolls
             const sc = document.getElementById('dashboard-payrolls-summary'); 
             sc.innerHTML = '';
             const rp = [...appData.pagos].filter(p => p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual').sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).slice(0, 3);
             
             if (rp.length === 0) { 
-                sc.innerHTML = '<div class="text-center py-8 text-slate-500 text-sm"><i class="fa-solid fa-folder-open text-2xl mb-2 block opacity-50"></i>No hay nóminas generadas todavía.</div>'; 
+                sc.innerHTML = '<div class="text-center py-8 opacity-50 text-sm"><i class="fa-solid fa-folder-open text-2xl mb-2 block"></i>No hay nóminas generadas todavía.</div>'; 
                 return; 
             }
             
@@ -877,14 +982,14 @@
                 sc.innerHTML += `
                     <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl border-l-4 ${ic ? 'border-emerald-500' : 'border-purple-500'} hover:bg-white/10 transition cursor-default">
                         <div>
-                            <p class="text-sm font-bold text-white">${p.concepto}</p>
-                            <p class="text-[10px] text-slate-400 mt-1">
+                            <p class="text-sm font-bold">${p.concepto}</p>
+                            <p class="text-[10px] mt-1 opacity-70">
                                 <i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}
                                 ${p.dias_laborables ? ` • ${p.dias_laborables} días laborables` : ''}
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-lg font-mono font-bold text-white">${parseFloat(p.importe).toFixed(2)} €</p>
+                            <p class="text-lg font-mono font-bold">${formatMoney(parseFloat(p.importe))}</p>
                             <span class="status-badge ${statusClass} mt-1 inline-block">${statusText}</span>
                         </div>
                     </div>
@@ -917,8 +1022,8 @@
             
             const rh = Math.max(0, th - wh), rd = Math.max(1, twd - wdp), dp = rh / rd, pr = wh + (dp * (twd - wdp)), cp = th > 0 ? Math.min((wh / th) * 100, 100) : 0;
             
-            document.getElementById('kpi-daily-pace').innerText = dp.toFixed(1) + " h/día";
-            document.getElementById('kpi-projection').innerText = pr.toFixed(1) + " h";
+            document.getElementById('kpi-daily-pace').innerText = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(dp) + " h/día";
+            document.getElementById('kpi-projection').innerText = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(pr) + " h";
             
             const ctx = document.getElementById('executiveDonutChart'); 
             if (!ctx) return;
@@ -959,17 +1064,15 @@
             
             const md = {}; 
             appData.jornadas.forEach(j => { 
-                if (j.horas_extra <= 0) return; 
+                if (j.horas_extra <= 0 || j.pagado_extras) return; 
                 const key = j.fecha.substring(0, 7); 
-                if (!md[key]) md[key] = { paid: 0, pending: 0 }; 
-                const val = j.horas_extra * rate; 
-                if (j.pagado_extras) md[key].paid += val; else md[key].pending += val; 
+                if (!md[key]) md[key] = 0; 
+                md[key] += j.horas_extra * rate; 
             });
             
             const sk = Object.keys(md).sort();
             const lb = sk.map(k => new Date(k + '-01').toLocaleDateString('es-ES', { month: 'short' }));
-            const pv = sk.map(k => md[k].paid);
-            const nv = sk.map(k => md[k].pending);
+            const nv = sk.map(k => md[k]);
             
             if (chartInstance) chartInstance.destroy();
             
@@ -978,8 +1081,7 @@
                 data: { 
                     labels: lb, 
                     datasets: [
-                        { label: 'Pagado', data: pv, backgroundColor: '#10b981', borderRadius: 6, stack: 'stack0', barPercentage: 0.6 }, 
-                        { label: 'Pendiente', data: nv, backgroundColor: '#ef4444', borderRadius: 6, stack: 'stack0', barPercentage: 0.6 }
+                        { label: 'Pendiente', data: nv, backgroundColor: '#ef4444', borderRadius: 6, barPercentage: 0.6 }
                     ] 
                 }, 
                 options: { 
@@ -995,13 +1097,13 @@
                             borderWidth: 1,
                             padding: 12,
                             callbacks: { 
-                                label: c => `${c.dataset.label}: ${c.parsed.y.toFixed(2)} €` 
+                                label: c => `Pendiente: ${formatMoney(c.parsed.y)}` 
                             } 
                         } 
                     }, 
                     scales: { 
-                        x: { stacked: true, grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11, weight: 'bold' } } }, 
-                        y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 11 }, callback: v => v + ' €' } } 
+                        x: { stacked: false, grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11, weight: 'bold' } } }, 
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 11 }, callback: v => formatMoney(v) } } 
                     } 
                 } 
             });
@@ -1014,7 +1116,6 @@
             else if (currentFilter === 'provisional') sorted = sorted.filter(j => getJornadaEstado(j) === 'provisional');
             else if (currentFilter === 'extra') sorted = sorted.filter(j => j.horas_extra > 0);
             
-            // Mobile Cards
             const cc = document.getElementById('jornadas-cards'); 
             cc.innerHTML = '';
             sorted.slice(0, 50).forEach(j => { 
@@ -1027,14 +1128,14 @@
                     <div class="glass-panel p-4 mobile-only">
                         <div class="flex justify-between items-start mb-3">
                             <div>
-                                <p class="font-bold text-white text-lg">${new Date(j.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</p>
-                                <p class="text-xs text-slate-400 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
+                                <p class="font-bold text-lg">${new Date(j.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</p>
+                                <p class="text-xs capitalize opacity-70">${new Date(j.fecha).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
                             </div>
                             <span class="status-badge ${bc}">${bt}</span>
                         </div>
-                        <div class="flex items-center justify-between text-sm bg-black/20 p-3 rounded-lg mb-3">
-                            <span class="text-slate-300 flex items-center gap-2"><i class="fa-regular fa-clock text-slate-500"></i>${hr}</span>
-                            <span class="font-mono font-bold ${j.horas_extra > 0 ? 'text-orange-400' : 'text-slate-500'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span>
+                        <div class="flex items-center justify-between text-sm bg-black/20 p-3 rounded-lg mb-3 light-mode-bg-adjust">
+                            <span class="flex items-center gap-2"><i class="fa-regular fa-clock opacity-50"></i>${hr}</span>
+                            <span class="font-mono font-bold ${j.horas_extra > 0 ? 'text-orange-400' : 'opacity-50'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="openExtraModal(${j.id})" class="btn-action btn-purple w-full py-2 rounded-lg text-xs font-bold text-white flex items-center justify-center gap-1">
@@ -1048,7 +1149,6 @@
                 `;
             });
             
-            // Desktop Table
             const tb = document.getElementById('jornadas-body'); 
             tb.innerHTML = '';
             sorted.forEach(j => { 
@@ -1060,12 +1160,12 @@
                 tb.innerHTML += `
                     <tr class="hover:bg-white/[0.03] transition">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-bold text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}</div>
-                            <div class="text-xs text-slate-400 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div>
+                            <div class="text-sm font-bold">${new Date(j.fecha).toLocaleDateString('es-ES')}</div>
+                            <div class="text-xs capitalize opacity-70">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300 font-mono">${hr}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-400 font-mono">${j.horas_normales}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-bold font-mono ${j.horas_extra > 0 ? 'text-orange-400' : 'text-slate-600'}">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono">${hr}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-mono opacity-70">${j.horas_normales}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-bold font-mono ${j.horas_extra > 0 ? 'text-orange-400' : 'opacity-50'}">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td>
                         <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge ${bc}">${bt}</span></td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button onclick="openExtraModal(${j.id})" class="text-white bg-orange-600 hover:bg-orange-500 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm mr-2"><i class="fa-solid fa-plus"></i></button>
@@ -1082,7 +1182,7 @@
             const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
             
             if (!s.length) { 
-                l.innerHTML = '<div class="glass-panel p-12 text-center"><i class="fa-solid fa-route text-4xl text-slate-600 mb-4"></i><p class="text-slate-400 font-medium">No hay viajes registrados.</p></div>'; 
+                l.innerHTML = '<div class="glass-panel p-12 text-center"><i class="fa-solid fa-route text-4xl opacity-50 mb-4"></i><p class="opacity-70 font-medium">No hay viajes registrados.</p></div>'; 
                 return; 
             }
             
@@ -1091,35 +1191,44 @@
                 l.innerHTML += `
                     <div class="glass-panel p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-l-4 ${p ? 'border-emerald-500' : 'border-red-500'}">
                         <div>
-                            <p class="font-bold text-white text-lg">${v.concepto}</p>
-                            <p class="text-xs text-slate-400 mt-1 flex items-center gap-2">
+                            <p class="font-bold text-lg">${v.concepto}</p>
+                            <p class="text-xs mt-1 flex items-center gap-2 opacity-70">
                                 <i class="fa-regular fa-calendar"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}
-                                ${v.notas ? `<span class="text-slate-500">• ${v.notas}</span>` : ''}
+                                ${v.notas ? `<span class="opacity-50">• ${v.notas}</span>` : ''}
                             </p>
                         </div>
                         <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-                            <p class="text-2xl font-mono font-bold text-white">${parseFloat(v.importe).toFixed(2)} €</p>
-                            ${p ? 
-                                `<span class="status-badge badge-paid"><i class="fa-solid fa-check"></i> Cobrado</span>` : 
-                                `<button onclick="markTripPaid(${v.id})" class="btn-action btn-primary px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md">Marcar Cobrado</button>`
-                            }
+                            <p class="text-2xl font-mono font-bold">${formatMoney(parseFloat(v.importe))}</p>
+                            <div class="flex gap-2">
+                                ${p ? 
+                                    `<span class="status-badge badge-paid"><i class="fa-solid fa-check"></i> Cobrado</span>` : 
+                                    `<button onclick="markTripPaid(${v.id})" class="btn-action btn-primary px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md">Marcar Cobrado</button>`
+                                }
+                                <button onclick="deleteTrip(${v.id})" class="btn-action btn-danger px-3 py-2 rounded-lg text-xs font-bold text-white shadow-md"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
                         </div>
                     </div>
                 `; 
             }); 
         }
 
+        function deleteTrip(id) {
+            if(!confirm('¿Eliminar viaje?')) return;
+            appData.viajes = appData.viajes.filter(v => v.id !== id);
+            saveData();
+            showToast('🗑️ Viaje eliminado', 'success');
+        }
+
         function renderPagos() {
             const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); 
             const rate = rs ? parseFloat(rs.valor) : 19.69;
             
-            // 1. Payroll History
             const pl = document.getElementById('payroll-history-list'); 
             pl.innerHTML = '';
             const ps = [...appData.pagos].filter(p => p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual').sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
             
             if (ps.length === 0) { 
-                pl.innerHTML = '<div class="text-center py-6 text-slate-500 text-sm">Genera jornadas y pulsa "Recalcular".</div>'; 
+                pl.innerHTML = '<div class="text-center py-6 opacity-50 text-sm">Genera jornadas y pulsa "Recalcular".</div>'; 
             } else { 
                 ps.forEach(p => { 
                     const ia = p.tipo === 'nomina_auto', ic = p.confirmado === true; 
@@ -1129,15 +1238,16 @@
                     pl.innerHTML += `
                         <div class="bg-white/5 rounded-xl p-4 border-l-4 ${ic ? 'border-emerald-500' : 'border-purple-500'} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-white/[0.08] transition">
                             <div>
-                                <p class="font-bold text-white text-base">${p.concepto}</p>
-                                <p class="text-xs text-slate-400 mt-1">
+                                <p class="font-bold text-base">${p.concepto}</p>
+                                <p class="text-xs mt-1 opacity-70">
                                     <i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
                                     ${ia && p.horas_normales_mes ? ` • ${p.horas_normales_mes}h (${p.dias_laborables} días)` : ''}
+                                    ${p.manual_edit ? ' • Editada manualmente' : ''}
                                 </p>
                             </div>
                             <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                                 <div class="text-right">
-                                    <p class="text-xl font-mono font-bold text-white">${parseFloat(p.importe).toFixed(2)} €</p>
+                                    <p class="text-xl font-mono font-bold">${formatMoney(parseFloat(p.importe))}</p>
                                     <span class="status-badge ${bc} mt-1 inline-block">${bt}</span>
                                 </div>
                                 <div class="flex gap-2">
@@ -1146,6 +1256,7 @@
                                         `<button onclick="confirmPayroll(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg btn-blue text-white shadow-md"><i class="fa-solid fa-check"></i> Confirmar</button>`
                                     }
                                     <button onclick="editPayrollAmount(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deletePayroll(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition"><i class="fa-solid fa-trash-can"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -1153,7 +1264,6 @@
                 }); 
             }
             
-            // 2. Summaries
             let ppt = 0, pt = 0; 
             appData.pagos.forEach(p => { 
                 if (p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual') { 
@@ -1169,28 +1279,27 @@
                 } 
             });
             
-            document.getElementById('summary-pending-payrolls').innerText = ppt.toFixed(2) + " €";
-            document.getElementById('summary-pending-extras').innerText = et.toFixed(2) + " €";
-            document.getElementById('summary-paid-extras').innerText = (pt + ptot).toFixed(2) + " €";
+            document.getElementById('summary-pending-payrolls').innerText = formatMoney(ppt);
+            document.getElementById('summary-pending-extras').innerText = formatMoney(et);
+            document.getElementById('summary-paid-extras').innerText = formatMoney(pt + ptot);
             
-            // 3. Extras List
             const list = document.getElementById('extras-payment-list'); 
             list.innerHTML = '';
             const ej = appData.jornadas.filter(j => j.horas_extra > 0).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
             
             if (ej.length === 0) { 
-                list.innerHTML = '<div class="text-center py-6 text-slate-500 text-sm">No hay horas extra pendientes.</div>'; 
+                list.innerHTML = '<div class="text-center py-6 opacity-50 text-sm">No hay horas extra registradas.</div>'; 
                 return; 
             }
             
             ej.forEach(j => { 
-                const ip = j.pagado_extras === true, val = (j.horas_extra * rate).toFixed(2), ds = new Date(j.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }); 
+                const ip = j.pagado_extras === true, val = (j.horas_extra * rate), ds = new Date(j.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }); 
                 
                 list.innerHTML += `
                     <div class="bg-white/5 rounded-xl p-4 border-l-4 ${ip ? 'border-emerald-500' : 'border-red-500'} flex justify-between items-center hover:bg-white/[0.08] transition">
                         <div>
-                            <p class="font-bold text-white text-sm">${ds}</p>
-                            <p class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-clock mr-1"></i>+${j.horas_extra}h extra • ${val} €</p>
+                            <p class="font-bold text-sm">${ds}</p>
+                            <p class="text-xs mt-1 opacity-70"><i class="fa-solid fa-clock mr-1"></i>+${j.horas_extra}h extra • ${formatMoney(val)}</p>
                             ${ip && j.fecha_pago_extras ? `<p class="text-[10px] text-emerald-400 mt-1"><i class="fa-solid fa-check-circle mr-1"></i>Pagado el ${new Date(j.fecha_pago_extras).toLocaleDateString('es-ES')}</p>` : ''}
                         </div>
                         <div class="text-right">
@@ -1205,14 +1314,21 @@
             });
         }
 
+        function deletePayroll(id) {
+            if(!confirm('¿Eliminar esta nómina?')) return;
+            appData.pagos = appData.pagos.filter(p => p.id !== id);
+            saveData();
+            showToast('🗑️ Nómina eliminada', 'success');
+        }
+
         function updateTodayStatus() { 
             const t = new Date().toISOString().split('T')[0]; 
             const j = appData.jornadas.find(x => x.fecha === t); 
             const s = document.getElementById('today-status'); 
             
-            if (!j) s.innerHTML = '<span class="text-slate-500"><i class="fa-regular fa-circle mr-1"></i>Sin actividad registrada hoy</span>'; 
+            if (!j) s.innerHTML = '<span class="opacity-50"><i class="fa-regular fa-circle mr-1"></i>Sin actividad registrada hoy</span>'; 
             else if (!j.salida?.trim()) s.innerHTML = `<span class="text-emerald-400 font-semibold flex items-center gap-2"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i>Trabajando desde las ${j.entrada}</span>`; 
-            else s.innerHTML = '<span class="text-slate-400 font-semibold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i>Jornada completada correctamente</span>'; 
+            else s.innerHTML = '<span class="text-emerald-400 font-semibold flex items-center gap-2"><i class="fa-solid fa-circle-check"></i>Jornada completada correctamente</span>'; 
         }
 
         function renderConfig() { 
@@ -1235,9 +1351,6 @@
             }
         }
 
-        // ==========================================
-        // ACTIONS & MODALS
-        // ==========================================
         function clockAction(type) { 
             const now = new Date(); 
             const ts = now.toTimeString().substring(0, 5); 
@@ -1268,8 +1381,8 @@
                     j.horas_normales = parseFloat(h.toFixed(2)); 
                     j.horas_extra = 0.0; 
                 } 
-                showToast(`🔴 Salida: ${ts} | Total: ${h.toFixed(2)}h`, 'success'); 
-                sendNotification("Jornada Finalizada", `Has trabajado ${h.toFixed(2)}h hoy`); 
+                showToast(`🔴 Salida: ${ts} | Total: ${formatHours(h)}`, 'success'); 
+                sendNotification("Jornada Finalizada", `Has trabajado ${formatHours(h)} hoy`); 
                 generateMonthlyPayrolls(); 
             } 
             saveData(); 
@@ -1280,15 +1393,16 @@
             currentModalType = 'add_extra'; 
             const j = appData.jornadas.find(x => x.id === id); 
             document.getElementById('modal-title').innerText = `Añadir Horas Extra`; 
+            document.getElementById('modal-delete-btn').classList.add('hidden');
             document.getElementById('modal-content').innerHTML = `
-                <div class="bg-black/20 p-3 rounded-lg mb-4">
-                    <p class="text-xs text-slate-400 uppercase font-bold mb-1">Jornada Seleccionada</p>
-                    <p class="text-white font-bold">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'})}</p>
-                    <p class="text-xs text-slate-500 mt-1">Actuales: <strong class="text-orange-400">${j.horas_extra}h</strong></p>
+                <div class="bg-black/20 p-3 rounded-lg mb-4 light-mode-bg-adjust">
+                    <p class="text-xs uppercase font-bold mb-1 opacity-70">Jornada Seleccionada</p>
+                    <p class="font-bold">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'})}</p>
+                    <p class="text-xs mt-1 opacity-70">Actuales: <strong class="text-orange-400">${j.horas_extra}h</strong></p>
                 </div>
-                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Cantidad a Añadir (h)</label>
+                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Cantidad a Añadir (h)</label>
                 <input type="number" step="0.25" id="m-extra-hours" placeholder="Ej: 1.5" class="input-modern w-full text-lg font-mono mb-4">
-                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Nota / Concepto (Opcional)</label>
+                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Nota / Concepto (Opcional)</label>
                 <textarea id="m-extra-note" placeholder="Motivo de las horas extra..." class="input-modern w-full" rows="3"></textarea>
             `; 
             document.getElementById('generic-modal').classList.remove('hidden'); 
@@ -1299,28 +1413,29 @@
             currentModalType = 'edit_jornada'; 
             const j = appData.jornadas.find(x => x.id === id); 
             document.getElementById('modal-title').innerText = `Editar Jornada`; 
+            document.getElementById('modal-delete-btn').classList.remove('hidden');
             document.getElementById('modal-content').innerHTML = `
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Entrada</label>
+                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Entrada</label>
                         <input type="time" id="m-entrada" value="${j.entrada || ''}" class="input-modern w-full font-mono">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Salida</label>
+                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Salida</label>
                         <input type="time" id="m-salida" value="${j.salida || ''}" class="input-modern w-full font-mono">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">H. Normales</label>
+                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">H. Normales</label>
                         <input type="number" step="0.5" id="m-normales" value="${j.horas_normales}" class="input-modern w-full font-mono">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">H. Extra</label>
+                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">H. Extra</label>
                         <input type="number" step="0.25" id="m-extra" value="${j.horas_extra}" class="input-modern w-full font-mono text-orange-400 font-bold">
                     </div>
                 </div>
-                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Notas Internas</label>
+                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Notas Internas</label>
                 <textarea id="m-notas" class="input-modern w-full" rows="3">${j.notas || ''}</textarea>
             `; 
             document.getElementById('generic-modal').classList.remove('hidden'); 
@@ -1365,7 +1480,7 @@
                     return; 
                 } 
                 appData.pagos.push({ id: Date.now(), fecha: date, concepto: note || "Nómina Manual", importe: amount, tipo: "nomina_mensual", confirmado: true, created: new Date().toISOString() }); 
-                showToast(`✅ Nómina de ${amount.toFixed(2)}€ registrada manualmente`, 'success'); 
+                showToast(`✅ Nómina de ${formatMoney(amount)} registrada manualmente`, 'success'); 
             } 
             closeModal(); 
             saveData(); 
@@ -1374,17 +1489,18 @@
         function openTripModal() { 
             currentModalType = 'viaje'; 
             editingId = null; 
+            document.getElementById('modal-delete-btn').classList.add('hidden');
             document.getElementById('modal-title').innerText = 'Registrar Nuevo Viaje'; 
             document.getElementById('modal-content').innerHTML = `
-                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Concepto / Destino</label>
+                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Concepto / Destino</label>
                 <input type="text" id="m-concepto" placeholder="Ej: Visita cliente Madrid Norte" class="input-modern w-full mb-4">
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Fecha</label>
+                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Fecha</label>
                         <input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-modern w-full">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Importe (€)</label>
+                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Importe (€)</label>
                         <input type="number" step="0.01" id="m-importe" placeholder="0.00" class="input-modern w-full font-mono">
                     </div>
                 </div>
@@ -1442,13 +1558,6 @@
             } 
         }
 
-        function regeneratePayrolls() { 
-            appData.pagos = appData.pagos.filter(p => !(p.tipo === 'nomina_auto' && !p.confirmado)); 
-            generateMonthlyPayrolls(); 
-            saveData(); 
-            showToast('✅ Nóminas automáticas recalculadas con éxito', 'success'); 
-        }
-
         function confirmPayroll(id) { 
             const p = appData.pagos.find(x => x.id === id); 
             if (p) { 
@@ -1481,9 +1590,6 @@
             } 
         }
 
-        // ==========================================
-        // UTILITIES & EXPORTS
-        // ==========================================
         async function generatePDF() { 
             const { jsPDF } = window.jspdf; 
             const doc = new jsPDF(); 
@@ -1491,7 +1597,6 @@
             const mn = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); 
             const an = document.getElementById('app-name').innerText; 
             
-            // Header
             doc.setFillColor('#f97316'); 
             doc.rect(0, 0, 210, 40, 'F'); 
             doc.setTextColor(255, 255, 255); 
@@ -1500,7 +1605,6 @@
             doc.setFontSize(12); 
             doc.text(`Informe Mensual Detallado - ${mn}`, 20, 30); 
             
-            // Body Setup
             doc.setTextColor(0, 0, 0); 
             doc.setFontSize(14); 
             doc.text("Resumen Ejecutivo", 20, 55); 
@@ -1521,12 +1625,11 @@
             const rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); 
             const rate = rs ? parseFloat(rs.valor) : 19.69; 
             
-            doc.text(`• Horas Normales Trabajadas: ${worked.toFixed(2)} h`, 20, 65); 
-            doc.text(`• Horas Extra Acumuladas: ${extras.toFixed(2)} h`, 20, 72); 
-            doc.text(`• Valor Económico Extras: ${(extras * rate).toFixed(2)} €`, 20, 79); 
-            doc.text(`• Tarifa Hora Extra Aplicada: ${rate.toFixed(2)} €/h`, 20, 86); 
+            doc.text(`• Horas Normales Trabajadas: ${formatHours(worked)}`, 20, 65); 
+            doc.text(`• Horas Extra Acumuladas: ${formatHours(extras)}`, 20, 72); 
+            doc.text(`• Valor Económico Extras: ${formatMoney(extras * rate)}`, 20, 79); 
+            doc.text(`• Tarifa Hora Extra Aplicada: ${formatMoney(rate)}/h`, 20, 86); 
             
-            // Detail Table Header
             doc.setFontSize(14); 
             doc.text("Detalle Cronológico de Jornadas", 20, 100); 
             doc.setFontSize(9); 
@@ -1561,7 +1664,6 @@
                 y += 7; 
             }); 
             
-            // Footer
             doc.setFontSize(8); 
             doc.setTextColor(150, 150, 150); 
             doc.text(`Documento generado automáticamente por ${an} el ${now.toLocaleString('es-ES')}`, 20, 285); 
@@ -1638,6 +1740,12 @@
             const appName = document.getElementById('config-appname').value.trim(); 
             const appColor = document.getElementById('config-color').value; 
             
+            // Validación básica de tarifas mínimas
+            if (parseFloat(nr) < 5 || parseFloat(r) < 5) {
+                showToast('⚠️ Las tarifas deben ser al menos 5 €/h', 'warning');
+                return;
+            }
+
             let nrs = appData.ajustes.find(a => a.clave === "hora_normal_euros"); 
             if (nrs) nrs.valor = nr; else appData.ajustes.push({ clave: "hora_normal_euros", valor: nr }); 
             
@@ -1663,7 +1771,6 @@
             showToast('✅ Configuración global guardada y aplicada', 'success'); 
         }
 
-        // Notifications & SW
         function requestNotificationPermission() { 
             if (!("Notification" in window)) { 
                 showToast('❌ Tu navegador no soporta notificaciones nativas', 'error'); 
@@ -1684,8 +1791,6 @@
 
         function scheduleNotifications() { 
             if (!("Notification" in window) || Notification.permission !== "granted") return; 
-            
-            // Simple interval check every minute for demo purposes
             setInterval(() => {
                 const now = new Date();
                 const hours = now.getHours();
@@ -1730,7 +1835,6 @@
             } 
         }
 
-        // Start App
         window.onload = initApp;
     </script>
 </body>
