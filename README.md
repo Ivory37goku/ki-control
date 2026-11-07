@@ -77,7 +77,7 @@ Introduce tu Nombre de App, Color y Tarifas Horarias.
 Sube tu Logo si deseas branding personalizado.
 Pulsa Guardar Todo.
 📸 Capturas de Pantalla
-(Aquí puedes insertar capturas reales de tu app una vez desplegada)
+<img width="1920" height="1080" alt="Captura de pantalla 2026-11-07 005600" src="https://github.com/user-attachments/assets/d9c2af41-e341-40d2-b139-eff8aa72c30d" />
 Dashboard Principal
 Gestión de Nóminas
 Ajustes & Branding
