@@ -4,7 +4,6 @@
 > Una solución web moderna, oscura y ultra-rápida para freelancers y trabajadores por cuenta ajena que necesitan controlar horas, extras, viajes y nóminas sin salir del navegador.
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
-[![Tech Stack](https://img.shields.io/badge/Tech-Tailwind%20JS%20-%20Chart.js-blue.svg?style=flat-square)](#)
 
 ---
 
