@@ -77,6 +77,11 @@ Introduce tu Nombre de App, Color y Tarifas Horarias.
 Sube tu Logo si deseas branding personalizado.
 Pulsa Guardar Todo.
 📸 Capturas de Pantalla
+<img width="1920" height="945" alt="Captura de pantalla 2026-11-07 113528" src="https://github.com/user-attachments/assets/491e7dfd-b3d0-4758-9c81-0a1cf5595fa9" />
+<img width="1920" height="927" alt="Captura de pantalla 2026-11-07 113515" src="https://github.com/user-attachments/assets/193387e3-6838-4219-967e-21209e3a8a98" />
+<img width="1920" height="938" alt="Captura de pantalla 2026-11-07 113502" src="https://github.com/user-attachments/assets/63385493-520e-4ae5-9590-19fec71fe8cb" />
+<img width="1920" height="952" alt="Captura de pantalla 2026-11-07 113321" src="https://github.com/user-attachments/assets/9fd5445e-395f-42bd-86e5-3fbc5dc10d16" />
+<img width="1904" height="868" alt="Captura de pantalla 2026-11-07 113135" src="https://github.com/user-attachments/assets/f8bb34c2-36e3-4b7a-b94b-27b57bbdbf5a" />
 
 Dashboard Principal
 Gestión de Nóminas
