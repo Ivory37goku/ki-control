@@ -3,35 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0f172a">
-    <link rel="manifest" href="./manifest.json">
     <title>工V龱尺7 | Control Laboral Pro</title>
     
-    <!-- Librerías CDN -->
+    <!-- Librerías -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Configuración Tailwind Custom -->
     <script>
         tailwind.config = {
-            darkMode: 'class', // Habilitar modo oscuro por clase
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        primary: '#f97316',
-                        success: '#10b981',
-                        danger: '#ef4444',
-                        accent: '#8b5cf6',
-                        surface: '#1e293b',
-                        background: '#0f172a'
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316', // Naranja Principal
+                            600: '#ea580c',
+                            900: '#7c2d12',
+                        },
+                        surface: {
+                            DEFAULT: '#1e293b',
+                            light: '#334155',
+                            dark: '#0f172a'
+                        }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace']
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                        'glow-orange': '0 0 20px rgba(249, 115, 22, 0.15)',
+                        'inner-light': 'inset 0 1px 0 0 rgba(255,255,255,0.1)'
                     }
                 }
             }
@@ -39,307 +46,405 @@
     </script>
 
     <style>
-        /* Reset & Base */
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            transition: background-color 0.3s ease, color 0.3s ease;
-            padding-bottom: 90px; 
-            min-height: 100vh;
+        :root {
+            --bg-main: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* --- MODO OSCURO (Por Defecto) --- */
-        body.dark-mode { background-color: #0f172a; color: #e2e8f0; }
-        body.dark-mode .glass-panel { 
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); 
-        }
-        body.dark-mode .kpi-card { 
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); 
-            border: 1px solid rgba(255, 255, 255, 0.06); 
-        }
-        body.dark-mode .input-modern { 
-            background: rgba(15, 23, 42, 0.6); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: #e2e8f0; 
-        }
-        body.dark-mode .bottom-nav { 
-            background: rgba(15, 23, 42, 0.98); 
-            border-top: 1px solid rgba(255, 255, 255, 0.08); 
-        }
-        body.dark-mode header { 
-            background: rgba(15, 23, 42, 0.9); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-        }
-        body.dark-mode footer { 
-            background: #0f172a; 
-            border-top: 1px solid rgba(255, 255, 255, 0.05); 
-            color: #94a3b8; 
-        }
-        body.dark-mode .bg-black\/20 { background: rgba(0,0,0,0.2) !important; }
-        body.dark-mode .hover\:bg-white\/\[0\.03\]:hover { background: rgba(255,255,255,0.03) !important; }
-
-        /* --- MODO CLARO (Premium Light) --- */
-        body.light-mode { background-color: #f8fafc; color: #1e293b; }
-        body.light-mode .glass-panel { 
-            background: white; 
-            border: 1px solid #e2e8f0; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
-        }
-        body.light-mode .kpi-card { 
-            background: white; 
-            border: 1px solid #e2e8f0; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-        }
-        body.light-mode .input-modern { 
-            background: #f1f5f9; 
-            border: 1px solid #cbd5e1; 
-            color: #1e293b; 
-        }
-        body.light-mode .bottom-nav { 
-            background: white; 
-            border-top: 1px solid #e2e8f0; 
-            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05); 
-        }
-        body.light-mode header { 
-            background: rgba(255, 255, 255, 0.9); 
-            border-bottom: 1px solid #e2e8f0; 
-        }
-        body.light-mode footer { 
-            background: #ffffff; 
-            border-top: 1px solid #e2e8f0; 
-            color: #64748b; 
-        }
-        body.light-mode .text-white { color: #1e293b !important; }
-        body.light-mode .text-slate-400 { color: #64748b !important; }
-        body.light-mode .bg-black\/20 { background: rgba(0,0,0,0.05) !important; }
-        body.light-mode .hover\:bg-white\/\[0\.03\]:hover { background: rgba(0,0,0,0.02) !important; }
-
-        /* Componentes Comunes */
-        .btn-action { transition: all 0.2s ease; position: relative; overflow: hidden; }
-        .btn-action:active { transform: scale(0.96); }
-        .btn-primary { background: linear-gradient(135deg, #f97316, #ea580c); color: white; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
-        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
-        .btn-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
-        .btn-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
-        
-        .status-badge {
-            padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            display: inline-flex; align-items: center; gap: 0.35rem;
-        }
-        .badge-pending { background: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.3); }
-        .badge-confirmed { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-paid { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-auto { background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3); }
-
-        .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* Scrollbar Custom */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Glassmorphism Card Base */
+        .premium-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem; /* Rounded-xl equivalent but softer */
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5), inset 0 1px 0 0 rgba(255,255,255,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         
-        @media (max-width: 768px) { .desktop-only { display: none !important; } }
-        @media (min-width: 769px) { .mobile-only { display: none !important; } }
+        .premium-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px -12px rgba(0,0,0,0.6), inset 0 1px 0 0 rgba(255,255,255,0.1);
+        }
+
+        /* Sidebar Desktop Styles */
+        @media (min-width: 1024px) {
+            .sidebar-desktop {
+                display: flex !important;
+                position: fixed;
+                left: 0; top: 0; bottom: 0;
+                width: 280px;
+                background: rgba(15, 23, 42, 0.95);
+                backdrop-filter: blur(20px);
+                border-right: 1px solid var(--border-color);
+                z-index: 50;
+                flex-direction: column;
+                padding: 2rem 1.5rem;
+            }
+            .main-content {
+                margin-left: 280px;
+                padding-bottom: 2rem;
+            }
+            .bottom-nav-mobile {
+                display: none !important;
+            }
+        }
+
+        /* Mobile Floating Nav */
+        @media (max-width: 1023px) {
+            .sidebar-desktop { display: none !important; }
+            .main-content { 
+                padding-bottom: 100px; /* Space for nav */
+            }
+            .bottom-nav-mobile {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 40px);
+                max-width: 400px;
+                background: rgba(15, 23, 42, 0.9);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 2rem;
+                padding: 0.5rem;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 50;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            }
+            .nav-btn-mobile {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                padding: 8px 12px;
+                border-radius: 1rem;
+                color: #94a3b8;
+                font-size: 10px;
+                font-weight: 600;
+                transition: all 0.2s;
+            }
+            .nav-btn-mobile.active {
+                background: rgba(249, 115, 22, 0.15);
+                color: #f97316;
+            }
+            .nav-btn-mobile i { font-size: 18px; }
+        }
+
+        /* Typography Utilities */
+        .text-huge-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        /* Input Focus Glow */
+        .input-premium:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+
+        /* Animations */
+        .fade-in-section {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body class="dark-mode antialiased selection:bg-orange-500 selection:text-white">
+<body class="antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- Indicador Offline -->
-    <div id="offline-indicator" class="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white text-center py-2 px-4 text-sm font-bold shadow-lg transform -translate-y-full transition-transform duration-300">
-        <i class="fa-solid fa-wifi-slash mr-2"></i>Sin conexión - Cambios guardados localmente
-    </div>
+    <!-- SIDEBAR DESKTOP -->
+    <aside class="sidebar-desktop hidden lg:flex">
+        <div class="flex items-center gap-3 mb-10 px-2">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white shadow-glow-orange">
+                <i class="fa-solid fa-bolt text-lg"></i>
+            </div>
+            <div>
+                <h1 id="app-name-sidebar" class="font-bold text-lg leading-none tracking-tight">工V龱尺㇌7</h1>
+                <span class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Laboral Pro</span>
+            </div>
+        </div>
 
-    <!-- App Container -->
-    <div id="app-container" class="opacity-0 transition-opacity duration-500 min-h-screen flex flex-col">
+        <nav class="flex-1 space-y-2">
+            <button onclick="switchTab('dashboard')" data-target="dashboard" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group active">
+                <i class="fa-solid fa-gauge-high w-5 text-center group-hover:text-brand-500 transition-colors"></i>
+                <span class="font-medium">Dashboard</span>
+            </button>
+            <button onclick="switchTab('jornadas')" data-target="jornadas" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group">
+                <i class="fa-solid fa-calendar-days w-5 text-center group-hover:text-brand-500 transition-colors"></i>
+                <span class="font-medium">Jornadas</span>
+            </button>
+            <button onclick="switchTab('viajes')" data-target="viajes" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group">
+                <i class="fa-solid fa-car-side w-5 text-center group-hover:text-brand-500 transition-colors"></i>
+                <span class="font-medium">Viajes & Dietas</span>
+            </button>
+            <button onclick="switchTab('pagos')" data-target="pagos" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group">
+                <i class="fa-solid fa-money-bill-transfer w-5 text-center group-hover:text-brand-500 transition-colors"></i>
+                <span class="font-medium">Pagos</span>
+            </button>
+            <button onclick="switchTab('ajustes')" data-target="ajustes" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group">
+                <i class="fa-solid fa-sliders w-5 text-center group-hover:text-brand-500 transition-colors"></i>
+                <span class="font-medium">Ajustes</span>
+            </button>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-white/5">
+            <div class="flex items-center gap-3 px-2">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=random&color=fff" alt="User" class="w-8 h-8 rounded-full ring-2 ring-white/10">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium truncate">Usuario Admin</p>
+                    <p class="text-xs text-slate-500 truncate">Plan Premium</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="main-content flex-1 min-h-screen relative">
         
-        <!-- Header Sticky -->
-        <header class="sticky top-0 z-30 backdrop-blur-xl">
-            <div class="px-4 py-3 max-w-6xl mx-auto flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div id="app-logo" class="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-orange-500 to-orange-700 text-white ring-2 ring-orange-500/20 overflow-hidden">
-                        <img id="custom-logo-img" src="" alt="Logo" class="hidden w-full h-full object-cover">
-                        <svg id="default-logo-svg" viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2C10.5 2 9.5 3 9 4C8 3.5 7 4 6.5 5C5.5 4.5 4.5 5 4 6C3 7 3.5 8.5 4 9C3 10 3.5 11.5 4.5 12C3.5 13 4 14.5 5 15C4.5 16 5.5 17 6.5 17C7 18 8 18.5 9 18C9.5 19 10.5 20 12 20C13.5 20 14.5 19 15 18C16 18.5 17 18 17.5 17C18.5 17 19.5 16 19 15C20 14.5 20.5 13 19.5 12C20.5 11.5 21 10 20 9C20.5 8.5 21 7 20 6C19.5 5 18.5 4.5 17.5 5C17 4 16 3.5 15 4C14.5 3 13.5 2 12 2ZM12 6C13.1 6 14 6.9 14 8C14 9.1 13.1 10 12 10C10.9 10 10 9.1 10 8C10 6.9 10.9 6 12 6Z"/></svg>
-                    </div>
-                    <div>
-                        <h1 id="app-name" class="font-bold text-lg leading-none tracking-tight">工V龱尺㇌7</h1>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-orange-400">Control Laboral Pro</span>
-                    </div>
+        <!-- HEADER MOBILE ONLY (Simple Top Bar) -->
+        <header class="lg:hidden sticky top-0 z-40 bg-[#0f172a]/90 backdrop-blur-md border-b border-white/5 px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-bolt text-xs"></i>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="hidden sm:flex flex-col items-end mr-2">
-                        <p id="current-date" class="text-xs font-medium opacity-70">--</p>
-                        <p id="live-clock" class="text-sm font-mono font-bold tabular-nums">--:--</p>
-                    </div>
-                    <!-- BOTÓN TOGGLE TEMA -->
-                    <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-9 h-9 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 transition border border-white/10" aria-label="Cambiar tema">
-                        <i class="fa-solid fa-moon text-sm" id="theme-icon"></i>
-                    </button>
-                </div>
+                <h1 id="app-name-header" class="font-bold text-base">工V龱尺7</h1>
+            </div>
+            <div class="text-right">
+                <p id="live-clock-header" class="text-xs font-mono text-slate-400">--:--</p>
             </div>
         </header>
 
-        <!-- Main Content Area -->
-        <main class="px-4 py-6 max-w-6xl mx-auto space-y-6 flex-grow w-full">
+        <!-- BOTTOM NAV MOBILE ONLY -->
+        <nav class="bottom-nav-mobile lg:hidden">
+            <button onclick="switchTab('dashboard')" data-target="dashboard" class="nav-btn-mobile active">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Dash</span>
+            </button>
+            <button onclick="switchTab('jornadas')" data-target="jornadas" class="nav-btn-mobile">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Jornadas</span>
+            </button>
+            <button onclick="switchTab('viajes')" data-target="viajes" class="nav-btn-mobile">
+                <i class="fa-solid fa-car-side"></i>
+                <span>Viajes</span>
+            </button>
+            <button onclick="switchTab('pagos')" data-target="pagos" class="nav-btn-mobile">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+                <span>Pagos</span>
+            </button>
+            <button onclick="switchTab('ajustes')" data-target="ajustes" class="nav-btn-mobile">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Ajustes</span>
+            </button>
+        </nav>
 
-            <!-- ================= DASHBOARD SECTION ================= -->
-            <section id="content-dashboard" class="tab-content active fade-in-up space-y-6">
+        <!-- PAGE CONTAINER -->
+        <main class="p-4 lg:p-8 max-w-7xl mx-auto space-y-8">
+
+            <!-- ================= DASHBOARD ================= -->
+            <section id="content-dashboard" class="tab-content fade-in-section space-y-8">
                 
-                <!-- Quick Clock Action Card -->
-                <div class="glass-panel p-5 border-l-4 border-orange-500">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-                        <div>
-                            <h2 class="text-xl font-bold flex items-center gap-2">
-                                <i class="fa-solid fa-stopwatch text-orange-400"></i> Fichaje Rápido
-                            </h2>
-                            <p class="text-sm mt-1 opacity-70" id="today-status">Esperando acción...</p>
-                        </div>
-                        <div class="text-right bg-black/20 px-4 py-2 rounded-lg border border-white/5 light-mode-bg-adjust">
-                            <p class="text-[10px] uppercase font-bold opacity-50 tracking-wider">Hora Actual</p>
-                            <p class="text-2xl font-mono font-bold text-orange-400 tabular-nums" id="live-clock-big">--:--</p>
+                <!-- Hero Stats Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    <!-- KPI 1 -->
+                    <div class="premium-card p-6 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-emerald-500/20 transition-all duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Total Cobrado</p>
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-huge-num text-3xl text-white mb-1" id="dash-total-paid">0,00 €</h3>
+                            <p class="text-xs text-slate-500">Nóminas + Extras + Viajes</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="clockAction('entrada')" class="btn-action btn-success w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md">
-                            <i class="fa-solid fa-right-to-bracket"></i> Entrada
-                        </button>
-                        <button onclick="clockAction('salida')" class="btn-action btn-danger w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md">
-                            <i class="fa-solid fa-right-from-bracket"></i> Salida
-                        </button>
+
+                    <!-- KPI 2 -->
+                    <div class="premium-card p-6 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-red-500/20 transition-all duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Pendiente</p>
+                                <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400">
+                                    <i class="fa-solid fa-hourglass-half"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-huge-num text-3xl text-white mb-1" id="dash-total-pending">0,00 €</h3>
+                            <p class="text-xs text-slate-500">A cobrar este mes</p>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3 -->
+                    <div class="premium-card p-6 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-brand-500/20 transition-all duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Horas Extra</p>
+                                <div class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center text-brand-500">
+                                    <i class="fa-solid fa-fire"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-huge-num text-3xl text-white mb-1" id="dash-extras-hours">0,00 h</h3>
+                            <p class="text-xs text-slate-500">Acumuladas año actual</p>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4 -->
+                    <div class="premium-card p-6 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-violet-500/20 transition-all duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Valor Extras</p>
+                                <div class="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
+                                    <i class="fa-solid fa-coins"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-huge-num text-3xl text-white mb-1" id="dash-extras-value">0,00 €</h3>
+                            <p class="text-xs text-slate-500">@ <span id="dash-rate-display">19,69</span> €/h</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Executive KPI Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="kpi-card" style="--card-accent: #10b981;">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Total Cobrado</p>
-                            <i class="fa-solid fa-wallet text-emerald-500/50"></i>
+                <!-- Quick Action Panel -->
+                <div class="premium-card p-6 border-l-4 border-brand-500">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-brand-500/10 flex items-center justify-center text-brand-500 animate-pulse">
+                                <i class="fa-solid fa-stopwatch text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-white">Fichaje Rápido</h2>
+                                <p class="text-sm text-slate-400" id="today-status">Esperando acción...</p>
+                            </div>
                         </div>
-                        <p class="text-2xl font-mono font-bold text-emerald-400" id="dash-total-paid">0,00 €</p>
-                        <p class="text-[10px] opacity-50 mt-1">Nóminas + Viajes + Extras</p>
-                    </div>
-                    <div class="kpi-card" style="--card-accent: #ef4444;">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Pendiente</p>
-                            <i class="fa-solid fa-hourglass-half text-red-500/50"></i>
+                        <div class="flex gap-3 w-full md:w-auto">
+                            <button onclick="clockAction('entrada')" class="flex-1 md:flex-none px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-to-bracket"></i> Entrada
+                            </button>
+                            <button onclick="clockAction('salida')" class="flex-1 md:flex-none px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-from-bracket"></i> Salida
+                            </button>
                         </div>
-                        <p class="text-2xl font-mono font-bold text-red-400" id="dash-total-pending">0,00 €</p>
-                        <p class="text-[10px] opacity-50 mt-1">A cobrar este mes</p>
-                    </div>
-                    <div class="kpi-card" style="--card-accent: #f97316;">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Horas Extra</p>
-                            <i class="fa-solid fa-fire text-orange-500/50"></i>
-                        </div>
-                        <p class="text-2xl font-mono font-bold text-orange-400" id="dash-extras-hours">0,00 h</p>
-                        <p class="text-[10px] opacity-50 mt-1">Acumuladas año actual</p>
-                    </div>
-                    <div class="kpi-card" style="--card-accent: #8b5cf6;">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold uppercase tracking-wide opacity-70">Valor Extras</p>
-                            <i class="fa-solid fa-coins text-violet-500/50"></i>
-                        </div>
-                        <p class="text-2xl font-mono font-bold text-violet-400" id="dash-extras-value">0,00 €</p>
-                        <p class="text-[10px] opacity-50 mt-1">@ <span id="dash-rate-display">19,69</span> €/h</p>
                     </div>
                 </div>
 
-                <!-- Charts Row -->
+                <!-- Charts Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Monthly Goal Donut -->
-                    <div class="glass-panel p-5 lg:col-span-1">
-                        <h3 class="font-bold text-sm mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-bullseye text-orange-400"></i> Objetivo Mensual
-                        </h3>
-                        <div class="relative h-48 w-full flex items-center justify-center">
+                    <!-- Donut Chart -->
+                    <div class="premium-card p-6 lg:col-span-1 flex flex-col">
+                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Objetivo Mensual</h3>
+                        <div class="relative flex-1 min-h-[200px] flex items-center justify-center">
                             <canvas id="executiveDonutChart"></canvas>
                             <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span id="donut-percentage" class="text-3xl font-mono font-bold">0%</span>
-                                <span class="text-[10px] uppercase font-bold tracking-wider mt-1 opacity-70">Completado</span>
+                                <span id="donut-percentage" class="text-4xl font-mono font-bold text-white drop-shadow-lg">0%</span>
+                                <span class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-1">Completado</span>
                             </div>
                         </div>
-                        <div class="mt-4 space-y-2">
+                        <div class="mt-4 pt-4 border-t border-white/5 space-y-2">
                             <div class="flex justify-between text-xs">
-                                <span class="opacity-70">Ritmo Necesario:</span>
-                                <span class="font-mono font-bold" id="kpi-daily-pace">0,0 h/día</span>
+                                <span class="text-slate-400">Ritmo Necesario:</span>
+                                <span class="font-mono font-bold text-white" id="kpi-daily-pace">0,0 h/día</span>
                             </div>
                             <div class="flex justify-between text-xs">
-                                <span class="opacity-70">Proyección:</span>
-                                <span class="font-mono font-bold" id="kpi-projection">0,0 h</span>
+                                <span class="text-slate-400">Proyección:</span>
+                                <span class="font-mono font-bold text-white" id="kpi-projection">0,0 h</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Evolution Bar Chart -->
-                    <div class="glass-panel p-5 lg:col-span-2">
+                    <!-- Bar Chart -->
+                    <div class="premium-card p-6 lg:col-span-2 flex flex-col">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-sm flex items-center gap-2">
-                                <i class="fa-solid fa-chart-line text-blue-400"></i> Pendiente por Cobrar
-                            </h3>
-                            <div class="flex gap-3 text-[10px] font-bold uppercase">
-                                <span class="flex items-center gap-1 text-red-400"><div class="w-2 h-2 rounded-full bg-red-500"></div>Pendiente</span>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Flujo de Caja (Pend.)</h3>
+                            <div class="flex gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                <span class="text-[10px] text-slate-500 font-bold uppercase">Pendiente</span>
                             </div>
                         </div>
-                        <div class="relative h-56 w-full">
+                        <div class="relative flex-1 min-h-[250px]">
                             <canvas id="monthlyChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Payrolls Summary -->
-                <div class="glass-panel p-5">
-                    <h3 class="font-bold text-sm mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Últimas Nóminas Generadas
+                <!-- Recent Payrolls List -->
+                <div class="premium-card p-6">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Últimas Nóminas
                     </h3>
-                    <div class="space-y-3" id="dashboard-payrolls-summary"></div>
+                    <div class="space-y-3" id="dashboard-payrolls-summary">
+                        <!-- JS Injected -->
+                    </div>
                 </div>
             </section>
 
-            <!-- ================= JORNADAS SECTION ================= -->
-            <section id="content-jornadas" class="tab-content hidden fade-in-up">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold">Registro de Jornadas</h2>
+            <!-- ================= JORNADAS ================= -->
+            <section id="content-jornadas" class="tab-content hidden fade-in-section space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h2 class="text-2xl font-bold text-white">Registro de Jornadas</h2>
                     <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="generatePDF()" class="btn-action btn-blue flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md">
+                        <button onclick="generatePDF()" class="btn-action px-4 py-2 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20 transition-all">
                             <i class="fa-solid fa-file-pdf mr-1"></i> PDF
                         </button>
-                        <button onclick="exportCSV()" class="btn-action btn-success flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md">
+                        <button onclick="exportCSV()" class="btn-action px-4 py-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/20 transition-all">
                             <i class="fa-solid fa-file-excel mr-1"></i> Excel
                         </button>
-                        <button onclick="confirmAllProvisional()" class="btn-action btn-primary flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md">
+                        <button onclick="confirmAllProvisional()" class="btn-action px-4 py-2 rounded-lg text-xs font-bold bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-900/20 transition-all">
                             <i class="fa-solid fa-check-double mr-1"></i> Confirmar Todo
                         </button>
                     </div>
                 </div>
 
                 <!-- Filters -->
-                <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
-                    <button onclick="setFilter('all')" class="filter-pill active whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition" data-filter="all">Todos</button>
+                <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    <button onclick="setFilter('all')" class="filter-pill whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition" data-filter="all">Todos</button>
                     <button onclick="setFilter('confirmado')" class="filter-pill whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition" data-filter="confirmado">Confirmados</button>
                     <button onclick="setFilter('provisional')" class="filter-pill whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition" data-filter="provisional">Provisionales</button>
                     <button onclick="setFilter('extra')" class="filter-pill whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition" data-filter="extra">Con Extras</button>
                 </div>
 
-                <!-- Mobile Cards View -->
+                <!-- Mobile Cards -->
                 <div class="mobile-only space-y-4" id="jornadas-cards"></div>
 
-                <!-- Desktop Table View -->
-                <div class="desktop-only glass-panel overflow-hidden">
+                <!-- Desktop Table -->
+                <div class="desktop-only premium-card overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-white/5">
                             <thead class="bg-white/5">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider opacity-70">Fecha</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider opacity-70">Horario</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider opacity-70">Norm.</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-orange-400">Extra</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider opacity-70">Estado</th>
-                                    <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider opacity-70">Acciones</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Fecha</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Horario</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Norm.</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-brand-500 uppercase tracking-wider">Extra</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Estado</th>
+                                    <th class="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="jornadas-body" class="divide-y divide-white/5"></tbody>
@@ -348,132 +453,129 @@
                 </div>
             </section>
 
-            <!-- ================= VIAJES SECTION ================= -->
-            <section id="content-viajes" class="tab-content hidden fade-in-up">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold">Viajes & Dietas</h2>
-                    <button onclick="openTripModal()" class="btn-action btn-primary px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md flex items-center gap-2">
+            <!-- ================= VIAJES ================= -->
+            <section id="content-viajes" class="tab-content hidden fade-in-section space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-white">Viajes & Dietas</h2>
+                    <button onclick="openTripModal()" class="btn-action px-5 py-2.5 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-900/20 flex items-center gap-2 transition-all">
                         <i class="fa-solid fa-plus"></i> Nuevo Viaje
                     </button>
                 </div>
                 <div class="space-y-4" id="viajes-list"></div>
             </section>
 
-            <!-- ================= PAGOS SECTION ================= -->
-            <section id="content-pagos" class="tab-content hidden fade-in-up space-y-6">
-                <h2 class="text-2xl font-bold mb-2">Gestión Financiera</h2>
+            <!-- ================= PAGOS ================= -->
+            <section id="content-pagos" class="tab-content hidden fade-in-section space-y-6">
+                <h2 class="text-2xl font-bold text-white">Gestión Financiera</h2>
                 
-                <!-- Auto Generated Payrolls -->
-                <div class="glass-panel p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg flex items-center gap-2">
-                            <i class="fa-solid fa-calculator text-purple-400"></i> Nóminas Automáticas
-                        </h3>
-                        <button onclick="regeneratePayrolls()" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition">
-                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Recalcular
-                        </button>
-                    </div>
-                    <p class="text-xs opacity-70 mb-4">Basadas en horas normales × tarifa configurada. Las manuales se conservan.</p>
-                    <div class="space-y-3" id="payroll-history-list"></div>
-                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Auto Payrolls -->
+                        <div class="premium-card p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-calculator text-purple-400"></i> Nóminas Automáticas
+                                </h3>
+                                <button onclick="regeneratePayrolls()" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition">
+                                    Recalcular
+                                </button>
+                            </div>
+                            <div class="space-y-3" id="payroll-history-list"></div>
+                        </div>
 
-                <!-- Financial Summary Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass-panel p-4 text-center border-t-4 border-red-500">
-                        <p class="text-xs font-bold uppercase mb-1 opacity-70">Nóminas Pendientes</p>
-                        <p class="text-2xl font-mono font-bold text-red-400" id="summary-pending-payrolls">0,00 €</p>
+                        <!-- Extras Detail -->
+                        <div class="premium-card p-6">
+                            <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-blue-400"></i> Detalle Horas Extra
+                            </h3>
+                            <div class="space-y-3" id="extras-payment-list"></div>
+                        </div>
                     </div>
-                    <div class="glass-panel p-4 text-center border-t-4 border-yellow-500">
-                        <p class="text-xs font-bold uppercase mb-1 opacity-70">Extras Pendientes</p>
-                        <p class="text-2xl font-mono font-bold text-yellow-400" id="summary-pending-extras">0,00 €</p>
-                    </div>
-                    <div class="glass-panel p-4 text-center border-t-4 border-green-500">
-                        <p class="text-xs font-bold uppercase mb-1 opacity-70">Total Liquidado</p>
-                        <p class="text-2xl font-mono font-bold text-green-400" id="summary-paid-extras">0,00 €</p>
-                    </div>
-                </div>
 
-                <!-- Individual Extras Payment List -->
-                <div class="glass-panel p-6">
-                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-blue-400"></i> Detalle Horas Extra
-                    </h3>
-                    <div class="space-y-3" id="extras-payment-list"></div>
+                    <!-- Summary Side -->
+                    <div class="space-y-4">
+                        <div class="premium-card p-5 border-t-4 border-red-500">
+                            <p class="text-xs font-bold text-slate-400 uppercase mb-1">Nóminas Pendientes</p>
+                            <p class="text-2xl font-mono font-bold text-red-400" id="summary-pending-payrolls">0,00 €</p>
+                        </div>
+                        <div class="premium-card p-5 border-t-4 border-yellow-500">
+                            <p class="text-xs font-bold text-slate-400 uppercase mb-1">Extras Pendientes</p>
+                            <p class="text-2xl font-mono font-bold text-yellow-400" id="summary-pending-extras">0,00 €</p>
+                        </div>
+                        <div class="premium-card p-5 border-t-4 border-green-500">
+                            <p class="text-xs font-bold text-slate-400 uppercase mb-1">Total Liquidado</p>
+                            <p class="text-2xl font-mono font-bold text-green-400" id="summary-paid-extras">0,00 €</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- ================= AJUSTES SECTION ================= -->
-            <section id="content-ajustes" class="tab-content hidden fade-in-up space-y-6">
-                <h2 class="text-2xl font-bold mb-2">Configuración del Sistema</h2>
+            <!-- ================= AJUSTES ================= -->
+            <section id="content-ajustes" class="tab-content hidden fade-in-section space-y-6">
+                <h2 class="text-2xl font-bold text-white">Configuración del Sistema</h2>
                 
-                <div class="glass-panel p-6 space-y-6">
-                    <!-- Logo Upload -->
-                    <div>
-                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Logo Personalizado</label>
-                        <div id="logo-upload-zone" class="border-2 border-dashed border-white/20 rounded-xl p-6 text-center cursor-pointer hover:border-orange-500 transition">
-                            <img id="logo-preview" src="" alt="Preview" class="w-20 h-20 object-contain mx-auto mb-3 hidden">
-                            <i id="logo-placeholder-icon" class="fa-solid fa-image text-3xl opacity-50 mb-2 block"></i>
-                            <p class="text-sm opacity-70">📁 Toca o arrastra tu logo aquí</p>
-                            <p class="text-[10px] opacity-50 mt-1">Formatos: JPG, PNG o SVG • Máx 2MB</p>
-                            <input type="file" id="logo-input" accept="image/*" class="hidden">
-                        </div>
-                        <button onclick="resetLogo()" class="mt-2 text-xs font-bold underline opacity-70 hover:opacity-100">
-                            Restaurar logo por defecto (Goku)
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Branding -->
+                    <div class="premium-card p-6 space-y-6">
+                        <h3 class="font-bold text-lg text-white border-b border-white/10 pb-2">Branding & Apariencia</h3>
+                        
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-2 opacity-70">Nombre de la Aplicación</label>
-                            <input type="text" id="config-appname" class="input-modern w-full font-bold" placeholder="Mi Empresa SL">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Nombre de la App</label>
+                            <input type="text" id="config-appname" class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                         </div>
+                        
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-2 opacity-70">Color Principal (Brand)</label>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Color Principal</label>
                             <div class="flex items-center gap-3">
-                                <input type="color" id="config-color" class="w-12 h-10 rounded cursor-pointer border-0 bg-transparent p-0">
-                                <input type="text" readonly class="input-modern flex-1 font-mono text-sm" value="#f97316" id="color-hex-display">
+                                <input type="color" id="config-color" class="w-12 h-12 rounded cursor-pointer border-0 bg-transparent p-0">
+                                <input type="text" readonly class="input-modern flex-1 bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white font-mono" value="#f97316" id="color-hex-display">
                             </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Logo Personalizado</label>
+                            <div id="logo-upload-zone" class="border-2 border-dashed border-white/20 rounded-xl p-6 text-center cursor-pointer hover:border-brand-500 hover:bg-brand-500/5 transition-all">
+                                <img id="logo-preview" src="" alt="Preview" class="w-20 h-20 object-contain mx-auto mb-3 hidden">
+                                <i id="logo-placeholder-icon" class="fa-solid fa-image text-3xl text-slate-500 mb-2 block"></i>
+                                <p class="text-sm text-slate-400">📁 Toca o arrastra tu logo aquí</p>
+                                <input type="file" id="logo-input" accept="image/*" class="hidden">
+                            </div>
+                            <button onclick="resetLogo()" class="mt-2 text-xs font-bold text-slate-400 hover:text-white underline">Restaurar logo por defecto</button>
                         </div>
                     </div>
 
-                    <div class="border-t border-white/5 pt-6">
-                        <h4 class="text-sm font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-euro-sign text-green-400"></i> Tarifas Salariales</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Financial Config -->
+                    <div class="premium-card p-6 space-y-6">
+                        <h3 class="font-bold text-lg text-white border-b border-white/10 pb-2">Tarifas & Horarios</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Tarifa Hora Normal (€/h)</label>
-                                <input type="number" step="0.01" id="config-normal-rate" class="input-modern w-full font-mono text-lg" min="5">
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Hora Normal (€/h)</label>
+                                <input type="number" step="0.01" id="config-normal-rate" class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white font-mono text-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Tarifa Hora Extra (€)</label>
-                                <input type="number" step="0.01" id="config-rate" class="input-modern w-full font-mono text-lg" min="5">
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Hora Extra (€)</label>
+                                <input type="number" step="0.01" id="config-rate" class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white font-mono text-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                             </div>
                         </div>
-                    </div>
 
-                    <div class="border-t border-white/5 pt-6">
-                        <h4 class="text-sm font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-clock text-blue-400"></i> Horarios & Notificaciones</h4>
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold uppercase mb-2 opacity-70">Horario Habitual (Texto libre)</label>
-                            <input type="text" id="config-schedule" class="input-modern w-full" placeholder="Ej: 08:00 - 16:00">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Horario Habitual</label>
+                            <input type="text" id="config-schedule" class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all" placeholder="Ej: 08:00 - 16:00">
                         </div>
-                        <button onclick="requestNotificationPermission()" class="btn-secondary w-full py-3 rounded-xl text-sm font-bold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-bell"></i> Activar Recordatorios Push
-                        </button>
-                    </div>
 
-                    <div class="pt-4 flex gap-4">
-                        <button onclick="saveConfig()" class="btn-primary flex-1 py-3 rounded-xl text-sm font-bold shadow-lg flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-save"></i> Guardar Cambios
+                        <button onclick="saveConfig()" class="w-full py-4 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-brand-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-save"></i> Guardar Configuración
                         </button>
                     </div>
                 </div>
 
                 <!-- Data Management -->
-                <div class="glass-panel p-6">
-                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                <div class="premium-card p-6">
+                    <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-database text-cyan-400"></i> Gestión de Datos
                     </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <button onclick="exportJSON()" class="flex flex-col items-center justify-center p-4 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20 hover:bg-blue-500/20 transition group">
                             <i class="fa-solid fa-download text-2xl mb-2 group-hover:scale-110 transition"></i>
                             <span class="text-xs font-bold uppercase">Backup JSON</span>
@@ -492,77 +594,48 @@
                             <span class="text-xs font-bold uppercase">Reset Factory</span>
                         </button>
                     </div>
-                    <p class="text-[10px] text-center italic opacity-50">Los datos se guardan localmente en tu navegador (LocalStorage). Realiza backups periódicos.</p>
                 </div>
             </section>
 
         </main>
+    </div>
 
-        <!-- FOOTER LEGAL -->
-        <footer class="py-6 mt-8 text-center text-xs opacity-60">
-            <p>&copy; 2026 Ivory37goku. Todos los derechos reservados.</p>
-            <p class="mt-1">Versión 1.0.0 · Última actualización: 07-Nov-2026</p>
-            <div class="flex justify-center gap-4 mt-2">
-                <a href="#" class="underline hover:text-orange-400 transition">Demo</a>
-                <a href="#" class="underline hover:text-orange-400 transition">Términos</a>
-                <a href="#" class="underline hover:text-orange-400 transition">Privacidad</a>
-            </div>
-        </footer>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-40">
-            <button onclick="switchTab('dashboard')" class="nav-item active" data-tab="dashboard">
-                <i class="fa-solid fa-gauge-high"></i> Dashboard
-            </button>
-            <button onclick="switchTab('jornadas')" class="nav-item" data-tab="jornadas">
-                <i class="fa-solid fa-calendar-days"></i> Jornadas
-            </button>
-            <button onclick="switchTab('viajes')" class="nav-item" data-tab="viajes">
-                <i class="fa-solid fa-car-side"></i> Viajes
-            </button>
-            <button onclick="switchTab('pagos')" class="nav-item" data-tab="pagos">
-                <i class="fa-solid fa-money-bill-transfer"></i> Pagos
-            </button>
-            <button onclick="switchTab('ajustes')" class="nav-item" data-tab="ajustes">
-                <i class="fa-solid fa-sliders"></i> Ajustes
-            </button>
-        </nav>
-
-        <!-- Generic Modal Overlay -->
-        <div id="generic-modal" class="fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-            <div class="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:max-w-md sm:w-full">
-                <div class="modal-content bg-[#1e293b] light-mode-modal rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t border-white/10 animate-slide-up">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-bold" id="modal-title">Título</h3>
-                        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-white/20 hover:text-white transition">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                    <div class="space-y-4" id="modal-content"></div>
-                    <div class="flex gap-3 mt-8">
-                        <button id="modal-delete-btn" onclick="deleteCurrentRecord()" class="hidden btn-danger flex-1 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-trash-can"></i> Eliminar
-                        </button>
-                        <button onclick="saveModalData()" class="btn-primary flex-1 py-3.5 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-check"></i> Guardar
-                        </button>
-                    </div>
+    <!-- MODAL OVERLAY -->
+    <div id="generic-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:max-w-md sm:w-full">
+            <div class="modal-content bg-[#1e293b] rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t border-white/10 animate-slide-up">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-white" id="modal-title">Título</h3>
+                    <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:bg-white/20 hover:text-white transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Toast Notification System -->
-        <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 z-[60] hidden">
-            <div class="bg-[#1e293b] light-mode-toast text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold border border-white/10 backdrop-blur-md">
-                <i class="fa-solid fa-circle-check text-green-500 text-lg" id="toast-icon"></i>
-                <span id="toast-message">Mensaje</span>
+                <div class="space-y-4" id="modal-content"></div>
+                <div class="flex gap-3 mt-8">
+                    <button id="modal-delete-btn" onclick="deleteCurrentRecord()" class="hidden btn-danger flex-1 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar
+                    </button>
+                    <button onclick="saveModalData()" class="btn-primary flex-1 py-3.5 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-500 text-white">
+                        <i class="fa-solid fa-check"></i> Guardar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Application Logic Script -->
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 z-[70] hidden">
+        <div class="bg-[#1e293b] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-bold border border-white/10 backdrop-blur-md">
+            <i class="fa-solid fa-circle-check text-green-500 text-lg" id="toast-icon"></i>
+            <span id="toast-message">Mensaje</span>
+        </div>
+    </div>
+
     <script>
+        // ==========================================
+        // STATE MANAGEMENT & DATA STRUCTURE
+        // ==========================================
         let appData = null;
         let currentModalType = null;
         let editingId = null;
@@ -570,7 +643,6 @@
         let executiveChartInstance = null;
         let currentFilter = 'all';
         let offlineQueue = [];
-        let isDarkMode = true; // Estado inicial
 
         function formatMoney(value) {
             return new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + ' €';
@@ -590,15 +662,6 @@
                 appData = buildInitialData(); 
             }
             
-            // Cargar preferencia de tema
-            const themePref = appData.ajustes.find(a => a.clave === "theme_mode");
-            if (themePref && themePref.valor === 'light') {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                isDarkMode = false;
-                updateThemeIcon();
-            }
-
             applyBranding();
             sanitizeConfirmedRecords(); 
             ensureFullYearData(); 
@@ -611,7 +674,7 @@
             scheduleNotifications();
             setupLogoUpload();
             
-            document.getElementById('app-container').classList.remove('opacity-0');
+            document.getElementById('app-container')?.classList.remove('opacity-0');
             renderAll();
             registerSW();
         }
@@ -634,11 +697,15 @@
             const an = ns ? ns.valor : "工V龱尺ㄚ7";
             const ac = cs ? cs.valor : "#f97316";
             
-            document.documentElement.style.setProperty('--app-primary', ac);
-            const r = parseInt(ac.slice(1,3),16), g = parseInt(ac.slice(3,5),16), b = parseInt(ac.slice(5,7),16);
-            document.documentElement.style.setProperty('--app-primary-dark', `rgb(${Math.max(0,r-30)},${Math.max(0,g-30)},${Math.max(0,b-30)})`);
+            document.documentElement.style.setProperty('--brand-500', ac);
+            document.documentElement.style.setProperty('--brand-600', adjustColor(ac, -20));
             
-            document.getElementById('app-name').innerText = an;
+            const names = ['app-name-sidebar', 'app-name-header'];
+            names.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.innerText = an;
+            });
+            
             document.title = `${an} | Control Laboral Pro`;
             
             const customImg = document.getElementById('custom-logo-img');
@@ -647,14 +714,13 @@
             const placeholderIcon = document.getElementById('logo-placeholder-icon');
             
             if (ls && ls.valor) {
-                customImg.src = ls.valor;
-                customImg.classList.remove('hidden');
-                defaultSvg.classList.add('hidden');
+                if(customImg) { customImg.src = ls.valor; customImg.classList.remove('hidden'); }
+                if(defaultSvg) defaultSvg.classList.add('hidden');
                 if(previewImg) { previewImg.src = ls.valor; previewImg.classList.remove('hidden'); }
                 if(placeholderIcon) placeholderIcon.classList.add('hidden');
             } else {
-                customImg.classList.add('hidden');
-                defaultSvg.classList.remove('hidden');
+                if(customImg) customImg.classList.add('hidden');
+                if(defaultSvg) defaultSvg.classList.remove('hidden');
                 if(previewImg) previewImg.classList.add('hidden');
                 if(placeholderIcon) placeholderIcon.classList.remove('hidden');
             }
@@ -663,201 +729,69 @@
             if(hexDisplay) hexDisplay.value = ac;
         }
 
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            if (isDarkMode) {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+        }
+
+        function toggleTheme() { showToast("Modo Oscuro Permanente (Premium Feature)", "info"); }
+        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; }
+        
+        function showToast(m, t = 'success') { 
+            const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); 
+            msg.innerText = m; 
+            icon.className = t === 'success' ? 'fa-solid fa-circle-check text-green-500 text-lg' : 
+                             t === 'warning' ? 'fa-solid fa-triangle-exclamation text-yellow-500 text-lg' : 
+                             t === 'error' ? 'fa-solid fa-circle-xmark text-red-500 text-lg' : 
+                             'fa-solid fa-circle-info text-blue-500 text-lg'; 
+            toast.classList.remove('hidden'); 
+            setTimeout(() => toast.classList.add('hidden'), 3000); 
+        }
+
+        function switchTab(t) { 
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
+            const target = document.getElementById(`content-${t}`);
+            if(target) {
+                target.classList.remove('hidden');
+                target.classList.add('fade-in-section');
             }
             
-            // Guardar preferencia
-            let tm = appData.ajustes.find(a => a.clave === "theme_mode");
-            if (tm) tm.valor = isDarkMode ? 'dark' : 'light';
-            else appData.ajustes.push({ clave: "theme_mode", valor: isDarkMode ? 'dark' : 'light' });
-            
-            saveDataSilent();
-            updateThemeIcon();
-            showToast(isDarkMode ? "🌙 Modo Oscuro Activado" : "☀️ Modo Claro Activado", "info");
-        }
-
-        function updateThemeIcon() {
-            const icon = document.getElementById('theme-icon');
-            if (icon) {
-                icon.className = isDarkMode ? 'fa-solid fa-moon text-sm' : 'fa-solid fa-sun text-sm';
-            }
-        }
-
-        function setupLogoUpload() {
-            const zone = document.getElementById('logo-upload-zone');
-            const input = document.getElementById('logo-input');
-            const preview = document.getElementById('logo-preview');
-            const placeholder = document.getElementById('logo-placeholder-icon');
-            
-            if (!zone || !input) return;
-            
-            zone.addEventListener('click', () => input.click());
-            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('border-orange-500'); });
-            zone.addEventListener('dragleave', () => zone.classList.remove('border-orange-500'));
-            zone.addEventListener('drop', e => {
-                e.preventDefault();
-                zone.classList.remove('border-orange-500');
-                handleLogoFile(e.dataTransfer.files[0]);
-            });
-            input.addEventListener('change', e => handleLogoFile(e.target.files[0]));
-        }
-
-        function handleLogoFile(file) {
-            if (!file || !file.type.startsWith('image/')) { showToast('❌ Solo imágenes válidas', 'error'); return; }
-            if (file.size > 2 * 1024 * 1024) { showToast('⚠️ Máximo 2MB', 'warning'); return; }
-            
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const base64 = ev.target.result;
-                let ls = appData.ajustes.find(a => a.clave === "custom_logo");
-                if (ls) ls.valor = base64; else appData.ajustes.push({ clave: "custom_logo", valor: base64 });
-                
-                const preview = document.getElementById('logo-preview');
-                const placeholder = document.getElementById('logo-placeholder-icon');
-                if(preview) { preview.src = base64; preview.classList.remove('hidden'); }
-                if(placeholder) placeholder.classList.add('hidden');
-                
-                applyBranding();
-                saveData();
-                showToast('✅ Logo actualizado', 'success');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function resetLogo() {
-            let ls = appData.ajustes.find(a => a.clave === "custom_logo");
-            if (ls) ls.valor = "";
-            const preview = document.getElementById('logo-preview');
-            const placeholder = document.getElementById('logo-placeholder-icon');
-            if(preview) preview.classList.add('hidden');
-            if(placeholder) placeholder.classList.remove('hidden');
-            applyBranding();
-            saveData();
-            showToast('↩️ Logo restaurado', 'info');
-        }
-
-        function sanitizeConfirmedRecords() {
-            let u = false;
-            appData.jornadas.forEach(j => {
-                if (getJornadaEstado(j) === 'confirmado' && (!j.entrada?.trim() || !j.salida?.trim())) {
-                    j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0;
-                    if (!(j.notas || '').toLowerCase().includes('horario asignado')) 
-                        j.notas = (j.notas || '') + ' ⚠️ Horario asignado automáticamente.';
-                    u = true;
+            // Update Sidebar Links
+            document.querySelectorAll('.nav-link').forEach(b => {
+                b.classList.remove('active', 'text-white', 'bg-white/10');
+                b.classList.add('text-slate-400');
+                if(b.dataset.target === t) {
+                    b.classList.add('active', 'text-white', 'bg-white/10');
+                    b.classList.remove('text-slate-400');
                 }
             });
-            if (u) saveDataSilent();
-        }
 
-        function ensureFullYearData() {
-            const dates = new Set(appData.jornadas.map(j => j.fecha));
-            let n = false, id = Math.max(...appData.jornadas.map(j => j.id), 999) + 1;
-            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
-                if (d.getDay() === 0 || d.getDay() === 6) continue;
-                const ds = d.toISOString().split('T')[0];
-                if (!dates.has(ds)) { 
-                    appData.jornadas.push({ 
-                        id: id++, fecha: ds, entrada: "08:00", salida: "16:00", 
-                        horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", 
-                        notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() 
-                    }); 
-                    n = true; 
-                }
-            }
-            if (n) saveDataSilent();
-        }
-
-        function generateMissingJornadas(existing) {
-            const dates = new Set(existing.map(j => j.fecha));
-            const nj = [];
-            let id = 1000;
-            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
-                if (d.getDay() === 0 || d.getDay() === 6) continue;
-                const ds = d.toISOString().split('T')[0];
-                if (!dates.has(ds)) 
-                    nj.push({ 
-                        id: id++, fecha: ds, entrada: "08:00", salida: "16:00", 
-                        horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", 
-                        notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() 
-                    });
-            }
-            return nj;
-        }
-
-        function generateMonthlyPayrolls() {
-            const nrs = appData.ajustes.find(a => a.clave === "hora_normal_euros");
-            const nr = nrs ? parseFloat(nrs.valor) : 12.50;
-            const mg = {};
-            
-            appData.jornadas.forEach(j => {
-                const key = j.fecha.substring(0, 7);
-                if (!mg[key]) mg[key] = { totalNormalHours: 0, totalExtraHours: 0, daysCount: 0 };
-                mg[key].totalNormalHours += parseFloat(j.horas_normales || 0);
-                mg[key].totalExtraHours += parseFloat(j.horas_extra || 0);
-                mg[key].daysCount++;
+            // Update Mobile Buttons
+            document.querySelectorAll('.nav-btn-mobile').forEach(b => {
+                b.classList.remove('active');
+                if(b.dataset.target === t) b.classList.add('active');
             });
             
-            Object.keys(mg).sort().forEach(mk => {
-                const g = mg[mk];
-                const pa = parseFloat((g.totalNormalHours * nr).toFixed(2));
-                const ml = new Date(mk + '-01').toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-                
-                const ei = appData.pagos.findIndex(p => p.tipo === 'nomina_auto' && p.mes_key === mk);
-                
-                if (ei >= 0) {
-                    if (appData.pagos[ei].importe !== pa && !appData.pagos[ei].confirmado) { 
-                        appData.pagos[ei].importe = pa; 
-                        appData.pagos[ei].actualizado = new Date().toISOString(); 
-                    }
-                } else {
-                    appData.pagos.push({
-                        id: Date.now() + Math.random(),
-                        fecha: mk + '-28',
-                        concepto: `Nómina ${ml}`,
-                        importe: pa,
-                        tipo: 'nomina_auto',
-                        mes_key: mk,
-                        confirmado: false,
-                        horas_normales_mes: g.totalNormalHours,
-                        dias_laborables: g.daysCount,
-                        created: new Date().toISOString()
-                    });
-                }
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            
+            if (t === 'dashboard') setTimeout(() => { 
+                renderDashboardNew(); 
+                renderExecutiveDashboard(); 
+                renderChartFixed(); 
+            }, 100); 
+        }
+
+        function setFilter(f) { 
+            currentFilter = f; 
+            document.querySelectorAll('.filter-pill').forEach(b => {
+                b.classList.toggle('active', b.dataset.filter === f);
+                b.classList.toggle('bg-brand-500', b.dataset.filter === f);
+                b.classList.toggle('text-white', b.dataset.filter === f);
+                b.classList.toggle('border-brand-500', b.dataset.filter === f);
+                b.classList.toggle('bg-white/5', b.dataset.filter !== f);
+                b.classList.toggle('text-slate-300', b.dataset.filter !== f);
+                b.classList.toggle('border-white/10', b.dataset.filter !== f);
             });
-            saveDataSilent();
-        }
-
-        function regeneratePayrolls() { 
-            appData.pagos = appData.pagos.filter(p => !(p.tipo === 'nomina_auto' && !p.confirmado)); 
-            generateMonthlyPayrolls(); 
-            saveData(); 
-            showToast('✅ Nóminas recalculadas (manuales conservadas)', 'success'); 
-        }
-
-        function deleteCurrentRecord() {
-            if (!editingId) return;
-            if (!confirm('⚠️ ¿Eliminar definitivamente este registro?')) return;
-            
-            if (currentModalType === 'edit_jornada') {
-                appData.jornadas = appData.jornadas.filter(j => j.id !== editingId);
-                showToast('🗑️ Jornada eliminada', 'success');
-            } else if (currentModalType === 'payroll_delete') {
-                appData.pagos = appData.pagos.filter(p => p.id !== editingId);
-                showToast('🗑️ Nómina eliminada', 'success');
-            } else if (currentModalType === 'trip_delete') {
-                appData.viajes = appData.viajes.filter(v => v.id !== editingId);
-                showToast('🗑️ Viaje eliminado', 'success');
-            }
-            
-            closeModal();
-            saveData();
+            renderJornadas(); 
         }
 
         function saveData() { 
@@ -882,10 +816,9 @@
 
         function updateDateAndClock() { 
             const n = new Date(); 
-            document.getElementById('current-date').innerText = n.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }); 
             const t = n.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); 
-            document.getElementById('live-clock').innerText = t; 
-            document.getElementById('live-clock-big').innerText = t; 
+            const headerClock = document.getElementById('live-clock-header');
+            if(headerClock) headerClock.innerText = t;
         }
 
         function getJornadaEstado(j) { 
@@ -895,47 +828,6 @@
             if (n.includes('[confirmado]') || n.includes('[revisado]')) return 'confirmado'; 
             if (n.includes('provisional') || n.includes('orientativa')) return 'provisional'; 
             return 'confirmado'; 
-        }
-
-        function setFilter(f) { 
-            currentFilter = f; 
-            document.querySelectorAll('.filter-pill').forEach(b => {
-                b.classList.toggle('active', b.dataset.filter === f);
-                b.classList.toggle('bg-orange-500', b.dataset.filter === f);
-                b.classList.toggle('text-white', b.dataset.filter === f);
-                b.classList.toggle('border-orange-500', b.dataset.filter === f);
-                b.classList.toggle('bg-white/5', b.dataset.filter !== f);
-                b.classList.toggle('text-slate-300', b.dataset.filter !== f);
-                b.classList.toggle('border-white/10', b.dataset.filter !== f);
-            });
-            renderJornadas(); 
-        }
-
-        function switchTab(t) { 
-            document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
-            document.getElementById(`content-${t}`).classList.remove('hidden'); 
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); 
-            document.querySelector(`.nav-item[data-tab="${t}"]`).classList.add('active'); 
-            window.scrollTo({ top: 0, behavior: 'smooth' }); 
-            
-            if (t === 'dashboard') setTimeout(() => { 
-                renderDashboardNew(); 
-                renderExecutiveDashboard(); 
-                renderChartFixed(); 
-            }, 100); 
-        }
-
-        function closeModal() { document.getElementById('generic-modal').classList.add('hidden'); editingId = null; }
-        
-        function showToast(m, t = 'success') { 
-            const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon'), msg = document.getElementById('toast-message'); 
-            msg.innerText = m; 
-            icon.className = t === 'success' ? 'fa-solid fa-circle-check text-green-500 text-lg' : 
-                             t === 'warning' ? 'fa-solid fa-triangle-exclamation text-yellow-500 text-lg' : 
-                             t === 'error' ? 'fa-solid fa-circle-xmark text-red-500 text-lg' : 
-                             'fa-solid fa-circle-info text-blue-500 text-lg'; 
-            toast.classList.remove('hidden'); 
-            setTimeout(() => toast.classList.add('hidden'), 3000); 
         }
 
         function renderDashboardNew() {
@@ -970,7 +862,7 @@
             const rp = [...appData.pagos].filter(p => p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual').sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).slice(0, 3);
             
             if (rp.length === 0) { 
-                sc.innerHTML = '<div class="text-center py-8 opacity-50 text-sm"><i class="fa-solid fa-folder-open text-2xl mb-2 block"></i>No hay nóminas generadas todavía.</div>'; 
+                sc.innerHTML = '<div class="text-center py-8 text-slate-500 text-sm"><i class="fa-solid fa-folder-open text-2xl mb-2 block opacity-50"></i>No hay nóminas generadas todavía.</div>'; 
                 return; 
             }
             
@@ -982,14 +874,14 @@
                 sc.innerHTML += `
                     <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl border-l-4 ${ic ? 'border-emerald-500' : 'border-purple-500'} hover:bg-white/10 transition cursor-default">
                         <div>
-                            <p class="text-sm font-bold">${p.concepto}</p>
-                            <p class="text-[10px] mt-1 opacity-70">
+                            <p class="text-sm font-bold text-white">${p.concepto}</p>
+                            <p class="text-[10px] text-slate-400 mt-1">
                                 <i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}
                                 ${p.dias_laborables ? ` • ${p.dias_laborables} días laborables` : ''}
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-lg font-mono font-bold">${formatMoney(parseFloat(p.importe))}</p>
+                            <p class="text-lg font-mono font-bold text-white">${formatMoney(parseFloat(p.importe))}</p>
                             <span class="status-badge ${statusClass} mt-1 inline-block">${statusText}</span>
                         </div>
                     </div>
@@ -1030,7 +922,7 @@
             
             if (executiveChartInstance) executiveChartInstance.destroy();
             
-            const pc = getComputedStyle(document.documentElement).getPropertyValue('--app-primary').trim() || '#f97316';
+            const pc = getComputedStyle(document.documentElement).getPropertyValue('--brand-500').trim() || '#f97316';
             
             executiveChartInstance = new Chart(ctx, { 
                 type: 'doughnut', 
@@ -1125,23 +1017,23 @@
                 const hr = (j.entrada && j.salida && j.entrada.trim()) ? `${j.entrada.trim()} - ${j.salida.trim()}` : "Sin ficha"; 
                 
                 cc.innerHTML += `
-                    <div class="glass-panel p-4 mobile-only">
+                    <div class="premium-card p-4 mobile-only">
                         <div class="flex justify-between items-start mb-3">
                             <div>
-                                <p class="font-bold text-lg">${new Date(j.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</p>
-                                <p class="text-xs capitalize opacity-70">${new Date(j.fecha).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
+                                <p class="font-bold text-white text-lg">${new Date(j.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</p>
+                                <p class="text-xs text-slate-400 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
                             </div>
                             <span class="status-badge ${bc}">${bt}</span>
                         </div>
-                        <div class="flex items-center justify-between text-sm bg-black/20 p-3 rounded-lg mb-3 light-mode-bg-adjust">
-                            <span class="flex items-center gap-2"><i class="fa-regular fa-clock opacity-50"></i>${hr}</span>
-                            <span class="font-mono font-bold ${j.horas_extra > 0 ? 'text-orange-400' : 'opacity-50'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span>
+                        <div class="flex items-center justify-between text-sm bg-black/20 p-3 rounded-lg mb-3">
+                            <span class="text-slate-300 flex items-center gap-2"><i class="fa-regular fa-clock text-slate-500"></i>${hr}</span>
+                            <span class="font-mono font-bold ${j.horas_extra > 0 ? 'text-brand-500' : 'text-slate-500'}">${j.horas_extra > 0 ? '+' + j.horas_extra + 'h' : '—'}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="openExtraModal(${j.id})" class="btn-action btn-purple w-full py-2 rounded-lg text-xs font-bold text-white flex items-center justify-center gap-1">
+                            <button onclick="openExtraModal(${j.id})" class="btn-action btn-purple w-full py-2 rounded-lg text-xs font-bold text-white flex items-center justify-center gap-1 bg-violet-600 hover:bg-violet-500 shadow-lg shadow-violet-900/20 transition-all">
                                 <i class="fa-solid fa-plus"></i> Extra
                             </button>
-                            <button onclick="openEditModal(${j.id})" class="btn-action btn-edit w-full py-2 rounded-lg text-xs font-bold text-slate-300 bg-white/5 border border-white/10 flex items-center justify-center gap-1">
+                            <button onclick="openEditModal(${j.id})" class="btn-action btn-edit w-full py-2 rounded-lg text-xs font-bold text-slate-300 bg-white/5 border border-white/10 flex items-center justify-center gap-1 hover:bg-white/10 transition-all">
                                 <i class="fa-solid fa-pen"></i> Editar
                             </button>
                         </div>
@@ -1160,15 +1052,15 @@
                 tb.innerHTML += `
                     <tr class="hover:bg-white/[0.03] transition">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-bold">${new Date(j.fecha).toLocaleDateString('es-ES')}</div>
-                            <div class="text-xs capitalize opacity-70">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div>
+                            <div class="text-sm font-bold text-white">${new Date(j.fecha).toLocaleDateString('es-ES')}</div>
+                            <div class="text-xs text-slate-400 capitalize">${new Date(j.fecha).toLocaleDateString('es-ES', {weekday:'short'})}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono">${hr}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-mono opacity-70">${j.horas_normales}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-bold font-mono ${j.horas_extra > 0 ? 'text-orange-400' : 'opacity-50'}">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300 font-mono">${hr}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-slate-400 font-mono">${j.horas_normales}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-bold font-mono ${j.horas_extra > 0 ? 'text-brand-500' : 'text-slate-600'}">${j.horas_extra > 0 ? '+' + j.horas_extra : '—'}</td>
                         <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge ${bc}">${bt}</span></td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button onclick="openExtraModal(${j.id})" class="text-white bg-orange-600 hover:bg-orange-500 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm mr-2"><i class="fa-solid fa-plus"></i></button>
+                            <button onclick="openExtraModal(${j.id})" class="text-white bg-violet-600 hover:bg-violet-500 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm mr-2"><i class="fa-solid fa-plus"></i></button>
                             <button onclick="openEditModal(${j.id})" class="text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg text-xs font-bold transition border border-white/10"><i class="fa-solid fa-pen"></i></button>
                         </td>
                     </tr>
@@ -1182,29 +1074,29 @@
             const s = [...appData.viajes].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
             
             if (!s.length) { 
-                l.innerHTML = '<div class="glass-panel p-12 text-center"><i class="fa-solid fa-route text-4xl opacity-50 mb-4"></i><p class="opacity-70 font-medium">No hay viajes registrados.</p></div>'; 
+                l.innerHTML = '<div class="premium-card p-12 text-center"><i class="fa-solid fa-route text-4xl text-slate-600 mb-4"></i><p class="text-slate-400 font-medium">No hay viajes registrados.</p></div>'; 
                 return; 
             }
             
             s.forEach(v => { 
                 const p = v.pagado === 1; 
                 l.innerHTML += `
-                    <div class="glass-panel p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-l-4 ${p ? 'border-emerald-500' : 'border-red-500'}">
+                    <div class="premium-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-l-4 ${p ? 'border-emerald-500' : 'border-red-500'}">
                         <div>
-                            <p class="font-bold text-lg">${v.concepto}</p>
-                            <p class="text-xs mt-1 flex items-center gap-2 opacity-70">
+                            <p class="font-bold text-white text-lg">${v.concepto}</p>
+                            <p class="text-xs text-slate-400 mt-1 flex items-center gap-2">
                                 <i class="fa-regular fa-calendar"></i>${new Date(v.fecha).toLocaleDateString('es-ES')}
-                                ${v.notas ? `<span class="opacity-50">• ${v.notas}</span>` : ''}
+                                ${v.notas ? `<span class="text-slate-500">• ${v.notas}</span>` : ''}
                             </p>
                         </div>
                         <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-                            <p class="text-2xl font-mono font-bold">${formatMoney(parseFloat(v.importe))}</p>
+                            <p class="text-2xl font-mono font-bold text-white">${formatMoney(parseFloat(v.importe))}</p>
                             <div class="flex gap-2">
                                 ${p ? 
                                     `<span class="status-badge badge-paid"><i class="fa-solid fa-check"></i> Cobrado</span>` : 
-                                    `<button onclick="markTripPaid(${v.id})" class="btn-action btn-primary px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md">Marcar Cobrado</button>`
+                                    `<button onclick="markTripPaid(${v.id})" class="btn-action btn-primary px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md bg-brand-600 hover:bg-brand-500 transition-all">Marcar Cobrado</button>`
                                 }
-                                <button onclick="deleteTrip(${v.id})" class="btn-action btn-danger px-3 py-2 rounded-lg text-xs font-bold text-white shadow-md"><i class="fa-solid fa-trash-can"></i></button>
+                                <button onclick="deleteTrip(${v.id})" class="btn-action btn-danger px-3 py-2 rounded-lg text-xs font-bold text-white shadow-md bg-red-600 hover:bg-red-500 transition-all"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1228,7 +1120,7 @@
             const ps = [...appData.pagos].filter(p => p.tipo === 'nomina_auto' || p.tipo === 'nomina_mensual').sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
             
             if (ps.length === 0) { 
-                pl.innerHTML = '<div class="text-center py-6 opacity-50 text-sm">Genera jornadas y pulsa "Recalcular".</div>'; 
+                pl.innerHTML = '<div class="text-center py-6 text-slate-500 text-sm">Genera jornadas y pulsa "Recalcular".</div>'; 
             } else { 
                 ps.forEach(p => { 
                     const ia = p.tipo === 'nomina_auto', ic = p.confirmado === true; 
@@ -1238,8 +1130,8 @@
                     pl.innerHTML += `
                         <div class="bg-white/5 rounded-xl p-4 border-l-4 ${ic ? 'border-emerald-500' : 'border-purple-500'} flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-white/[0.08] transition">
                             <div>
-                                <p class="font-bold text-base">${p.concepto}</p>
-                                <p class="text-xs mt-1 opacity-70">
+                                <p class="font-bold text-white text-base">${p.concepto}</p>
+                                <p class="text-xs text-slate-400 mt-1">
                                     <i class="fa-regular fa-calendar mr-1"></i>${new Date(p.fecha).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
                                     ${ia && p.horas_normales_mes ? ` • ${p.horas_normales_mes}h (${p.dias_laborables} días)` : ''}
                                     ${p.manual_edit ? ' • Editada manualmente' : ''}
@@ -1247,13 +1139,13 @@
                             </div>
                             <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                                 <div class="text-right">
-                                    <p class="text-xl font-mono font-bold">${formatMoney(parseFloat(p.importe))}</p>
+                                    <p class="text-xl font-mono font-bold text-white">${formatMoney(parseFloat(p.importe))}</p>
                                     <span class="status-badge ${bc} mt-1 inline-block">${bt}</span>
                                 </div>
                                 <div class="flex gap-2">
                                     ${ic ? 
                                         `<button onclick="unconfirmPayroll(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition"><i class="fa-solid fa-undo"></i></button>` : 
-                                        `<button onclick="confirmPayroll(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg btn-blue text-white shadow-md"><i class="fa-solid fa-check"></i> Confirmar</button>`
+                                        `<button onclick="confirmPayroll(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg btn-blue text-white shadow-md bg-blue-600 hover:bg-blue-500 transition-all"><i class="fa-solid fa-check"></i> Confirmar</button>`
                                     }
                                     <button onclick="editPayrollAmount(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition"><i class="fa-solid fa-pen"></i></button>
                                     <button onclick="deletePayroll(${p.id})" class="text-xs font-bold px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition"><i class="fa-solid fa-trash-can"></i></button>
@@ -1288,7 +1180,7 @@
             const ej = appData.jornadas.filter(j => j.horas_extra > 0).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
             
             if (ej.length === 0) { 
-                list.innerHTML = '<div class="text-center py-6 opacity-50 text-sm">No hay horas extra registradas.</div>'; 
+                list.innerHTML = '<div class="text-center py-6 text-slate-500 text-sm">No hay horas extra registradas.</div>'; 
                 return; 
             }
             
@@ -1298,15 +1190,15 @@
                 list.innerHTML += `
                     <div class="bg-white/5 rounded-xl p-4 border-l-4 ${ip ? 'border-emerald-500' : 'border-red-500'} flex justify-between items-center hover:bg-white/[0.08] transition">
                         <div>
-                            <p class="font-bold text-sm">${ds}</p>
-                            <p class="text-xs mt-1 opacity-70"><i class="fa-solid fa-clock mr-1"></i>+${j.horas_extra}h extra • ${formatMoney(val)}</p>
+                            <p class="font-bold text-white text-sm">${ds}</p>
+                            <p class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-clock mr-1"></i>+${j.horas_extra}h extra • ${formatMoney(val)}</p>
                             ${ip && j.fecha_pago_extras ? `<p class="text-[10px] text-emerald-400 mt-1"><i class="fa-solid fa-check-circle mr-1"></i>Pagado el ${new Date(j.fecha_pago_extras).toLocaleDateString('es-ES')}</p>` : ''}
                         </div>
                         <div class="text-right">
                             <span class="status-badge ${ip ? 'badge-paid' : 'badge-pending'} mb-2 block">${ip ? 'PAGADO' : 'PENDIENTE'}</span>
                             ${ip ? 
                                 `<button onclick="markExtrasUnpaid(${j.id})" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition">Deshacer</button>` : 
-                                `<button onclick="markExtrasPaid(${j.id})" class="text-xs font-bold px-3 py-1.5 rounded-lg btn-mark-paid text-white shadow-md">Marcar Pagado</button>`
+                                `<button onclick="markExtrasPaid(${j.id})" class="text-xs font-bold px-3 py-1.5 rounded-lg btn-mark-paid text-white shadow-md bg-emerald-600 hover:bg-emerald-500 transition-all">Marcar Pagado</button>`
                             }
                         </div>
                     </div>
@@ -1326,9 +1218,9 @@
             const j = appData.jornadas.find(x => x.fecha === t); 
             const s = document.getElementById('today-status'); 
             
-            if (!j) s.innerHTML = '<span class="opacity-50"><i class="fa-regular fa-circle mr-1"></i>Sin actividad registrada hoy</span>'; 
+            if (!j) s.innerHTML = '<span class="text-slate-500"><i class="fa-regular fa-circle mr-1"></i>Sin actividad registrada hoy</span>'; 
             else if (!j.salida?.trim()) s.innerHTML = `<span class="text-emerald-400 font-semibold flex items-center gap-2"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i>Trabajando desde las ${j.entrada}</span>`; 
-            else s.innerHTML = '<span class="text-emerald-400 font-semibold flex items-center gap-2"><i class="fa-solid fa-circle-check"></i>Jornada completada correctamente</span>'; 
+            else s.innerHTML = '<span class="text-slate-400 font-semibold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i>Jornada completada correctamente</span>'; 
         }
 
         function renderConfig() { 
@@ -1395,15 +1287,15 @@
             document.getElementById('modal-title').innerText = `Añadir Horas Extra`; 
             document.getElementById('modal-delete-btn').classList.add('hidden');
             document.getElementById('modal-content').innerHTML = `
-                <div class="bg-black/20 p-3 rounded-lg mb-4 light-mode-bg-adjust">
-                    <p class="text-xs uppercase font-bold mb-1 opacity-70">Jornada Seleccionada</p>
-                    <p class="font-bold">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'})}</p>
-                    <p class="text-xs mt-1 opacity-70">Actuales: <strong class="text-orange-400">${j.horas_extra}h</strong></p>
+                <div class="bg-black/20 p-3 rounded-lg mb-4">
+                    <p class="text-xs text-slate-400 uppercase font-bold mb-1">Jornada Seleccionada</p>
+                    <p class="text-white font-bold">${new Date(j.fecha).toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'})}</p>
+                    <p class="text-xs text-slate-500 mt-1">Actuales: <strong class="text-brand-500">${j.horas_extra}h</strong></p>
                 </div>
-                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Cantidad a Añadir (h)</label>
-                <input type="number" step="0.25" id="m-extra-hours" placeholder="Ej: 1.5" class="input-modern w-full text-lg font-mono mb-4">
-                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Nota / Concepto (Opcional)</label>
-                <textarea id="m-extra-note" placeholder="Motivo de las horas extra..." class="input-modern w-full" rows="3"></textarea>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Cantidad a Añadir (h)</label>
+                <input type="number" step="0.25" id="m-extra-hours" placeholder="Ej: 1.5" class="input-modern w-full text-lg font-mono mb-4 bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Nota / Concepto (Opcional)</label>
+                <textarea id="m-extra-note" placeholder="Motivo de las horas extra..." class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all" rows="3"></textarea>
             `; 
             document.getElementById('generic-modal').classList.remove('hidden'); 
         }
@@ -1417,26 +1309,26 @@
             document.getElementById('modal-content').innerHTML = `
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Entrada</label>
-                        <input type="time" id="m-entrada" value="${j.entrada || ''}" class="input-modern w-full font-mono">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Entrada</label>
+                        <input type="time" id="m-entrada" value="${j.entrada || ''}" class="input-modern w-full font-mono bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Salida</label>
-                        <input type="time" id="m-salida" value="${j.salida || ''}" class="input-modern w-full font-mono">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Salida</label>
+                        <input type="time" id="m-salida" value="${j.salida || ''}" class="input-modern w-full font-mono bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">H. Normales</label>
-                        <input type="number" step="0.5" id="m-normales" value="${j.horas_normales}" class="input-modern w-full font-mono">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">H. Normales</label>
+                        <input type="number" step="0.5" id="m-normales" value="${j.horas_normales}" class="input-modern w-full font-mono bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">H. Extra</label>
-                        <input type="number" step="0.25" id="m-extra" value="${j.horas_extra}" class="input-modern w-full font-mono text-orange-400 font-bold">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">H. Extra</label>
+                        <input type="number" step="0.25" id="m-extra" value="${j.horas_extra}" class="input-modern w-full font-mono text-brand-500 font-bold bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                     </div>
                 </div>
-                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Notas Internas</label>
-                <textarea id="m-notas" class="input-modern w-full" rows="3">${j.notas || ''}</textarea>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Notas Internas</label>
+                <textarea id="m-notas" class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all" rows="3">${j.notas || ''}</textarea>
             `; 
             document.getElementById('generic-modal').classList.remove('hidden'); 
         }
@@ -1492,16 +1384,16 @@
             document.getElementById('modal-delete-btn').classList.add('hidden');
             document.getElementById('modal-title').innerText = 'Registrar Nuevo Viaje'; 
             document.getElementById('modal-content').innerHTML = `
-                <label class="block text-xs font-bold uppercase mb-2 opacity-70">Concepto / Destino</label>
-                <input type="text" id="m-concepto" placeholder="Ej: Visita cliente Madrid Norte" class="input-modern w-full mb-4">
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Concepto / Destino</label>
+                <input type="text" id="m-concepto" placeholder="Ej: Visita cliente Madrid Norte" class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all mb-4">
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Fecha</label>
-                        <input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-modern w-full">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Fecha</label>
+                        <input type="date" id="m-fecha" value="${new Date().toISOString().split('T')[0]}" class="input-modern w-full bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase mb-2 opacity-70">Importe (€)</label>
-                        <input type="number" step="0.01" id="m-importe" placeholder="0.00" class="input-modern w-full font-mono">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Importe (€)</label>
+                        <input type="number" step="0.01" id="m-importe" placeholder="0.00" class="input-modern w-full font-mono bg-black/20 border-white/10 rounded-lg px-4 py-3 text-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all">
                     </div>
                 </div>
             `; 
@@ -1558,6 +1450,13 @@
             } 
         }
 
+        function regeneratePayrolls() { 
+            appData.pagos = appData.pagos.filter(p => !(p.tipo === 'nomina_auto' && !p.confirmado)); 
+            generateMonthlyPayrolls(); 
+            saveData(); 
+            showToast('✅ Nóminas recalculadas (manuales conservadas)', 'success'); 
+        }
+
         function confirmPayroll(id) { 
             const p = appData.pagos.find(x => x.id === id); 
             if (p) { 
@@ -1590,12 +1489,337 @@
             } 
         }
 
+        function deleteCurrentRecord() {
+            if (!editingId) return;
+            if (!confirm('⚠️ ¿Eliminar definitivamente este registro?')) return;
+            
+            if (currentModalType === 'edit_jornada') {
+                appData.jornadas = appData.jornadas.filter(j => j.id !== editingId);
+                showToast('🗑️ Jornada eliminada', 'success');
+            } else if (currentModalType === 'payroll_delete') {
+                appData.pagos = appData.pagos.filter(p => p.id !== editingId);
+                showToast('🗑️ Nómina eliminada', 'success');
+            } else if (currentModalType === 'trip_delete') {
+                appData.viajes = appData.viajes.filter(v => v.id !== editingId);
+                showToast('🗑️ Viaje eliminado', 'success');
+            }
+            
+            closeModal();
+            saveData();
+        }
+
+        function sanitizeConfirmedRecords() {
+            let u = false;
+            appData.jornadas.forEach(j => {
+                if (getJornadaEstado(j) === 'confirmado' && (!j.entrada?.trim() || !j.salida?.trim())) {
+                    j.entrada = "08:00"; j.salida = "16:00"; j.horas_normales = 8.0;
+                    if (!(j.notas || '').toLowerCase().includes('horario asignado')) 
+                        j.notas = (j.notas || '') + ' ⚠️ Horario asignado automáticamente.';
+                    u = true;
+                }
+            });
+            if (u) saveDataSilent();
+        }
+
+        function ensureFullYearData() {
+            const dates = new Set(appData.jornadas.map(j => j.fecha));
+            let n = false, id = Math.max(...appData.jornadas.map(j => j.id), 999) + 1;
+            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
+                if (d.getDay() === 0 || d.getDay() === 6) continue;
+                const ds = d.toISOString().split('T')[0];
+                if (!dates.has(ds)) { 
+                    appData.jornadas.push({ 
+                        id: id++, fecha: ds, entrada: "08:00", salida: "16:00", 
+                        horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", 
+                        notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() 
+                    }); 
+                    n = true; 
+                }
+            }
+            if (n) saveDataSilent();
+        }
+
+        function generateMissingJornadas(existing) {
+            const dates = new Set(existing.map(j => j.fecha));
+            const nj = [];
+            let id = 1000;
+            for (let d = new Date('2026-01-01'); d <= new Date(); d.setDate(d.getDate() + 1)) {
+                if (d.getDay() === 0 || d.getDay() === 6) continue;
+                const ds = d.toISOString().split('T')[0];
+                if (!dates.has(ds)) 
+                    nj.push({ 
+                        id: id++, fecha: ds, entrada: "08:00", salida: "16:00", 
+                        horas_normales: 8.0, horas_extra: 0.0, estado: "confirmado", 
+                        notas: "[CONFIRMADO] Jornada estándar.", creado: d.toISOString() 
+                    });
+            }
+            return nj;
+        }
+
+        function generateMonthlyPayrolls() {
+            const nrs = appData.ajustes.find(a => a.clave === "hora_normal_euros");
+            const nr = nrs ? parseFloat(nrs.valor) : 12.50;
+            const mg = {};
+            
+            appData.jornadas.forEach(j => {
+                const key = j.fecha.substring(0, 7);
+                if (!mg[key]) mg[key] = { totalNormalHours: 0, totalExtraHours: 0, daysCount: 0 };
+                mg[key].totalNormalHours += parseFloat(j.horas_normales || 0);
+                mg[key].totalExtraHours += parseFloat(j.horas_extra || 0);
+                mg[key].daysCount++;
+            });
+            
+            Object.keys(mg).sort().forEach(mk => {
+                const g = mg[mk];
+                const pa = parseFloat((g.totalNormalHours * nr).toFixed(2));
+                const ml = new Date(mk + '-01').toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+                
+                const ei = appData.pagos.findIndex(p => p.tipo === 'nomina_auto' && p.mes_key === mk);
+                
+                if (ei >= 0) {
+                    if (appData.pagos[ei].importe !== pa && !appData.pagos[ei].confirmado) { 
+                        appData.pagos[ei].importe = pa; 
+                        appData.pagos[ei].actualizado = new Date().toISOString(); 
+                    }
+                } else {
+                    appData.pagos.push({
+                        id: Date.now() + Math.random(),
+                        fecha: mk + '-28',
+                        concepto: `Nómina ${ml}`,
+                        importe: pa,
+                        tipo: 'nomina_auto',
+                        mes_key: mk,
+                        confirmado: false,
+                        horas_normales_mes: g.totalNormalHours,
+                        dias_laborables: g.daysCount,
+                        created: new Date().toISOString()
+                    });
+                }
+            });
+            saveDataSilent();
+        }
+
+        function setupLogoUpload() {
+            const zone = document.getElementById('logo-upload-zone');
+            const input = document.getElementById('logo-input');
+            const preview = document.getElementById('logo-preview');
+            const placeholder = document.getElementById('logo-placeholder-icon');
+            
+            if (!zone || !input) return;
+            
+            zone.addEventListener('click', () => input.click());
+            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('border-brand-500'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('border-brand-500'));
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('border-brand-500');
+                handleLogoFile(e.dataTransfer.files[0]);
+            });
+            input.addEventListener('change', e => handleLogoFile(e.target.files[0]));
+        }
+
+        function handleLogoFile(file) {
+            if (!file || !file.type.startsWith('image/')) { showToast('❌ Solo imágenes válidas', 'error'); return; }
+            if (file.size > 2 * 1024 * 1024) { showToast('⚠️ Máximo 2MB', 'warning'); return; }
+            
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const base64 = ev.target.result;
+                let ls = appData.ajustes.find(a => a.clave === "custom_logo");
+                if (ls) ls.valor = base64; else appData.ajustes.push({ clave: "custom_logo", valor: base64 });
+                
+                const preview = document.getElementById('logo-preview');
+                const placeholder = document.getElementById('logo-placeholder-icon');
+                if(preview) { preview.src = base64; preview.classList.remove('hidden'); }
+                if(placeholder) placeholder.classList.add('hidden');
+                
+                applyBranding();
+                saveData();
+                showToast('✅ Logo actualizado', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetLogo() {
+            let ls = appData.ajustes.find(a => a.clave === "custom_logo");
+            if (ls) ls.valor = "";
+            const preview = document.getElementById('logo-preview');
+            const placeholder = document.getElementById('logo-placeholder-icon');
+            if(preview) preview.classList.add('hidden');
+            if(placeholder) placeholder.classList.remove('hidden');
+            applyBranding();
+            saveData();
+            showToast('↩️ Logo restaurado', 'info');
+        }
+
+        function requestNotificationPermission() { 
+            if (!("Notification" in window)) { 
+                showToast('❌ Tu navegador no soporta notificaciones nativas', 'error'); 
+                return; 
+            } 
+            Notification.requestPermission().then(permission => { 
+                if (permission === "granted") { 
+                    showToast('✅ Permisos de notificación concedidos', 'success'); 
+                    scheduleNotifications(); 
+                } else showToast('⚠️ Permiso denegado por el usuario', 'warning'); 
+            }); 
+        }
+
+        function sendNotification(title, body) { 
+            if ("Notification" in window && Notification.permission === "granted") 
+                new Notification(title, { body, icon: '/favicon.ico' }); 
+        }
+
+        function scheduleNotifications() { 
+            if (!("Notification" in window) || Notification.permission !== "granted") return; 
+            setInterval(() => {
+                const now = new Date();
+                const hours = now.getHours();
+                const mins = now.getMinutes();
+                
+                if (hours === 8 && mins === 0) {
+                    const tj = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]);
+                    if (!tj || !tj.entrada?.trim()) sendNotification("⏰ Recordatorio Matutino", "Son las 08:00. ¿Has registrado tu entrada laboral?");
+                }
+                
+                if (hours === 16 && mins === 0) {
+                    const tj = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]);
+                    if (tj && tj.entrada?.trim() && !tj.salida?.trim()) sendNotification("⏰ Recordatorio Vespertino", "Son las 16:00. Recuerda cerrar tu jornada registrando la salida.");
+                }
+            }, 60000);
+        }
+
+        function setupOfflineDetection() { 
+            const ind = document.getElementById('offline-indicator'); 
+            window.addEventListener('online', () => { 
+                ind.classList.remove('-translate-y-full'); 
+                processOfflineQueue(); 
+                showToast('🟢 Conexión a internet restablecida', 'success'); 
+            }); 
+            window.addEventListener('offline', () => { 
+                ind.classList.add('-translate-y-full'); 
+                showToast('🔴 Modo Offline activo. Los cambios se guardan localmente.', 'warning'); 
+            }); 
+            if (!navigator.onLine) ind.classList.add('-translate-y-full'); 
+        }
+
+        function processOfflineQueue() { 
+            if (offlineQueue.length === 0) return; 
+            offlineQueue = []; 
+            showToast('✅ Cola de sincronización procesada', 'success'); 
+        }
+
+        function registerSW() { 
+            if ('serviceWorker' in navigator) { 
+                const swCode = `const CACHE_NAME='ivory37-premium-v1';self.addEventListener("install",e=>{e.waitUntil(self.skipWaiting())});self.addEventListener("activate",e=>{e.waitUntil(self.clients.claim())});self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
+                navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }))).catch(err => console.warn('SW Registration failed:', err)); 
+            } 
+        }
+
+        function exportJSON() { 
+            const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2)); 
+            const l = document.createElement('a'); 
+            l.href = d; 
+            l.download = `backup_ivory37_${new Date().toISOString().slice(0,10)}.json`; 
+            document.body.appendChild(l); 
+            l.click(); 
+            document.body.removeChild(l); 
+            showToast('💾 Copia de seguridad descargada', 'success'); 
+        }
+
+        function importJSON(e) { 
+            const f = e.target.files[0]; 
+            if (!f) return; 
+            const r = new FileReader(); 
+            r.onload = function(ev) { 
+                try { 
+                    const imp = JSON.parse(ev.target.result); 
+                    if (imp.jornadas && imp.viajes && imp.ajustes) { 
+                        appData = imp; 
+                        sanitizeConfirmedRecords(); 
+                        ensureFullYearData(); 
+                        generateMonthlyPayrolls(); 
+                        applyBranding(); 
+                        saveData(); 
+                        showToast('✅ Datos restaurados exitosamente', 'success'); 
+                        setTimeout(() => location.reload(), 1000); 
+                    } else showToast('❌ Estructura de archivo JSON inválida', 'error'); 
+                } catch { 
+                    showToast('❌ Error crítico al leer el archivo', 'error'); 
+                } 
+            }; 
+            r.readAsText(f); 
+            e.target.value = ''; 
+        }
+
+        function exportCSV() { 
+            const h = ["ID","Fecha","Entrada","Salida","H_Normales","H_Extra","Estado","Notas"]; 
+            const r = appData.jornadas.map(j => [ 
+                j.id, j.fecha, j.entrada || '', j.salida || '', 
+                j.horas_normales, j.horas_extra, 
+                getJornadaEstado(j), `"${(j.notas || '').replace(/"/g, '""')}"`
+            ]); 
+            const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); 
+            const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); 
+            const l = document.createElement("a"); 
+            l.href = URL.createObjectURL(b); 
+            l.download = `datos_jornadas_${new Date().toISOString().slice(0,10)}.csv`; 
+            document.body.appendChild(l); 
+            l.click(); 
+            document.body.removeChild(l); 
+            showToast('📊 Exportación CSV completada', 'success'); 
+        }
+
+        function resetToFactory() { 
+            if (confirm('⚠️ ADVERTENCIA: Esto borrará TODOS tus datos locales permanentemente.\n\n¿Estás absolutamente seguro de continuar?')) { 
+                localStorage.removeItem('ivory37_data_v1'); 
+                location.reload(); 
+            } 
+        }
+
+        function saveConfig() { 
+            const nr = document.getElementById('config-normal-rate').value; 
+            const r = document.getElementById('config-rate').value; 
+            const sc = document.getElementById('config-schedule').value; 
+            const appName = document.getElementById('config-appname').value.trim(); 
+            const appColor = document.getElementById('config-color').value; 
+            
+            if (parseFloat(nr) < 5 || parseFloat(r) < 5) {
+                showToast('⚠️ Las tarifas deben ser al menos 5 €/h', 'warning');
+                return;
+            }
+
+            let nrs = appData.ajustes.find(a => a.clave === "hora_normal_euros"); 
+            if (nrs) nrs.valor = nr; else appData.ajustes.push({ clave: "hora_normal_euros", valor: nr }); 
+            
+            let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); 
+            if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); 
+            
+            let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); 
+            if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc }); 
+            
+            if (appName) { 
+                let ns = appData.ajustes.find(a => a.clave === "app_name"); 
+                if (ns) ns.valor = appName; else appData.ajustes.push({ clave: "app_name", valor: appName }); 
+            } 
+            
+            if (appColor) { 
+                let cs = appData.ajustes.find(a => a.clave === "app_color"); 
+                if (cs) cs.valor = appColor; else appData.ajustes.push({ clave: "app_color", valor: appColor }); 
+            } 
+            
+            applyBranding(); 
+            generateMonthlyPayrolls(); 
+            saveData(); 
+            showToast('✅ Configuración global guardada y aplicada', 'success'); 
+        }
+
         async function generatePDF() { 
             const { jsPDF } = window.jspdf; 
             const doc = new jsPDF(); 
             const now = new Date(); 
             const mn = now.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }); 
-            const an = document.getElementById('app-name').innerText; 
+            const an = document.getElementById('app-name-header').innerText; 
             
             doc.setFillColor('#f97316'); 
             doc.rect(0, 0, 210, 40, 'F'); 
@@ -1670,169 +1894,6 @@
             
             doc.save(`Informe_Laboral_${an}_${mn.replace(' ', '_')}.pdf`); 
             showToast('📄 Informe PDF generado y descargado', 'success'); 
-        }
-
-        function exportJSON() { 
-            const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2)); 
-            const l = document.createElement('a'); 
-            l.href = d; 
-            l.download = `backup_ivory37_${new Date().toISOString().slice(0,10)}.json`; 
-            document.body.appendChild(l); 
-            l.click(); 
-            document.body.removeChild(l); 
-            showToast('💾 Copia de seguridad descargada', 'success'); 
-        }
-
-        function importJSON(e) { 
-            const f = e.target.files[0]; 
-            if (!f) return; 
-            const r = new FileReader(); 
-            r.onload = function(ev) { 
-                try { 
-                    const imp = JSON.parse(ev.target.result); 
-                    if (imp.jornadas && imp.viajes && imp.ajustes) { 
-                        appData = imp; 
-                        sanitizeConfirmedRecords(); 
-                        ensureFullYearData(); 
-                        generateMonthlyPayrolls(); 
-                        applyBranding(); 
-                        saveData(); 
-                        showToast('✅ Datos restaurados exitosamente', 'success'); 
-                        setTimeout(() => location.reload(), 1000); 
-                    } else showToast('❌ Estructura de archivo JSON inválida', 'error'); 
-                } catch { 
-                    showToast('❌ Error crítico al leer el archivo', 'error'); 
-                } 
-            }; 
-            r.readAsText(f); 
-            e.target.value = ''; 
-        }
-
-        function exportCSV() { 
-            const h = ["ID","Fecha","Entrada","Salida","H_Normales","H_Extra","Estado","Notas"]; 
-            const r = appData.jornadas.map(j => [ 
-                j.id, j.fecha, j.entrada || '', j.salida || '', 
-                j.horas_normales, j.horas_extra, 
-                getJornadaEstado(j), `"${(j.notas || '').replace(/"/g, '""')}"`
-            ]); 
-            const c = "\uFEFF" + [h.join(";"), ...r.map(x => x.join(";"))].join("\n"); 
-            const b = new Blob([c], { type: 'text/csv;charset=utf-8;' }); 
-            const l = document.createElement("a"); 
-            l.href = URL.createObjectURL(b); 
-            l.download = `datos_jornadas_${new Date().toISOString().slice(0,10)}.csv`; 
-            document.body.appendChild(l); 
-            l.click(); 
-            document.body.removeChild(l); 
-            showToast('📊 Exportación CSV completada', 'success'); 
-        }
-
-        function resetToFactory() { 
-            if (confirm('⚠️ ADVERTENCIA: Esto borrará TODOS tus datos locales permanentemente.\n\n¿Estás absolutamente seguro de continuar?')) { 
-                localStorage.removeItem('ivory37_data_v1'); 
-                location.reload(); 
-            } 
-        }
-
-        function saveConfig() { 
-            const nr = document.getElementById('config-normal-rate').value; 
-            const r = document.getElementById('config-rate').value; 
-            const sc = document.getElementById('config-schedule').value; 
-            const appName = document.getElementById('config-appname').value.trim(); 
-            const appColor = document.getElementById('config-color').value; 
-            
-            // Validación básica de tarifas mínimas
-            if (parseFloat(nr) < 5 || parseFloat(r) < 5) {
-                showToast('⚠️ Las tarifas deben ser al menos 5 €/h', 'warning');
-                return;
-            }
-
-            let nrs = appData.ajustes.find(a => a.clave === "hora_normal_euros"); 
-            if (nrs) nrs.valor = nr; else appData.ajustes.push({ clave: "hora_normal_euros", valor: nr }); 
-            
-            let rs = appData.ajustes.find(a => a.clave === "hora_extra_euros"); 
-            if (rs) rs.valor = r; else appData.ajustes.push({ clave: "hora_extra_euros", valor: r }); 
-            
-            let ss = appData.ajustes.find(a => a.clave === "horario_habitual"); 
-            if (ss) ss.valor = sc; else appData.ajustes.push({ clave: "horario_habitual", valor: sc }); 
-            
-            if (appName) { 
-                let ns = appData.ajustes.find(a => a.clave === "app_name"); 
-                if (ns) ns.valor = appName; else appData.ajustes.push({ clave: "app_name", valor: appName }); 
-            } 
-            
-            if (appColor) { 
-                let cs = appData.ajustes.find(a => a.clave === "app_color"); 
-                if (cs) cs.valor = appColor; else appData.ajustes.push({ clave: "app_color", valor: appColor }); 
-            } 
-            
-            applyBranding(); 
-            generateMonthlyPayrolls(); 
-            saveData(); 
-            showToast('✅ Configuración global guardada y aplicada', 'success'); 
-        }
-
-        function requestNotificationPermission() { 
-            if (!("Notification" in window)) { 
-                showToast('❌ Tu navegador no soporta notificaciones nativas', 'error'); 
-                return; 
-            } 
-            Notification.requestPermission().then(permission => { 
-                if (permission === "granted") { 
-                    showToast('✅ Permisos de notificación concedidos', 'success'); 
-                    scheduleNotifications(); 
-                } else showToast('⚠️ Permiso denegado por el usuario', 'warning'); 
-            }); 
-        }
-
-        function sendNotification(title, body) { 
-            if ("Notification" in window && Notification.permission === "granted") 
-                new Notification(title, { body, icon: '/favicon.ico' }); 
-        }
-
-        function scheduleNotifications() { 
-            if (!("Notification" in window) || Notification.permission !== "granted") return; 
-            setInterval(() => {
-                const now = new Date();
-                const hours = now.getHours();
-                const mins = now.getMinutes();
-                
-                if (hours === 8 && mins === 0) {
-                    const tj = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]);
-                    if (!tj || !tj.entrada?.trim()) sendNotification("⏰ Recordatorio Matutino", "Son las 08:00. ¿Has registrado tu entrada laboral?");
-                }
-                
-                if (hours === 16 && mins === 0) {
-                    const tj = appData.jornadas.find(j => j.fecha === now.toISOString().split('T')[0]);
-                    if (tj && tj.entrada?.trim() && !tj.salida?.trim()) sendNotification("⏰ Recordatorio Vespertino", "Son las 16:00. Recuerda cerrar tu jornada registrando la salida.");
-                }
-            }, 60000);
-        }
-
-        function setupOfflineDetection() { 
-            const ind = document.getElementById('offline-indicator'); 
-            window.addEventListener('online', () => { 
-                ind.classList.remove('-translate-y-full'); 
-                processOfflineQueue(); 
-                showToast('🟢 Conexión a internet restablecida', 'success'); 
-            }); 
-            window.addEventListener('offline', () => { 
-                ind.classList.add('-translate-y-full'); 
-                showToast('🔴 Modo Offline activo. Los cambios se guardan localmente.', 'warning'); 
-            }); 
-            if (!navigator.onLine) ind.classList.add('-translate-y-full'); 
-        }
-
-        function processOfflineQueue() { 
-            if (offlineQueue.length === 0) return; 
-            offlineQueue = []; 
-            showToast('✅ Cola de sincronización procesada', 'success'); 
-        }
-
-        function registerSW() { 
-            if ('serviceWorker' in navigator) { 
-                const swCode = `const CACHE_NAME='ivory37-premium-v1';self.addEventListener('install',e=>{e.waitUntil(self.skipWaiting())});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
-                navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }))).catch(err => console.warn('SW Registration failed:', err)); 
-            } 
         }
 
         window.onload = initApp;
